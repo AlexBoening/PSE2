@@ -18,7 +18,7 @@ public class DisplayTest2 {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        
+//Committest...kann gelöscht werden!        
     }
 	private Shell shell;
 

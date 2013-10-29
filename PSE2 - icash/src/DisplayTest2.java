@@ -9,7 +9,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Composite;
-
+//TEst
 public class DisplayTest2 {
 	public static void main(String[] args) {
 		try {

@@ -10,7 +10,7 @@ public class DisplayTest {
 	public static void main(String[] args) {
         Display display = new Display();
         Shell shell = new Shell(display);
-        
+//Test        
         Label labelHomeWelcomeAdmin = new Label(shell, SWT.BORDER);
         labelHomeWelcomeAdmin.setText("Welcome to the Administration Frontend");
         labelHomeWelcomeAdmin.setSize(600,30);

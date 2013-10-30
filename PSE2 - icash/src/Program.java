@@ -5,6 +5,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.GridData;
 
 public class Program {
 	public static void main(String[] args) {
@@ -33,5 +36,9 @@ public class Program {
 	
 		shell = new Shell(display);
 		shell.setSize(700, 500);
+		GridLayout gridlayout1 = new GridLayout();
+		gridlayout1.numColumns=2;
+		shell.setText("Welcome to iCash!");
+		shell.setLayout(gridlayout1);
 	}
 }

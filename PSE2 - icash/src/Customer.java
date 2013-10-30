@@ -6,4 +6,7 @@ public class Customer extends Person {
 	    super(firstName, secondName, passwort, false);
 	}
 	
+	public Customer(int id) {
+		super(id, false);
+	}
 }

@@ -5,10 +5,26 @@ public class AccountType {
 	private String description;
 	private double interestRate;
 	
-	public AccountType(int id, String description, double interestRate) {
-	    // ID generieren
+	public AccountType(String description, double interestRate) {
+	    this.id = SQL.getID("idAccountTyp", "AccountTyp");
 	    this.description = description;
 	    this.interestRate = interestRate;
+	    
+	    String[] value = new String[3];
+	    value[0] = "" + id;
+	    value[1] = description;
+	    value[2] = "" + interestRate;
+	    SQL.insert(value, "AccountTyp");
+	}
+	
+	public AccountType(int id) {
+		String[] column = {"idAccountTyp", "descriptionAccountTyp", "interestRateAccountTyp"};
+        String[] condition = {"idAccountTyp = " + id};
+        String[][] value = SQL.select(column, "AccountTyp", condition, "and");
+        
+        this.id = id;
+        this.description = value[0][1];
+        this.interestRate = Convert.toDouble(value[0][2]);
 	}
 	
 	public int getId() {

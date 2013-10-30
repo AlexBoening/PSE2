@@ -11,7 +11,7 @@ public class SQL {
 		
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost/test", "root", "");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost/icash", "root", "");
 			stmt = conn.createStatement();
 		}
 		catch (ClassNotFoundException err) {
@@ -24,7 +24,7 @@ public class SQL {
 		}
 	}
 	
-	public static String[][] select(String[] column, String table, String[] condition) {
+	public static String[][] select(String[] column, String table, String[] condition, String connector) {
 		
 		ArrayList<String[]> list = new ArrayList<String[]>();
 		String[][] result;
@@ -36,12 +36,12 @@ public class SQL {
 				sql += ", ";
 			sql += column[i];
 		}
-		sql += "from " + table;
+		sql += " from " + table + " ";
 		for (int i=0; i<condition.length; i++) 
 			if (i==0)
 				sql += "where " + condition[i] + " ";
 			else
-				sql += "and " + condition[i] + " ";
+				sql += connector + " " + condition[i] + " ";
 		try {
 		    rs = stmt.executeQuery(sql);
 		    rs.beforeFirst();
@@ -56,7 +56,7 @@ public class SQL {
 		    result = list.toArray(result);
 		}
 		catch (SQLException err) {
-			System.out.println("Connection not possible");
+			System.out.println("Error when selecting from table " + table);
 			result = new String[0][0];
 		}
 		return result;
@@ -75,24 +75,43 @@ public class SQL {
 		    int lines = stmt.executeUpdate(sql);
 		}
 		catch (SQLException err) {
-			System.out.println("Connection not possible");
+			System.out.println("Error when inserting into table " + table);
 		}
 	}
 	
-	public static void update(String column, String value, String table, String[] condition) {
+	public static void update(String column, String value, String table, String[] condition, String connector) {
 		
-		String sql = "update " + table + " set " + column + " = " + value + " ";
+		String sql = "update " + table + " set " + column + " = '" + value + "' ";
 		for (int i=0 ; i<condition.length; i++) {
 			if (i==0) 
 				sql += "where " + condition[i] + " ";
 			else
-				sql += "and " + condition[i] + " ";
+				sql += connector + " " + condition[i] + " ";
 		}
 		try {
 		    int lines = stmt.executeUpdate(sql);
 		}
 		catch (SQLException err) {
-			System.out.println("Connection not possible");
+			System.out.println("Error when updating table " + table);
+		}
+	}
+	
+	public static int getID(String column, String table) {
+		
+		String sql = "select max( " + column + " ) from " + table;
+		int id = 0;
+		
+		try {
+		    rs = stmt.executeQuery(sql);
+		    rs.beforeFirst();
+		    if (rs.next()) 
+		    	return rs.getInt(1) + 1;
+		    else
+		    	return 1;
+		}
+		catch (SQLException err) {
+			System.out.println("Error when selecting from table " + table);
+			return 0;
 		}
 	}
 }

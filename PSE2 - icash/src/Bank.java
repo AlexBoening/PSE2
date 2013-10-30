@@ -7,9 +7,28 @@ public class Bank {
     private ArrayList<Account> accounts;
     
     public Bank(int blz, String description) {
-    	// ID generieren
+    	this.id = SQL.getID("idBank", "Bank");
     	this.blz = blz;
     	this.description = description;
+    	this.accounts = new ArrayList<Account>();
+    	
+    	String[] value = new String[3];
+    	value[0] = "" + id;
+    	value[1] = "" + blz;
+    	value[2] = description;
+    	SQL.insert(value, "Bank");
+    }
+    
+    public Bank(int id) {
+    	
+    	String[] column = {"idBank", "blzBank", "descriptionBank" };
+        String[] condition = {"idBank = " + id};
+        String[][] value = SQL.select(column, "Bank", condition, "and");
+
+    	this.id = id;
+    	this.blz = Convert.toInt(value[0][1]);
+    	this.description = value[0][2];
+    	this.accounts = new ArrayList<Account>();
     }
     
     public void add(Account a) {

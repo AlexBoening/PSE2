@@ -10,14 +10,41 @@ public class Transaction {
     private Account incomingAccount;
     private Account outgoingAccount;
     
-    public Transaction(int amount, String description, Date date, boolean shownIn, 
-    		           boolean shownOut, Account incomingAccount, Account outgoingAccount) {
-        // ID generieren
+    public Transaction(int amount, String description, Date date, Account incomingAccount, Account outgoingAccount) {
+        this.id = SQL.getID("idTransaction", "Transaction");
         this.amount = amount;
         this.description = description;
         this.date = date;
-        this.shownIn = shownIn;
-        this.shownOut = shownOut;
+        this.shownIn = false;
+        this.shownOut = false;
+        this.incomingAccount = incomingAccount;
+        this.outgoingAccount = outgoingAccount;
+        
+        String[] value = new String[8];
+        value[0] = "" + id;
+        value[1] = "" + amount;
+        value[2] = description;
+        value[3] = date.toString();
+        value[4] = " ";
+        value[5] = " ";
+        value[6] = "" + incomingAccount.getId();
+        value[7] = "" + outgoingAccount.getId();
+        SQL.insert(value, "Transaction");
+    }
+    
+    public Transaction(int id, Account incomingAccount, Account outgoingAccount) {
+    	
+    	String[] column = {"idTransaction", "amountTransaction", "descriptionTransaction", "dateTransaction",
+    			           "shownInTransaction", "shownOutTransaction", "incomingAccountTransaction", "outgoingAccountTransaction"};
+        String[] condition = {"idTransaction = " + id};
+        String[][] value = SQL.select(column, "Transaction", condition, "and");
+
+        this.id = id;
+        this.amount = Convert.toInt(value[0][1]);
+        this.description = value[0][2];
+        this.date = Date.valueOf(value[0][3]);
+        this.shownIn = value[0][4] == "X";
+        this.shownOut = value[0][5] == "X";
         this.incomingAccount = incomingAccount;
         this.outgoingAccount = outgoingAccount;
     }

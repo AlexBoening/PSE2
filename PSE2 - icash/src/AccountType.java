@@ -30,19 +30,23 @@ public class AccountType {
 	public int getId() {
 		return id;
 	}
-	public void setId(int id) {
+	/*public void setId(int id) {
 		this.id = id;
-	}
+	}*/
 	public String getDescription() {
 		return description;
 	}
 	public void setDescription(String description) {
 		this.description = description;
+		String[] condition = {"idAccountTyp = " + id};
+		SQL.update("descriptionAccountTyp", description, "AccountTyp", condition, "and");
 	}
 	public double getInterestRate() {
 		return interestRate;
 	}
 	public void setInterestRate(double interestRate) {
 		this.interestRate = interestRate;
+		String[] condition = {"idAccountTyp = " + id};
+		SQL.update("interestRateAccountTyp", "" + interestRate, "AccountTyp", condition, "and");
 	}
 }

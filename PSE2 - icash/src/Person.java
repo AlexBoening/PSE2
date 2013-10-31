@@ -2,14 +2,14 @@
 import java.util.ArrayList;
 
 public abstract class Person {
-    private int id;
-    private String firstName;
-    private String secondName;
-    private String passwort;
-    private boolean loggedIn;
-    private ArrayList<Account> accounts;
+    protected int id;
+    protected String firstName;
+    protected String secondName;
+    protected String password;
+    protected boolean loggedIn;
+    protected ArrayList<Account> accounts;
     
-    public Person(String firstName, String secondName, String passwort, boolean admin) {
+    public Person(String firstName, String secondName, String password, boolean admin) {
     	if (admin) {
     	    this.id = SQL.getID("idAdministrator", "Administrator");
     	}
@@ -18,14 +18,14 @@ public abstract class Person {
     	}
     	this.firstName = firstName;
     	this.secondName = secondName;
-    	this.passwort = passwort;
+    	this.password = password;
     	this.loggedIn = false;
     	
     	String[] value = new String[4];
     	value[0] = "" + id;
     	value[1] = firstName;
     	value[2] = secondName;
-    	value[3] = passwort;  // ToDo: Verschlüsseln
+    	value[3] = password;  // ToDo: Verschlüsseln
     	if (admin)
     	    SQL.insert(value, "Administrator");
     	else
@@ -35,32 +35,32 @@ public abstract class Person {
     public Person(int id, boolean admin) {
     	
     	if (admin) {
-    	    String[] column = {"idAdministrator", "firstNameAdministrator", "secondNameAdministrator", "passwortAdministrator" };
+    	    String[] column = {"firstNameAdministrator", "secondNameAdministrator", "passwordAdministrator" };
             String[] condition = {"idAdministrator = " + id};
             String[][] value = SQL.select(column, "Administrator", condition, "and");
 
             this.id = id;
-    		this.firstName = value[0][1];
-    		this.secondName = value[0][2];
-    		this.passwort = value[0][3];
+    		this.firstName = value[0][0];
+    		this.secondName = value[0][1];
+    		this.password = value[0][2];
         	this.loggedIn = false;
-        	this.accounts = new ArrayList<Account>();
     	}
     	else {
-        	String[] column = {"idCustomer", "firstNameCustomer", "secondNameCustomer", "passwortCustomer" };
+        	String[] column = {"firstNameCustomer", "secondNameCustomer", "passwordCustomer" };
             String[] condition = {"idCustomer = " + id};
             String[][] value = SQL.select(column, "Customer", condition, "and");
 
         	this.id = id;
-        	this.firstName = value[0][1];
-        	this.secondName = value[0][2];
-        	this.passwort = value[0][3];
-        	this.loggedIn = false;
-        	this.accounts = new ArrayList<Account>();    		
+        	this.firstName = value[0][0];
+        	this.secondName = value[0][1];
+        	this.password = value[0][2];
+        	this.loggedIn = false;   		
     	}
     }
     
     public void add(Account a) {
+    	if (accounts == null)
+    		accounts = new ArrayList<Account>();
         accounts.add(a);	
     }
     
@@ -71,37 +71,6 @@ public abstract class Person {
     public static void login(String firstName, String secondName, String passwort) {
     	
     }
-    
-	public String getFirstName() {
-		return firstName;
-	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-	public String getSecondName() {
-		return secondName;
-	}
-	public void setSecondName(String secondName) {
-		this.secondName = secondName;
-	}
-	public String getPasswort() {
-		return passwort;
-	}
-	public void setPasswort(String passwort) {
-		this.passwort = passwort;
-	}
-	public ArrayList<Account> getAccounts() {
-		return accounts;
-	}
-	public void setAccounts(ArrayList<Account> accounts) {
-		this.accounts = accounts;
-	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	public boolean isLoggedIn() {
 		return loggedIn;

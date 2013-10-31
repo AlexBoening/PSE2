@@ -28,35 +28,55 @@ public class Bank {
     	this.id = id;
     	this.blz = Convert.toInt(value[0][1]);
     	this.description = value[0][2];
-    	this.accounts = new ArrayList<Account>();
     }
     
     public void add(Account a) {
+    	if (accounts == null)
+    		accounts = new ArrayList<Account>();
         accounts.add(a);	
     }
     
 	public int getId() {
 		return id;
 	}
-	public void setId(int id) {
+	
+	/*public void setId(int id) {
 		this.id = id;
-	}
+	}*/
+	
 	public int getBlz() {
 		return blz;
 	}
+	
 	public void setBlz(int blz) {
 		this.blz = blz;
+		String[] condition = {"idBank = " + id};
+		SQL.update("blzBank", "" + blz, "Bank", condition, "and");
 	}
+	
 	public String getDescription() {
 		return description;
 	}
+	
 	public void setDescription(String description) {
 		this.description = description;
+		String[] condition = {"idBank = " + id};
+		SQL.update("descriptionBank", description, "Bank", condition, "and");
 	}
+	
 	public ArrayList<Account> getAccounts() {
+		if (accounts == null) {
+			accounts = new ArrayList<Account>();
+			String[] column = {"idAccount"};
+			String[] condition = {"Bank_idBank = " + id};
+			String[][] value = SQL.select(column, "Account", condition, "and");
+			for (int i=0; i<value.length; i++)
+			    accounts.add(new Account(Convert.toInt(value[i][0])));
+		}
 		return accounts;
 	}
-	public void setAccounts(ArrayList<Account> accounts) {
+	
+	/*public void setAccounts(ArrayList<Account> accounts) {
 		this.accounts = accounts;
-	}
+	}*/
 }

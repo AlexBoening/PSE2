@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Account {
     private int id;
@@ -49,6 +50,46 @@ public void add(Transaction t) {
 	if (transactions == null)
 		transactions = new ArrayList<Transaction>();
     transactions.add(t);	
+}
+
+public int getBalance() {
+    int balance = 0;
+    Iterator<Transaction> it = getTransactions().iterator();
+    Transaction t;
+    while (it.hasNext()) {
+    	t = it.next();
+    	if (t.getIncomingAccount().getId() == id)
+    		balance += t.getAmount();
+    	else if (t.getOutgoingAccount().getId() == id)
+    		balance -= t.getAmount();
+    }
+    return balance;
+}
+
+public void printTransactions() {
+	
+	Iterator<Transaction> it = getTransactions().iterator();
+    Transaction t;
+    while (it.hasNext()) {
+    	t = it.next();
+    	if (t.getIncomingAccount().getId() == id && !t.isShownIn()) {
+    		// actual PrintOut
+    		t.setShownIn(true);
+    	}
+    	else if (t.getOutgoingAccount().getId() == id && !t.isShownOut()) {
+    		// actual PrintOut;
+    		t.setShownOut(true);
+    	}
+    }
+}
+
+public void showTransactions() {
+	Iterator<Transaction> it = getTransactions().iterator();
+    Transaction t;
+    while (it.hasNext()) {
+    	t = it.next();
+    	// actual display
+    }
 }
 
 public boolean isFlagActive() {

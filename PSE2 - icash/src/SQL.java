@@ -48,6 +48,7 @@ public class SQL {
 		    int j=0;
 		    while (rs.next()) {
 		    	j++;
+		    	line = new String[column.length];
 		    	for (int i=0; i<column.length; i++)
 		    		line[i] = rs.getString(i+1);
 		    	list.add(line);

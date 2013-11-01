@@ -43,7 +43,8 @@ public class Transaction {
         this.id = id;
         this.amount = Convert.toInt(value[0][0]);
         this.description = value[0][1];
-        this.date = Date.valueOf(value[0][2]);
+        String s = value[0][2].substring(0,10);
+        this.date = new Date(java.util.Date.parse(value[0][2]));
         this.shownIn = value[0][3] == "X";
         this.shownOut = value[0][4] == "X";
     }

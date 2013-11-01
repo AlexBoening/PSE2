@@ -2,8 +2,8 @@ import java.util.ArrayList;
 
 public class Administrator extends Person {
 
-	public Administrator(String firstName, String secondName, String passwort) {
-	    super(firstName, secondName, passwort, true); 
+	public Administrator(String firstName, String secondName, String password) {
+	    super(firstName, secondName, password, true); 
 	}
 	
 	public Administrator(int id) {
@@ -12,6 +12,22 @@ public class Administrator extends Person {
 	
 	public String getFirstName() {
 		return firstName;
+	}
+	
+	public void deactivateAccount(Account account, boolean active) {
+		if (account.getAdministrator().getId() == id)
+	        account.setFlagActive(active);	
+		else {
+			// Error: you cannot deactivate Accounts you do not maintain!
+		}
+	}
+	
+	public void createCustomer(String firstName, String secondName, String password) {
+		Customer c = new Customer(firstName, secondName, password);
+	}
+	
+	public void createAccount(boolean flagActive, Customer customer, Bank bank, AccountType accountType) {
+		Account a = new Account (flagActive, customer, this, bank, accountType);
 	}
 	
 	public void setFirstName(String firstName) {

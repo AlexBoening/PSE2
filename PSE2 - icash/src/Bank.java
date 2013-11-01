@@ -1,16 +1,20 @@
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Bank {
     private int id;
     private int blz;
     private String description;
     private ArrayList<Account> accounts;
+    private Account bank_account;
     
     public Bank(int blz, String description) {
     	this.id = SQL.getID("idBank", "Bank");
     	this.blz = blz;
     	this.description = description;
     	this.accounts = new ArrayList<Account>();
+    	this.setBank_account(new Account(true, new Customer(1), new Administrator(1), this, new AccountType(1)));
     	
     	String[] value = new String[3];
     	value[0] = "" + id;
@@ -28,6 +32,15 @@ public class Bank {
     	this.id = id;
     	this.blz = Convert.toInt(value[0][1]);
     	this.description = value[0][2];
+    	
+    	// get Bank account
+    	column = new String[1];
+    	column[0] = "idAccount";
+    	condition = new String[2];
+    	condition[0] = "Bank_idBank = " + id;
+    	condition[1] = "AccountTyp_idAccountTyp = 1";
+    	value = SQL.select(column, "Account", condition, "and");
+    	this.bank_account = new Account(Convert.toInt(value[0][0]));
     }
     
     public void add(Account a) {
@@ -36,13 +49,24 @@ public class Bank {
         accounts.add(a);	
     }
     
+    public void payInterests() {
+    	int balance = 0;
+    	int interests = 0;
+        Iterator<Account> it = getAccounts().iterator();
+        Account a;
+        Transaction t;
+        while (it.hasNext()) {
+        	a = it.next();
+        	balance = a.getBalance();
+        	interests = (int)(a.getAccountType().getInterestRate() * balance / 100);
+        	if (interests != 0)
+        	    t = new Transaction(interests, "Zinsen", Convert.currentDate(), a, bank_account);
+        }
+    }
+    
 	public int getId() {
 		return id;
 	}
-	
-	/*public void setId(int id) {
-		this.id = id;
-	}*/
 	
 	public int getBlz() {
 		return blz;
@@ -75,8 +99,13 @@ public class Bank {
 		}
 		return accounts;
 	}
+
+	public Account getBank_account() {
+		return bank_account;
+	}
+
+	public void setBank_account(Account bank_account) {
+		this.bank_account = bank_account;
+	}
 	
-	/*public void setAccounts(ArrayList<Account> accounts) {
-		this.accounts = accounts;
-	}*/
 }

@@ -34,7 +34,7 @@ public class CustomerClient {
 		    
 		    GridLayout layoutCompositeHorizontal = new GridLayout(2, false);
 		    Label LabelHorizontal = new Label(compositeHorizontal,SWT.NONE);
-		    LabelHorizontal.setText("ICash");
+		    LabelHorizontal.setText("iCash");
 		    LabelHorizontal.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
 		    LabelHorizontal.setBackground(new Color(display, 200,200,200));
 		    Button LogOut = new Button(compositeHorizontal, SWT.PUSH);

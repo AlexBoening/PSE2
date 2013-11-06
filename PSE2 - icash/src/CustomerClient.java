@@ -1,6 +1,9 @@
 
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -13,8 +16,8 @@ import org.eclipse.swt.widgets.Shell;
 
 public class CustomerClient {
 	 public static void main(String[] args) {
-		    Display display = new Display();
-		    Shell shell = new Shell(display);
+		    final Display display = new Display();
+		    final Shell shell = new Shell(display);
 		    GridLayout layout = new GridLayout(2, false);
 		    shell.setLayout(layout);
 		    
@@ -37,7 +40,7 @@ public class CustomerClient {
 		    LabelHorizontal.setText("iCash");
 		    LabelHorizontal.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
 		    LabelHorizontal.setBackground(new Color(display, 200,200,200));
-		    Button LogOut = new Button(compositeHorizontal, SWT.PUSH);
+		    final Button LogOut = new Button(compositeHorizontal, SWT.PUSH);
 		    GridData griddataHorizontal = new GridData(GridData.FILL, GridData.CENTER, true, false);
 		    griddataHorizontal.horizontalAlignment = GridData.END;
 		    LogOut.setLayoutData(griddataHorizontal);
@@ -53,7 +56,7 @@ public class CustomerClient {
 		    GridLayout layoutCompositeVertical = new GridLayout(1, false);
 		    GridData griddataVertical = new GridData(GridData.FILL, GridData.FILL,true, false);
 		    griddataVertical.verticalAlignment = GridData.CENTER;
-		    Button ViewTransaction = new Button(compositeVertical, SWT.PUSH);
+		    final Button ViewTransaction = new Button(compositeVertical, SWT.PUSH);
 		    ViewTransaction.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		    ViewTransaction.setText("View Transaction");
 		    ViewTransaction.setBackground(new Color(display, 31, 78, 121));
@@ -89,10 +92,26 @@ public class CustomerClient {
 		    CurrentBalance.setText("Current Balance");
 		    
 		    
-		    
 		    final Composite compositeMain = new Composite(shell, 0);
 		    compositeMain.setBackground(new Color(display,255,255,255));
 		    compositeMain.setLayoutData(griddataMain);
+		    
+		    //Events
+		    ViewTransaction.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					ViewTransaction.setVisible(false);
+				}
+			});
+		    
+		    LogOut.addSelectionListener(new SelectionAdapter() {
+		    	public void widgetSelected(SelectionEvent arg0) {
+		    		display.dispose();
+		    	}
+		    });
+		    //Events Ende
+		    
+		    
 		    
 
 		    
@@ -149,4 +168,9 @@ public class CustomerClient {
 		    }
 		    display.dispose();
 }
+	 
+	 public void ViewTransactions(){
+		 //View Transactions here
+	 
+	 }
 }

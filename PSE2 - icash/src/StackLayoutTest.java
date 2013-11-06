@@ -70,7 +70,7 @@ public class StackLayoutTest {
 		    ViewTransaction.setLayoutData(griddataVertical);
 		    Label label1 = new Label(compositeVertical, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    label1.setBackground(new Color(display, 200,200,200));
-		    Button PerformTransaction = new Button(compositeVertical, SWT.PUSH);
+		    final Button PerformTransaction = new Button(compositeVertical, SWT.PUSH);
 		    PerformTransaction.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		    PerformTransaction.setText("Perform Transaction");
 		    PerformTransaction.setBackground(new Color(display, 31, 78, 121));
@@ -108,34 +108,77 @@ public class StackLayoutTest {
 		    final StackLayout stacklayout = new StackLayout();
 		    compositeMain.setLayout(stacklayout);
 		    
-		    final Composite page0 = new Composite(compositeMain, SWT.NONE);
-		    page0.setBackground(new Color(display,255,255,255));
+		    final Composite ViewPage = new Composite(compositeMain, SWT.NONE);
+		    ViewPage.setBackground(new Color(display,255,255,255));
 		    compositeMain.setLayoutData(griddataMain);
-		    page0.setLayout(new RowLayout());
-		    Label label = new Label(page0, SWT.NONE);
-		    label.setText("Label on page 1");
-		    label.pack();
+		    ViewPage.setLayout(new RowLayout());
+		    Label ViewLabel = new Label(ViewPage, SWT.NONE);
+		    ViewLabel.setText("THIS IS THE VIEW TRANSACTION PAGE");
+		    ViewLabel.pack();
 
 		    // create the second page's content
-		    final Composite page1 = new Composite(compositeMain, SWT.NONE);
-		    page1.setBackground(new Color(display,255,255,255));
+		    final Composite PerformPage = new Composite(compositeMain, SWT.NONE);
+		    PerformPage.setBackground(new Color(display,255,255,255));
 		    compositeMain.setLayoutData(griddataMain);
-		    page1.setLayout(new RowLayout());
-		    Button button = new Button(page1, SWT.NONE);
-		    button.setText("Button on page 2");
-		    button.pack();
+		    PerformPage.setLayout(new RowLayout());
+		    Label Performlabel = new Label(PerformPage, SWT.NONE);
+		    Performlabel.setText("THIS IS THE PERFORM TRANSACTION PAGE");
+		    Performlabel.pack();
 		    
-		    
+		    final Composite DepositPage = new Composite(compositeMain, SWT.NONE);
+		    DepositPage.setBackground(new Color(display,255,255,255));
+		    compositeMain.setLayoutData(griddataMain);
+		    DepositPage.setLayout(new RowLayout());
+		    Label DepositLabel = new Label(DepositPage, SWT.NONE);
+		    DepositLabel.setText("THIS IS THE DEPOSITMONEY PAGE");
+		    DepositLabel.pack();
+
+		    // create the second page's content
+		    final Composite WithdrawPage = new Composite(compositeMain, SWT.NONE);
+		    WithdrawPage.setBackground(new Color(display,255,255,255));
+		    compositeMain.setLayoutData(griddataMain);
+		    WithdrawPage.setLayout(new RowLayout());
+		    Label WithdrawLabel = new Label(WithdrawPage, SWT.NONE);
+		    WithdrawLabel.setText("THIS IS THE WITHDRAW MONEY PAGE");
+		    WithdrawLabel.pack();
 		    
 		    
 		    //Events
 		    ViewTransaction.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
 		          pageNum = ++pageNum % 2;
-		          stacklayout.topControl = pageNum == 0 ? page0 : page1;
+		          //stacklayout.topControl = pageNum == 0 ? page0 : page1;
+		          stacklayout.topControl = ViewPage;
 		          compositeMain.layout();
 		        }
 		      });
+		    
+		    PerformTransaction.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+			          pageNum = ++pageNum % 2;
+			          //stacklayout.topControl = pageNum == 0 ? page0 : page1;
+			          stacklayout.topControl = PerformPage;
+			          compositeMain.layout();
+			        }
+			      });
+		    
+		    DepositMoney.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		          pageNum = ++pageNum % 2;
+		          //stacklayout.topControl = pageNum == 0 ? page0 : page1;
+		          stacklayout.topControl = DepositPage;
+		          compositeMain.layout();
+		        }
+		      });
+		    
+		    WithdrawMoney.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+			          pageNum = ++pageNum % 2;
+			          //stacklayout.topControl = pageNum == 0 ? page0 : page1;
+			          stacklayout.topControl = WithdrawPage;
+			          compositeMain.layout();
+			        }
+			      });
 		    
 		    LogOut.addSelectionListener(new SelectionAdapter() {
 		    	public void widgetSelected(SelectionEvent arg0) {

@@ -1,6 +1,5 @@
 
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -52,6 +51,7 @@ public class CustomerClient {
 		    compositeVertical.setBackground(new Color(display,200,200,200));
 		    compositeVertical.setBounds(100,200,200,200);
 		    compositeVertical.setLayoutData(griddatavertical);
+		    ((GridData)compositeVertical.getLayoutData()).widthHint=150;
 		    
 		    GridLayout layoutCompositeVertical = new GridLayout(1, false);
 		    GridData griddataVertical = new GridData(GridData.FILL, GridData.FILL,true, false);

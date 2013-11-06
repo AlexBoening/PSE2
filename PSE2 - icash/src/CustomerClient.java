@@ -41,6 +41,7 @@ public class CustomerClient {
 		    GridData griddataHorizontal = new GridData(GridData.FILL, GridData.CENTER, true, false);
 		    griddataHorizontal.horizontalAlignment = GridData.END;
 		    LogOut.setLayoutData(griddataHorizontal);
+		    LogOut.setBackground(new Color(display, 31, 78, 121));
 		    LogOut.setText("Log out!");
 		    compositeHorizontal.setLayout(layoutCompositeHorizontal);
 		    
@@ -55,20 +56,23 @@ public class CustomerClient {
 		    Button ViewTransaction = new Button(compositeVertical, SWT.PUSH);
 		    ViewTransaction.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		    ViewTransaction.setText("View Transaction");
+		    ViewTransaction.setBackground(new Color(display, 31, 78, 121));
 		    ViewTransaction.setLayoutData(griddataVertical);
 		    Label label1 = new Label(compositeVertical, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    label1.setBackground(new Color(display, 200,200,200));
 		    Button PerformTransaction = new Button(compositeVertical, SWT.PUSH);
 		    PerformTransaction.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		    PerformTransaction.setText("Perform Transaction");
+		    PerformTransaction.setBackground(new Color(display, 31, 78, 121));
 		    PerformTransaction.setLayoutData(griddataVertical);
 		    label1.setLayoutData(griddataVertical);
 		    Label label2 = new Label(compositeVertical, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    label2.setBackground(new Color(display, 200,200,200));
-		    Button DespositeMoney = new Button(compositeVertical, SWT.PUSH);
-		    DespositeMoney.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		    DespositeMoney.setText("Desposite Money");
-		    DespositeMoney.setLayoutData(griddataVertical);
+		    Button DepositMoney = new Button(compositeVertical, SWT.PUSH);
+		    DepositMoney.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		    DepositMoney.setText("Deposit Money");
+		    DepositMoney.setBackground(new Color(display, 31, 78, 121));
+		    DepositMoney.setLayoutData(griddataVertical);
 		    label2.setLayoutData(griddataVertical);
 		    Label label3 = new Label(compositeVertical, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    label3.setBackground(new Color(display, 200,200,200));
@@ -76,6 +80,7 @@ public class CustomerClient {
 		    Button WithdrawMoney = new Button(compositeVertical, SWT.PUSH);
 		    WithdrawMoney.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		    WithdrawMoney.setText("Withdraw Money");
+		    WithdrawMoney.setBackground(new Color(display, 31, 78, 121));
 		    WithdrawMoney.setLayoutData(griddataVertical);
 		    label3.setLayoutData(griddataVertical);
 		    Label CurrentBalance = new Label(compositeVertical, SWT.FILL);

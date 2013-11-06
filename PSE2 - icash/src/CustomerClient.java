@@ -54,7 +54,7 @@ public class CustomerClient {
 		    ((GridData)compositeVertical.getLayoutData()).widthHint=150;
 		    
 		    GridLayout layoutCompositeVertical = new GridLayout(1, false);
-		    GridData griddataVertical = new GridData(GridData.FILL, GridData.FILL,true, false);
+		    final GridData griddataVertical = new GridData(GridData.FILL, GridData.FILL,true, false);
 		    griddataVertical.verticalAlignment = GridData.CENTER;
 		    final Button ViewTransaction = new Button(compositeVertical, SWT.PUSH);
 		    ViewTransaction.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -86,6 +86,9 @@ public class CustomerClient {
 		    WithdrawMoney.setBackground(new Color(display, 31, 78, 121));
 		    WithdrawMoney.setLayoutData(griddataVertical);
 		    label3.setLayoutData(griddataVertical);
+		    Label label4 = new Label(compositeVertical, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    label4.setBackground(new Color(display, 200,200,200));
+		    label4.setLayoutData(griddataVertical);
 		    Label CurrentBalance = new Label(compositeVertical, SWT.FILL);
 		    CurrentBalance.setBackground(new Color(display, 200,200,200));
 		    griddataVertical.verticalAlignment = GridData.END;
@@ -100,7 +103,11 @@ public class CustomerClient {
 		    ViewTransaction.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					ViewTransaction.setVisible(false);
+					Button DepositMoney = new Button(compositeMain, SWT.PUSH);
+					 DepositMoney.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+					    DepositMoney.setText("Deposit Money");
+					    DepositMoney.setBackground(new Color(display, 31, 78, 121));
+					    DepositMoney.setLayoutData(griddataVertical);
 				}
 			});
 		    
@@ -169,8 +176,14 @@ public class CustomerClient {
 		    display.dispose();
 }
 	 
-	 public void ViewTransactions(){
+	 public static Composite ViewTransactions(Shell shell, Display display, Composite compositeMain, GridData griddataVertical){
 		 //View Transactions here
-	 
+		 Composite CompositeTransaction = compositeMain;
+		 Button DepositMoney = new Button(CompositeTransaction, SWT.PUSH);
+		 DepositMoney.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		    DepositMoney.setText("Deposit Money");
+		    DepositMoney.setBackground(new Color(display, 31, 78, 121));
+		    DepositMoney.setLayoutData(griddataVertical);
+		 return CompositeTransaction;
 	 }
 }

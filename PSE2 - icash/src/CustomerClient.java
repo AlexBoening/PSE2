@@ -89,11 +89,16 @@ public class CustomerClient {
 		    Label label4 = new Label(compositeVertical, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    label4.setBackground(new Color(display, 200,200,200));
 		    label4.setLayoutData(griddataVertical);
-		    Label CurrentBalance = new Label(compositeVertical, SWT.FILL);
-		    CurrentBalance.setBackground(new Color(display, 200,200,200));
-		    griddataVertical.verticalAlignment = GridData.END;
-		    CurrentBalance.setText("Current Balance");
-		    
+		    Label CurrentBalanceText = new Label(compositeVertical, SWT.END);
+		    CurrentBalanceText.setBackground(new Color(display, 200,200,200));
+		    griddataVertical.verticalAlignment = GridData.FILL;
+		    CurrentBalanceText.setText("Current Balance");
+		    CurrentBalanceText.setLayoutData(new GridData(SWT.FILL, SWT.END, true, true));
+		    Label CurrentBalance = new Label(compositeVertical, SWT.BEGINNING);
+		    CurrentBalance.setBackground(new Color(display, 70,38,121));
+		    griddataVertical.verticalAlignment = GridData.FILL;
+		    //CurrentBalance.setText("Current Balance");
+		    CurrentBalance.setLayoutData(new GridData(SWT.FILL, SWT.END, true, true));
 		    
 		    final Composite compositeMain = new Composite(shell, 0);
 		    compositeMain.setBackground(new Color(display,255,255,255));

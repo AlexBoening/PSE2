@@ -32,6 +32,10 @@ public class AccountType {
         this.interestRate = Convert.toDouble(value[0][2]);
 	}
 	
+	public AccountType() {
+		
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -41,17 +45,27 @@ public class AccountType {
 	public String getDescription() {
 		return description;
 	}
-	public void setDescription(String description) throws SQLException {
+	public void setDescription(String description) {
 		this.description = description;
-		String[] condition = {"idAccountTyp = " + id};
-		SQL.update("descriptionAccountTyp", description, "AccountTyp", condition, "and");
 	}
 	public double getInterestRate() {
 		return interestRate;
 	}
-	public void setInterestRate(double interestRate) throws SQLException {
+	public void setInterestRate(double interestRate) {
 		this.interestRate = interestRate;
+	}
+	
+	public void updateDB() throws SQLException {
+		String[] column = new String[2];
+		String[] value = new String[2];
 		String[] condition = {"idAccountTyp = " + id};
-		SQL.update("interestRateAccountTyp", "" + interestRate, "AccountTyp", condition, "and");
+		
+		column[0] = "descriptionAccountTyp";
+		column[1] = "interestRateAccountTyp";
+		
+		value[0] = description;
+		value[1] = "" + interestRate;
+		
+		SQL.update(column, value, "AccountTyp", condition, "and");
 	}
 }

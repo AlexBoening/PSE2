@@ -1,4 +1,4 @@
-package Server;
+package server;
 
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;

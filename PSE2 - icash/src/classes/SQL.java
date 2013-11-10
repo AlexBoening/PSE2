@@ -84,7 +84,7 @@ public class SQL {
 		}*/
 	}
 	
-	public static void update(String column, String value, String table, String[] condition, String connector) 
+	/*public static void update(String column, String value, String table, String[] condition, String connector) 
 			           throws SQLException {
 		
 		String sql = "update " + table + " set " + column + " = '" + value + "' ";
@@ -101,7 +101,22 @@ public class SQL {
 		/*}
 		catch (SQLException err) {
 			System.out.println("Error when updating table " + table);
-		}*/
+		}
+	}*/
+	
+	public static void update(String[] column, String[] value, String table, String[] condition, String connector)
+	                   throws SQLException {
+		String sql = "update " + table + " set " + column[0] + " = '" + value[0] + "' ";
+		for (int i=1; i<value.length; i++)
+			sql += ", " + column[i] + " = '" + value[i] + "' ";
+		for (int i=0; i<condition.length; i++)
+		    if (i==0)
+		    	sql+= "where " + condition[i] + " ";
+		    else
+		    	sql += connector + " " + condition[i] + " ";
+		int lines = stmt.executeUpdate(sql);
+		if (lines < 1)
+	    	throw new SQLException();
 	}
 	
 	public static int getID(String column, String table) throws SQLException {

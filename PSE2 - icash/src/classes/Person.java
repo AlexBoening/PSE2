@@ -62,6 +62,10 @@ public abstract class Person {
     	}
     }
     
+    public Person() {
+    	
+    }
+    
     public void add(Account a) {
     	if (accounts == null)
     		accounts = new ArrayList<Account>();

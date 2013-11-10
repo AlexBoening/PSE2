@@ -38,7 +38,7 @@ public class Transaction {
     
     public Transaction(int id) throws SQLException {
      	
-    	String[] column = {"amountTransaction", "descriptionTransaction", "dateTransaction", "shownInTransaction", "shownOutTransaction"};
+    	String[] column = {"amountTransaction", "descriptionTransaction", "dateTransaction", "shownIncomingTransaction", "shownOutgoingTransaction"};
         String[] condition = {"idTransaction = " + id};
         String[][] value = SQL.select(column, "Transaction", condition, "and");
         
@@ -53,6 +53,10 @@ public class Transaction {
         this.shownOutgoing = value[0][4].equals("X");
     }
     
+    public Transaction() {
+    	
+    }
+    
 	public int getId() {
 		return id;
 	}
@@ -65,56 +69,40 @@ public class Transaction {
 		return amount;
 	}
 	
-	public void setAmount(int amount) throws SQLException {
-		String[] condition = {"idTransaction = " + id};
+	public void setAmount(int amount) {
 		this.amount = amount;
-		SQL.update("amountTransaction", "" + amount, "Transaction", condition, "and");
 	}
 	
 	public String getDescription() {
 		return description;
 	}
 	
-	public void setDescription(String description) throws SQLException {
-		String[] condition = {"idTransaction = " + id};
+	public void setDescription(String description) {
 		this.description = description;
-		SQL.update("descriptionTransaction", description, "Transaction", condition, "and");
-	}
+		}
 	
 	public Date getDate() {
 		return date;
 	}
 	
-	public void setDate(Date date) throws SQLException {
-		String[] condition = {"idTransaction = " + id};
+	public void setDate(Date date) {
 		this.date = date;
-		SQL.update("dateTransaction", date.toString(), "Transaction", condition, "and");
-	}
+		}
 	
 	public boolean isShownIncoming() {
 		return shownIncoming;
 	}
 	
-	public void setShownIncoming(boolean shownIncoming) throws SQLException {
-		String[] condition = {"idTransaction = " + id};
+	public void setShownIncoming(boolean shownIncoming) {
 		this.shownIncoming = shownIncoming;
-		if (shownIncoming)
-			SQL.update("shownIncomingTransaction", "X", "Transaction", condition, "and");
-		else
-			SQL.update("shownIncomingTransaction", " ", "Transaction", condition, "and");
-	}
+		}
 	
 	public boolean isShownOutgoing() {
 		return shownOutgoing;
 	}
 	
-	public void setShownOutgoing(boolean shownOutgoing) throws SQLException {
-		String[] condition = {"idTransaction = " + id};
+	public void setShownOutgoing(boolean shownOutgoing) {
 		this.shownOutgoing = shownOutgoing;
-		if (shownOutgoing) 
-			SQL.update("shownOutgoingTransaction", "X", "Transaction", condition, "and");
-		else
-			SQL.update("shownOutgoingTransaction", " ", "Transaction", condition, "and");
 	}
 	
 	public Account getIncomingAccount() throws SQLException {
@@ -128,11 +116,9 @@ public class Transaction {
 		return incomingAccount;
 	}
 	
-	public void setIncomingAccount(Account incomingAccount) throws SQLException {
-		String[] condition = {"idTransaction = " + id};
+	public void setIncomingAccount(Account incomingAccount) {
 		this.incomingAccount = incomingAccount;
-		SQL.update("incomingAccount_idAccount", "" + incomingAccount.getId(), "Transaction", condition, "and");
-	}
+		}
 	
 	public Account getOutgoingAccount() throws SQLException {
 		if (outgoingAccount == null) {
@@ -144,9 +130,35 @@ public class Transaction {
 		return outgoingAccount;
 	}
 	
-	public void setOutgoingAccount(Account outgoingAccount) throws SQLException {
-		String[] condition = {"idTransaction = " + id};
+	public void setOutgoingAccount(Account outgoingAccount) {
 		this.outgoingAccount = outgoingAccount;
-		SQL.update("outgoingAccount_idAccount", "" + outgoingAccount.getId(), "Transaction", condition, "and");
+		}
+	
+	public void updateDB() throws SQLException {
+		String[] condition = {"idTransaction = " + id};
+		String[] column = new String[7];
+		String[] value = new String[7];
+		
+		column[0] = "amountTransaction";
+		column[1] = "descriptionTransaction";
+		column[2] = "dateTransaction";
+		column[3] = "shownIncomingTransaction";
+		column[4] = "shownOutgoingTransaction";
+		column[5] = "incomingAccount_idAccount";
+		column[6] = "outgoingAccount_idAccount";
+		
+		value[0] = "" + amount;
+		value[1] = description;
+		value[2] = date.toString();
+		if (shownIncoming)
+			value[3] = "X";
+		else
+			value[3] = " ";
+		if (shownOutgoing)
+			value[4] = "X";
+		else
+			value[4] = " ";
+		value[5] = "" + incomingAccount.getId();
+		value[6] = "" + outgoingAccount.getId();
 	}
 }

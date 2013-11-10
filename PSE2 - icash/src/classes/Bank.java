@@ -47,6 +47,10 @@ public class Bank {
     	this.bank_account = new Account(Convert.toInt(value[0][0]));
     }
     
+    public Bank() {
+    	
+    }
+    
     public void add(Account a) {
     	if (accounts == null)
     		accounts = new ArrayList<Account>();
@@ -72,24 +76,24 @@ public class Bank {
 		return id;
 	}
 	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 	public int getBlz() {
 		return blz;
 	}
 	
-	public void setBlz(int blz) throws SQLException {
+	public void setBlz(int blz) {
 		this.blz = blz;
-		String[] condition = {"idBank = " + id};
-		SQL.update("blzBank", "" + blz, "Bank", condition, "and");
 	}
 	
 	public String getDescription() {
 		return description;
 	}
 	
-	public void setDescription(String description) throws SQLException {
+	public void setDescription(String description) {
 		this.description = description;
-		String[] condition = {"idBank = " + id};
-		SQL.update("descriptionBank", description, "Bank", condition, "and");
 	}
 	
 	public ArrayList<Account> getAccounts() throws SQLException {
@@ -112,4 +116,17 @@ public class Bank {
 		this.bank_account = bank_account;
 	}
 	
+	public void updateDB() throws SQLException {
+		String[] condition = {"idBank = " + id};
+		String[] column = new String[2];
+		String[] value = new String[2];
+		
+		column[0] = "blzBank";
+		column[1] = "descriptionBank";
+		
+		value[0] = "" + blz;
+		value[1] = description;
+		
+		SQL.update(column, value, "Bank", condition, "and");
+	}
 }

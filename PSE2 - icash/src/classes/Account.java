@@ -49,6 +49,9 @@ public Account(int id) throws SQLException {
 	this.flagActive = value[0][0].equals("X");
 }
 
+public Account() {
+}
+
 public void add(Transaction t) {
 	if (transactions == null)
 		transactions = new ArrayList<Transaction>();
@@ -95,17 +98,21 @@ public void showTransactions() throws SQLException {
     }
 }
 
+public int getId() {
+	return id;
+}
+
+public void setId(int id) {
+	this.id = id;
+}
+
 public boolean isFlagActive() {
 	return flagActive;
 }
 
-public void setFlagActive(boolean flagActive) throws SQLException {
+public void setFlagActive(boolean flagActive) {
 	this.flagActive = flagActive;
-	String[] condition = {"idAccount = " + id};
-	if (flagActive)
-		SQL.update("flagActive", "X", "Account", condition, "and");
-	else
-		SQL.update("flagActive", " ", "Account", condition, "and");
+	
 }
 
 public Customer getCustomer() throws SQLException {
@@ -119,10 +126,8 @@ public Customer getCustomer() throws SQLException {
 }
 
 
-public void setCustomer(Customer customer) throws SQLException {
+public void setCustomer(Customer customer) {
 	this.customer = customer;
-	String[] condition = {"idAccount = " + id};
-	SQL.update("Customer_idCustomer", "" + customer.getId(), "Account", condition, "and");
 }
 
 public Administrator getAdministrator() throws SQLException {
@@ -136,10 +141,9 @@ public Administrator getAdministrator() throws SQLException {
 }
 
 
-public void setAdministrator(Administrator administrator) throws SQLException {
+public void setAdministrator(Administrator administrator) {
 	this.administrator = administrator;
-	String[] condition = {"idAccount = " + id};
-	SQL.update("Administrator_idAdministrator", "" + administrator.getId(), "Account", condition, "and");
+	
 }
 
 public Bank getBank() throws SQLException {
@@ -152,20 +156,9 @@ public Bank getBank() throws SQLException {
 	return bank;
 }
 
-public void setBank(Bank bank) throws SQLException {
+public void setBank(Bank bank) {
 	this.bank = bank;
-	String[] condition = {"idAccount = " + id};
-	SQL.update("Bank_idBank", "" + bank.getId(), "Account", condition, "and");
 }
-
-
-public int getId() {
-	return id;
-}
-
-/*public void setId(int id) {
-	this.id = id;
-}*/
 
 public AccountType getAccountType() throws SQLException {
 	if (accountType == null) {
@@ -178,10 +171,8 @@ public AccountType getAccountType() throws SQLException {
 }
 
 
-public void setAccountType(AccountType accountType) throws SQLException {
+public void setAccountType(AccountType accountType) {
 	this.accountType = accountType;
-	String[] condition = {"idAccount = " + id};
-	SQL.update("AccountTyp_idAccountTyp", "" + accountType.getId(), "Account", condition, "and");
 }
 
 
@@ -203,4 +194,26 @@ public void setTransactions(ArrayList<Transaction> transactions) {
 }
 */
 
+public void updateDB() throws SQLException{
+	String[] column = new String[5];
+	String[] value = new String[5];
+	String[] condition = {"idAccount = " + id};
+
+	column[0] = "flagActive";
+	column[1] = "Customer_idCustomer";
+	column[2] = "Administrator_idAdministrator";
+	column[3] = "Bank_idBank";
+	column[4] = "AccountTyp_idAccountTyp";
+	
+	if (flagActive)
+		value[0] = "X";
+	else
+		value[0] = " ";
+	value[1] = "" + customer.getId();
+	value[2] = "" + administrator.getId();
+	value[3] = "" + bank.getId();
+	value[4] = "" + accountType.getId();
+	
+    SQL.update(column, value, "Account", condition, "and");
+    }
 }

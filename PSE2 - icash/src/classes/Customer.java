@@ -12,6 +12,9 @@ public class Customer extends Person {
 		super(id, false);
 	}
 	
+	public Customer() {
+		super();
+	}
 	
 	public void withdrawMoney(Account account, int amount, String description) throws SQLException {
 		if (account.getCustomer().getId() == id) {
@@ -50,26 +53,20 @@ public class Customer extends Person {
 	public String getFirstName() {
 		return firstName;
 	}
-	public void setFirstName(String firstName) throws SQLException {
-		String[] condition = {"idCustomer = " + id};
+	public void setFirstName(String firstName) {
 		this.firstName = firstName;
-		SQL.update("firstNameCustomer", firstName, "Customer", condition, "and");
 	}
 	public String getSecondName() {
 		return secondName;
 	}
-	public void setSecondName(String secondName) throws SQLException {
-		String[] condition = {"idCustomer = " + id};
+	public void setSecondName(String secondName) {
 		this.secondName = secondName;
-		SQL.update("secondNameCustomer", secondName, "Customer", condition, "and");
 	}
 	public String getPassword() {
 		return password;
 	}
-	public void setPassword(String password) throws SQLException {
-		String[] condition = {"idCustomer = " + id};
+	public void setPassword(String password) {
 		this.password = password;
-		SQL.update("passwordCustomer", password, "Customer", condition, "and");
 	}
 	
 	public int getId() {
@@ -86,5 +83,21 @@ public class Customer extends Person {
 			    accounts.add(new Account(Convert.toInt(value[i][0])));
 		}
 		return accounts;
+	}
+	
+	public void updateDB() throws SQLException {
+		String[] condition = {"idCustomer = " + id};
+		String[] column = new String[3];
+		String[] value = new String[3];
+		
+		column[0] = "firstNameCustomer";
+		column[1] = "secondNameCustomer";
+     	column[2] = "passwordCustomer";
+     	
+     	value[0] = firstName;
+     	value[1] = secondName;
+     	value[2] = password;
+     	
+     	SQL.update(column, value, "Customer", condition, "and");
 	}
 }

@@ -12,6 +12,10 @@ public class Administrator extends Person {
 		super(id, true);
 	}
 	
+	public Administrator() {
+		super();
+	}
+	
 	public String getFirstName() {
 		return firstName;
 	}
@@ -32,28 +36,24 @@ public class Administrator extends Person {
 		Account a = new Account (flagActive, customer, this, bank, accountType);
 	}
 	
-	public void setFirstName(String firstName) throws SQLException {
+	public void setFirstName(String firstName) {
 		this.firstName = firstName;
-		String[] condition = {"idAdministrator = " + id};
-		SQL.update("firstNameAdministrator", firstName, "Administrator", condition, "and");
 	}
 	
 	public String getSecondName() {
 		return secondName;
 	}
 	
-	public void setSecondName(String secondName) throws SQLException {
-		String[] condition = {"idAdministrator = " + id};
+	public void setSecondName(String secondName) {
 		this.secondName = secondName;
-		SQL.update("secondNameAdministrator", secondName, "administrator", condition, "and");
 	}
+	
 	public String getPassword() {
 		return password;
 	}
-	public void setPasswort(String password) throws SQLException {
-		String[] condition = {"idAdministrator = " + id};
+	
+	public void setPasswort(String password) {
 		this.password = password;
-		SQL.update("passwordAdministrator", password, "administrator", condition, "and");
 	}
 	
 	/*public void setAccounts(ArrayList<Account> accounts) {
@@ -76,5 +76,21 @@ public class Administrator extends Person {
 			    accounts.add(new Account(Convert.toInt(value[i][0])));
 		}
 		return accounts;
+	}
+	
+	public void updateDB() throws SQLException {
+		String[] condition = {"idAdministrator = " + id};
+		String[] column = new String[3];
+		String[] value = new String[3];
+		
+		column[0] = "firstNameAdministrator";
+		column[1] = "secondNameAdministrator";
+     	column[2] = "passwordAdministrator";
+     	
+     	value[0] = firstName;
+     	value[1] = secondName;
+     	value[2] = password;
+     	
+     	SQL.update(column, value, "Administrator", condition, "and");
 	}
 }

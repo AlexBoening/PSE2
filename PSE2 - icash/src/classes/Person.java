@@ -72,12 +72,8 @@ public abstract class Person {
         accounts.add(a);	
     }
     
-    public static void login(String firstName, String secondName) {
-    	
-    }
-    
-    public static void login(String firstName, String secondName, String passwort) {
-    	
+    public void login() {
+    	setLoggedIn(true);
     }
 
 	public boolean isLoggedIn() {

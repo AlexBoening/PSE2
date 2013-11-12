@@ -41,6 +41,6 @@ public class Security {
     
     public static boolean logout() {
     	// Kill Session/Userobject.....
-    }
+    	return true;
     }
 }

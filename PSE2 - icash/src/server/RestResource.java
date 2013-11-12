@@ -75,13 +75,86 @@ public class RestResource {
 		return Response.ok(jo.toString(), MediaType.APPLICATION_JSON).build();
 	}
 	
-	@POST
-	@Path("/transferMoneyapplication")
+	@GET
+	@Path("/s/getAccount")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
-	public Response transferMoneyapplication(@FormParam("senderNumber")int sender, 
-			                                 @FormParam("receiverNumber")int receiver, 
-			                                 @FormParam("amount")int amount, 
-			                                 @FormParam("reference")String reference) {
+	public Response getAccount(@QueryParam("number")int number,
+			                   @QueryParam("kundenId")int customer,
+			                   @QueryParam("passwortHash")String password) {
+		Customer c;
+		JSONObject jo;
+		Account a;
+		JSONArray ja;
+		
+		try {
+		    c = new Customer(customer);                     
+		    c.login(password);								
+		    if (!c.isLoggedIn())
+		    	return Response.status(403).build();		// Wrong Customer Number or Password
+		    a = new Account(number);
+			if (a.getId() == 0)
+				return Response.status(404).build();		// Account does not exist
+		    if (a.getCustomer().getId() != c.getId())
+		    	return Response.status(400).build();		// Customer Number and Account Number do not match
+		}
+		catch(SQLException e) {
+			return Response.status(500).build();			// Internal Server Error
+		}
+		
+		jo = new JSONObject();
+		try {
+		
+		// Build up header data
+		jo.put("id", a.getBank().getId());
+		jo.put("number", a.getId());
+		jo.put("owner", a.getCustomer().getFirstName() + " " + a.getCustomer().getSecondName());
+        
+		ja = new JSONArray();
+		Transaction[] t = new Transaction[a.getTransactions().size()];
+		a.getTransactions().toArray(t);
+		
+		// Build up transaction data
+		for (int i=0; i<t.length; i++) {
+			JSONObject transaction = new JSONObject();
+			transaction.put("amount", t[i].getAmount());
+			transaction.put("id", t[i].getId());
+			
+			// Receiver Data
+			JSONObject receiver = new JSONObject();
+			receiver.put("id", t[i].getIncomingAccount().getBank().getId());
+			receiver.put("number", t[i].getIncomingAccount().getId());
+			receiver.put("owner", t[i].getIncomingAccount().getCustomer().getFirstName() + " " 
+			                    + t[i].getIncomingAccount().getCustomer().getSecondName());
+			transaction.put("receiver", receiver);
+			transaction.put("reference", t[i].getDescription());
+			
+			// Sender Data
+			JSONObject sender = new JSONObject();
+			sender.put("id", t[i].getOutgoingAccount().getBank().getId());
+			sender.put("number", t[i].getOutgoingAccount().getId());
+			sender.put("owner", t[i].getOutgoingAccount().getCustomer().getFirstName() + " " 
+			                    + t[i].getOutgoingAccount().getCustomer().getSecondName());
+			transaction.put("sender", sender);
+			transaction.put("transactionDate", t[i].getDate());
+			
+			ja.put(transaction);
+		}
+		jo.put("transactions", ja);
+		}
+		catch (SQLException e) {
+			return Response.status(500).build();			// Internal Server Error
+		}
+		// No Errors, JSONObject is returned
+		return Response.ok(jo.toString(), MediaType.APPLICATION_JSON).build();
+	}
+	
+	@POST
+	@Path("/transferMoney")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response transferMoney(@FormParam("senderNumber")int sender, 
+			                      @FormParam("receiverNumber")int receiver, 
+			                      @FormParam("amount")int amount, 
+			                      @FormParam("reference")String reference) {
 		
 		if (sender == 0 || receiver == 0 || amount == 0)
 			return Response.status(400).build();
@@ -104,5 +177,55 @@ public class RestResource {
 			return Response.status(500).build();
 		}
 		return Response.ok().build();
+	}
+	
+	@POST
+	@Path("/s/transferMoney")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response transferMoney(@FormParam("senderNumber")int sender, 
+			                      @FormParam("receiverNumber")int receiver, 
+			                      @FormParam("amount")int amount, 
+			                      @FormParam("reference")String reference,
+			                      @FormParam("kundenId")int customer,
+				                  @FormParam("passwortHash")String password) {
+		
+		Account outgoingAccount;
+		Account incomingAccount;
+		Transaction t;
+		Customer c;
+		
+		try {
+		    c = new Customer(customer);                     
+		    c.login(password);								
+		    if (!c.isLoggedIn())
+		    	return Response.status(403).build();		// Wrong Customer Number or Password
+		    outgoingAccount = new Account(sender);
+			if (outgoingAccount.getId() == 0)
+				return Response.status(404).build();		// Account does not exist
+		    if (outgoingAccount.getCustomer().getId() != c.getId())
+		    	return Response.status(400).build();		// Customer Number and Account Number do not match
+		}
+		catch(SQLException e) {
+			return Response.status(500).build();			// Internal Server Error
+		}
+		if (sender == 0 || receiver == 0 || amount == 0)
+			return Response.status(400).build();			// Client Error 
+		try {
+		
+		incomingAccount = new Account(receiver);
+		if (incomingAccount.getId() == 0)
+			return Response.status(404).build();			// Account does not exist
+		
+		int balance = outgoingAccount.getBalance();
+		
+		if (balance >= amount)
+		    t = new Transaction(amount, reference, Convert.currentDate(), incomingAccount, outgoingAccount);
+		else
+			return Response.status(412).build();			// Insufficient Money
+		}
+		catch(SQLException e) {
+			return Response.status(500).build();			// Internal Server Error
+		}
+		return Response.ok().build();						// Transaction was created successfully
 	}
 }

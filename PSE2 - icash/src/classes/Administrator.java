@@ -78,6 +78,20 @@ public class Administrator extends Person {
 		return accounts;
 	}
 	
+    public void login(String password) throws SQLException{
+    	String[] column = {"passwordAdministrator"};
+    	String table = "Administrator";
+    	String[] condition = {"idAdministrator = " + id};
+    	String[][] value = SQL.select(column, table, condition, "and");
+    	if (value.length > 0)
+    		if (value[0][0].equals(password))
+    			setLoggedIn(true);
+    		else
+    			setLoggedIn(false);
+    	else
+    		setLoggedIn(false);
+    }
+    
 	public void updateDB() throws SQLException {
 		String[] condition = {"idAdministrator = " + id};
 		String[] column = new String[3];

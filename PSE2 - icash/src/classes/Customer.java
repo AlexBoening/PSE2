@@ -85,6 +85,20 @@ public class Customer extends Person {
 		return accounts;
 	}
 	
+    public void login(String password) throws SQLException{
+    	String[] column = {"passwordCustomer"};
+    	String table = "Customer";
+    	String[] condition = {"idCustomer = " + id};
+    	String[][] value = SQL.select(column, table, condition, "and");
+    	if (value.length > 0)
+    		if (value[0][0].equals(password))
+    			setLoggedIn(true);
+    		else
+    			setLoggedIn(false);
+    	else
+    		setLoggedIn(false);
+    }
+    
 	public void updateDB() throws SQLException {
 		String[] condition = {"idCustomer = " + id};
 		String[] column = new String[3];

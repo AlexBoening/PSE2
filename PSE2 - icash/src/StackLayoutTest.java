@@ -99,10 +99,16 @@ public class StackLayoutTest {
 		    Label label4 = new Label(compositeVertical, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    label4.setBackground(new Color(display, 200,200,200));
 		    label4.setLayoutData(griddataVertical);
+		    Label CurrentBalanceText = new Label(compositeVertical, SWT.END);
+		    CurrentBalanceText.setBackground(new Color(display, 200,200,200));
+		    griddataVertical.verticalAlignment = GridData.FILL;
+		    CurrentBalanceText.setText("Current Balance");
+		    CurrentBalanceText.setLayoutData(new GridData(SWT.FILL, SWT.END, true, true));
 		    Label CurrentBalance = new Label(compositeVertical, SWT.FILL);
-		    CurrentBalance.setBackground(new Color(display, 200,200,200));
-		    griddataVertical.verticalAlignment = GridData.END;
-		    CurrentBalance.setText("Current Balance");
+		    CurrentBalance.setBackground(new Color(display, 70,200,230));
+		    griddataVertical.verticalAlignment = GridData.FILL;
+		    //CurrentBalance.setText("Current Balance");
+		    CurrentBalance.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 		    
 		    
 		    final Composite compositeMain = new Composite(shell, 0);
@@ -170,6 +176,9 @@ public class StackLayoutTest {
 			Text AmountPerform = new Text(PerformPage, SWT.SINGLE | SWT.BORDER);
 			new Label(PerformPage, SWT.NONE).setText("Description:");
 			Text DescriptionPerform = new Text(PerformPage, SWT.SINGLE | SWT.BORDER);
+			
+			final Button ButtonCommitPerform = new Button(PerformPage, SWT.PUSH);
+			ButtonCommitPerform.setText("Commit");
 			//connectData.horizontalSpan = 2;
 			//connectText.setLayoutData(connectData);
 		    CaptionPerformPage.pack();
@@ -190,7 +199,8 @@ public class StackLayoutTest {
 			//GridData connectData = new GridData(GridData.FILL, GridData.CENTER, true, false);
 			new Label(DepositPage, SWT.NONE).setText("Description:");
 			Text DescriptionDeposit = new Text(DepositPage, SWT.SINGLE | SWT.BORDER);
-
+			final Button ButtonCommitDeposit = new Button(DepositPage, SWT.PUSH);
+			ButtonCommitDeposit.setText("Deposit");
 		    DepositLabel.pack();
 
 		    // create the second page's content
@@ -210,6 +220,9 @@ public class StackLayoutTest {
 			//GridData connectData = new GridData(GridData.FILL, GridData.CENTER, true, false);
 			new Label(WithdrawPage, SWT.NONE).setText("Description:");
 			Text DescriptionWithdraw = new Text(WithdrawPage, SWT.SINGLE | SWT.BORDER);
+			
+			final Button ButtonCommitWithdraw = new Button(WithdrawPage, SWT.PUSH);
+			ButtonCommitWithdraw.setText("Withdraw");
 		    WithdrawLabel.pack();
 		    
 		    

@@ -394,9 +394,4 @@ public class AdminClient {
 		    }
 		    display.dispose();
 }
-	 
-	 public static void createTestPage(Display display, Composite AccountPage)
-	 {
-		 
-	 }
 }

@@ -8,11 +8,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.servlet.http.HttpServletRequest;
 
 import com.sun.jersey.spi.resource.Singleton;
 
+import org.apache.log4j.Logger;
+import org.eclipse.jetty.server.Request;
 import org.json.*;
 
 import classes.*;
@@ -23,9 +27,15 @@ public class RestResource {
 	@GET
 	@Path("/getAccount")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
-	public Response getAccount(@QueryParam("number")int number) {
+	public Response getAccount(@QueryParam("number")int number,
+			                   @Context HttpServletRequest req) {
 		
-		if (number == 0)
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: getAccount");
+		logger.info(new java.util.Date() + ": Account: " + number);
+		
+		if (number == 0) 
 			return Response.status(400).build();
 		JSONObject jo = new JSONObject();
 		try {
@@ -72,7 +82,7 @@ public class RestResource {
 		
 		//return Response.status(400).build();
 		//return Response.serverError().build(); //Code 500
-		return Response.ok(jo.toString(), MediaType.APPLICATION_JSON).build();
+		return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
 	}
 	
 	@GET
@@ -80,7 +90,16 @@ public class RestResource {
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
 	public Response getAccount(@QueryParam("number")int number,
 			                   @QueryParam("kundenId")int customer,
-			                   @QueryParam("passwortHash")String password) {
+			                   @QueryParam("passwortHash")String password,
+			                   @Context HttpServletRequest req) {
+		
+		// Logging
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: getAccount");
+		logger.info(new java.util.Date() + ": Account: " + number);
+		
+		// Declarations
 		Customer c;
 		JSONObject jo;
 		Account a;
@@ -145,7 +164,7 @@ public class RestResource {
 			return Response.status(500).build();			// Internal Server Error
 		}
 		// No Errors, JSONObject is returned
-		return Response.ok(jo.toString(), MediaType.APPLICATION_JSON).build();
+		return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
 	}
 	
 	@POST
@@ -154,8 +173,16 @@ public class RestResource {
 	public Response transferMoney(@FormParam("senderNumber")int sender, 
 			                      @FormParam("receiverNumber")int receiver, 
 			                      @FormParam("amount")int amount, 
-			                      @FormParam("reference")String reference) {
-		
+			                      @FormParam("reference")String reference,
+			                      @Context HttpServletRequest req) {
+    		
+		// Logging
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: transferMoney");
+		logger.info(new java.util.Date() + ": Sender: " + sender + "/ Receiver: " + receiver
+				                         + "/ Amount: " + amount + "/ Reference: " + reference);
+
 		if (sender == 0 || receiver == 0 || amount == 0)
 			return Response.status(400).build();
 		try {
@@ -187,8 +214,16 @@ public class RestResource {
 			                      @FormParam("amount")int amount, 
 			                      @FormParam("reference")String reference,
 			                      @FormParam("kundenId")int customer,
-				                  @FormParam("passwortHash")String password) {
-		
+				                  @FormParam("passwortHash")String password,
+				                  @Context HttpServletRequest req) {
+    		
+		// Logging
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: transferMoney");
+		logger.info(new java.util.Date() + ": Sender: " + sender + "/ Receiver: " + receiver
+				                         + "/ Amount: " + amount + "/ Reference: " + reference);
+
 		Account outgoingAccount;
 		Account incomingAccount;
 		Transaction t;

@@ -124,9 +124,19 @@ public class StackLayoutTest {
 		    GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
 		    ViewPage.setLayout(ViewComposite);
 		    ViewCompositeData.horizontalSpan = 2;
+		    ViewCompositeData.horizontalAlignment = GridData.CENTER;
 		    Label CaptionViewPage = new Label(ViewPage, SWT.NONE);
 		    CaptionViewPage.setText("View your Transaction!");
+		    CaptionViewPage.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
+		    CaptionViewPage.setBackground(new Color(display, 255,255,255));
 		    CaptionViewPage.setLayoutData(ViewCompositeData);
+		    
+		    /*ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
+		    ViewCompositeData.horizontalSpan = 2;
+		    Label SepView1 = new Label(ViewPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepView1.setBackground(new Color(display,255,255,255));
+		    SepView1.setLayoutData(ViewCompositeData);*/
+		    
 		    final Table table = new Table(ViewPage,
 		    		SWT.SINGLE | SWT.H_SCROLL |
 		    		SWT.V_SCROLL | SWT.BORDER |
@@ -134,25 +144,26 @@ public class StackLayoutTest {
 		    		// Drei Tabellenspalten erzeugen
 		    		final TableColumn col1 = new TableColumn(table,SWT.LEFT);
 		    		col1.setText("Amount");
-		    		col1.setWidth(80);
+		    		col1.setWidth(100);
 		    		final TableColumn col2 = new TableColumn(table,SWT.LEFT);
 		    		col2.setText("Sender");
-		    		col2.setWidth(80);
+		    		col2.setWidth(100);
 		    		final TableColumn col3 = new TableColumn(table,SWT.LEFT);
 		    		col3.setText("Receiver");
-		    		col3.setWidth(80);
+		    		col3.setWidth(100);
 		    		final TableColumn col4 = new TableColumn(table,SWT.LEFT);
-		    		col3.setText("Description");
-		    		col3.setWidth(80);
+		    		col4.setText("Description");
+		    		col4.setWidth(150);
 		    		final TableColumn col5 = new TableColumn(table,SWT.LEFT);
-		    		col3.setText("Date");
-		    		col3.setWidth(80);
+		    		col5.setText("Date");
+		    		col5.setWidth(100);
 		    		// Spaltenköpfe und Trennlinien sichtbar machen
 		    		table.setHeaderVisible(true);
 		    		table.setLinesVisible(true);
 		    		
 		    		ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, true);
 		    		table.setLayoutData(ViewCompositeData);
+		    		
 		    CaptionViewPage.pack();
 
 		    // create the second page's content
@@ -163,13 +174,20 @@ public class StackLayoutTest {
 		    GridData PerformCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
 		    PerformPage.setLayout(PerformComposite);
 		    PerformCompositeData.horizontalSpan = 2;
+		    PerformCompositeData.horizontalAlignment = GridData.CENTER;
 		    Label CaptionPerformPage = new Label(PerformPage, SWT.NONE);
 		    CaptionPerformPage.setText("Perform your Transaction!");
+		    CaptionPerformPage.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
+		    CaptionPerformPage.setBackground(new Color(display, 255,255,255));
 		    CaptionPerformPage.setLayoutData(PerformCompositeData);
+		    
+		    PerformCompositeData.horizontalAlignment = GridData.BEGINNING;
+		    Label SepPerform1 = new Label(PerformPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform1.setBackground(new Color(display,255,255,255));
+		    SepPerform1.setLayoutData(PerformCompositeData);
 		    
 		    new Label(PerformPage, SWT.NONE).setText("To Account:");
 			Text ToAccountPerform = new Text(PerformPage, SWT.SINGLE | SWT.BORDER);
-			GridData connectData = new GridData(GridData.FILL, GridData.CENTER, true, false);
 			new Label(PerformPage, SWT.NONE).setText("BLZ:");
 			Text BLZPerform = new Text(PerformPage, SWT.SINGLE | SWT.BORDER);
 			new Label(PerformPage, SWT.NONE).setText("Amount:");
@@ -177,10 +195,13 @@ public class StackLayoutTest {
 			new Label(PerformPage, SWT.NONE).setText("Description:");
 			Text DescriptionPerform = new Text(PerformPage, SWT.SINGLE | SWT.BORDER);
 			
+			Label SepPerform2 = new Label(PerformPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+			PerformCompositeData.horizontalSpan = 2;
+			SepPerform2.setBackground(new Color(display,255,255,255));
+		    SepPerform2.setLayoutData(PerformCompositeData);
+			
 			final Button ButtonCommitPerform = new Button(PerformPage, SWT.PUSH);
 			ButtonCommitPerform.setText("Commit");
-			//connectData.horizontalSpan = 2;
-			//connectText.setLayoutData(connectData);
 		    CaptionPerformPage.pack();
 		    
 		    final Composite DepositPage = new Composite(compositeMain, SWT.NONE);
@@ -190,18 +211,35 @@ public class StackLayoutTest {
 		    GridData DepositCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
 		    DepositPage.setLayout(DepositComposite);
 		    DepositCompositeData.horizontalSpan = 2;
-		    Label DepositLabel = new Label(DepositPage, SWT.NONE);
-		    DepositLabel.setText("Desposit your money to the best bank out there!");
-		    DepositLabel.setLayoutData(PerformCompositeData);
+		    DepositCompositeData.horizontalAlignment = GridData.CENTER;
+		    Label CaptionDepositPage = new Label(DepositPage, SWT.NONE);
+		    CaptionDepositPage.setText("Desposit your money to the best bank out there!");
+		    CaptionDepositPage.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
+		    CaptionDepositPage.setBackground(new Color(display, 255,255,255));
+		    CaptionDepositPage.setLayoutData(PerformCompositeData);
+		    
+		    /*DepositCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
+		    DepositCompositeData.horizontalSpan = 2;
+		    DepositCompositeData.horizontalAlignment = GridData.BEGINNING;
+		    Label SepDeposit1 = new Label(DepositPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepDeposit1.setBackground(new Color(display,255,255,255));
+		    SepDeposit1.setLayoutData(DepositCompositeData);*/
 		    
 		    new Label(DepositPage, SWT.NONE).setText("Amount:");
 			Text AmountDeposit = new Text(DepositPage, SWT.SINGLE | SWT.BORDER);
 			//GridData connectData = new GridData(GridData.FILL, GridData.CENTER, true, false);
 			new Label(DepositPage, SWT.NONE).setText("Description:");
 			Text DescriptionDeposit = new Text(DepositPage, SWT.SINGLE | SWT.BORDER);
+			
+		    /*Label SepDeposit2 = new Label(DepositPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepDeposit2.setBackground(new Color(display,255,255,255));
+		    SepDeposit2.setLayoutData(DepositCompositeData);*/
+			
 			final Button ButtonCommitDeposit = new Button(DepositPage, SWT.PUSH);
 			ButtonCommitDeposit.setText("Deposit");
-		    DepositLabel.pack();
+						
+			CaptionDepositPage.pack();
+			
 
 		    // create the second page's content
 		    final Composite WithdrawPage = new Composite(compositeMain, SWT.NONE);
@@ -211,9 +249,18 @@ public class StackLayoutTest {
 		    GridData WithdrawCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
 		    WithdrawPage.setLayout(WithdrawComposite);
 		    WithdrawCompositeData.horizontalSpan = 2;
-		    Label WithdrawLabel = new Label(WithdrawPage, SWT.NONE);
-		    WithdrawLabel.setText("Where are you goining with your money?!");
-		    WithdrawLabel.setLayoutData(WithdrawCompositeData);
+		    WithdrawCompositeData.horizontalAlignment = SWT.CENTER;
+		    Label CaptionWithdrawPage = new Label(WithdrawPage, SWT.NONE);
+		    CaptionWithdrawPage.setText("Where are you goining with your money?!");
+		    CaptionWithdrawPage.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
+		    CaptionWithdrawPage.setBackground(new Color(display, 255,255,255));
+		    CaptionWithdrawPage.setLayoutData(WithdrawCompositeData);
+		    
+		   /* WithdrawCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
+		    WithdrawCompositeData.horizontalSpan = 2;
+		    Label SepWithdraw1 = new Label(WithdrawPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepWithdraw1.setBackground(new Color(display,255,255,255));
+		    SepWithdraw1.setLayoutData(WithdrawCompositeData);*/
 		    
 		    new Label(WithdrawPage, SWT.NONE).setText("Amount:");
 			Text AmountWithdraw = new Text(WithdrawPage, SWT.SINGLE | SWT.BORDER);
@@ -221,9 +268,15 @@ public class StackLayoutTest {
 			new Label(WithdrawPage, SWT.NONE).setText("Description:");
 			Text DescriptionWithdraw = new Text(WithdrawPage, SWT.SINGLE | SWT.BORDER);
 			
+		   /* WithdrawCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
+		    WithdrawCompositeData.horizontalSpan = 2;
+		    Label SepWithdraw2 = new Label(WithdrawPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepWithdraw2.setBackground(new Color(display,255,255,255));
+		    SepWithdraw2.setLayoutData(WithdrawCompositeData);*/
+			
 			final Button ButtonCommitWithdraw = new Button(WithdrawPage, SWT.PUSH);
 			ButtonCommitWithdraw.setText("Withdraw");
-		    WithdrawLabel.pack();
+			CaptionWithdrawPage.pack();
 		    
 		    
 		    //Events
@@ -268,55 +321,9 @@ public class StackLayoutTest {
 		    		display.dispose();
 		    	}
 		    });
-		    //Events Ende
-		    
-		    
-		    
 
-		    
-		    //layout = new GridLayout(2,false);
 		    shell.setLayout(layout);
-		    /*final Table table = new Table(shell,
-		    		SWT.SINGLE | SWT.H_SCROLL |
-		    		SWT.V_SCROLL | SWT.BORDER |
-		    		SWT.FULL_SELECTION );
-		    		// Drei Tabellenspalten erzeugen
-		    		final TableColumn col1 = new TableColumn(table,SWT.LEFT);
-		    		col1.setText("Spalte 1");
-		    		col1.setWidth(80);
-		    		final TableColumn col2 = new TableColumn(table,SWT.LEFT);
-		    		col2.setText("Spalte 2");
-		    		col2.setWidth(80);
-		    		final TableColumn col3 = new TableColumn(table,SWT.LEFT);
-		    		col3.setText("Spalte 3");
-		    		col3.setWidth(80);
-		    		// Spaltenköpfe und Trennlinien sichtbar machen
-		    		table.setHeaderVisible(true);
-		    		table.setLinesVisible(true);
-		    		// Zwei Tabellenreihen erzeugen
-		    		final TableItem item1 = new TableItem(table,0)
-		    		item1.setText(new String[] {"a","b","c"});
-		    		final TableItem item2 = new TableItem(table,0);
-		    		item2.setText(new String[] {"d","c","e"});
-		    		// SelectionListener hinzufügen
-		    		table.addSelectionListener(new SelectionAdapter() {
-		    		public void widgetDefaultSelected(SelectionEvent e) {
-		    		processSelection("Enter gedrückt: ");
-		    		}
-		    		public void widgetSelected(SelectionEvent e) {
-		    		processSelection("Tabellenelement ausgewählt: ");
-		    		}
-		    		private void processSelection(String message) {
-		    		// Ausgewählte Tabellenzeilen holen
-		    			 TableItem[] selection = table.getSelection();
-		    			// Wegen SWT.SINGLE ist nur eine Zeile ausgewählt
-		    			TableItem selectedRow = selection[0];
-		    			// Die einzelnen Tabellenelemente für Ausgabe aufbereiten
-		    			String s = selectedRow.getText(0)+", "+
-		    			selectedRow.getText(1)+", "+selectedRow.getText(2);
-		    			System.out.println(message + s);
-		    			}
-		    			});*/
+
 		    
 		    shell.pack();
 		    shell.open();

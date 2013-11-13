@@ -43,7 +43,7 @@ public class AdminClient {
 		    griddatavertical.verticalAlignment = GridData.FILL;
 		    griddatavertical.grabExcessVerticalSpace = true;
 		    
-		    GridData griddataMain = new GridData(GridData.FILL, GridData.CENTER,true, false);
+		    GridData griddataMain = new GridData(GridData.FILL, GridData.CENTER,false, false);
 		    griddataMain.verticalAlignment = GridData.FILL;
 		    
 		    final Composite compositeHorizontal = new Composite(shell, 0);
@@ -152,7 +152,7 @@ public class AdminClient {
 		    AccountPage.setBackground(new Color(display,255,255,255));
 		    //compositeMain.setLayoutData(griddataMain);
 		    GridLayout ViewComposite = new GridLayout(2, false);
-		    GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
+		    GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,false, false);
 		    AccountPage.setLayout(ViewComposite);
 		    ViewCompositeData.horizontalSpan = 2;
 		    Label CaptionViewPage = new Label(AccountPage, SWT.NONE);
@@ -215,9 +215,9 @@ public class AdminClient {
 		    
 		    final Composite CreateAccountPage = new Composite(compositeMain, SWT.NONE);
 		    CreateAccountPage.setBackground(new Color(display,255,255,255));
-		    //compositeMain.setLayoutData(griddataMain);
+		    compositeMain.setLayoutData(griddataMain);
 		    GridLayout CreateAccountComposite = new GridLayout(2, false);
-		    GridData CreateAccountCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
+		    GridData CreateAccountCompositeData = new GridData(GridData.FILL, GridData.FILL,false, false);
 		    CreateAccountPage.setLayout(CreateAccountComposite);
 		    CreateAccountCompositeData.horizontalSpan = 2;
 		    Label CaptionCreateAccountPage = new Label(CreateAccountPage, SWT.NONE);

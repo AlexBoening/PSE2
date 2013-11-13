@@ -130,10 +130,10 @@ public class AdminClient {
 		    final Composite WelcomePage = new Composite(compositeMain, SWT.NONE);
 		    WelcomePage.setBackground(new Color(display,255,255,255));
 		    //compositeMain.setLayoutData(griddataMain);
-		    GridLayout WelcomeComposite = new GridLayout(3, false);
-		    GridData WelcomeCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
+		    GridLayout WelcomeComposite = new GridLayout(2, false);
+		    GridData WelcomeCompositeData = new GridData(GridData.BEGINNING, GridData.FILL,true, false);
 		    WelcomePage.setLayout(WelcomeComposite);
-		    WelcomeCompositeData.horizontalSpan = 3;
+		    WelcomeCompositeData.horizontalSpan = 2;
 		    Label CaptionWelcomePage = new Label(WelcomePage, SWT.NONE);
 		    CaptionWelcomePage.setText("Welcome to the Adminstration Frontend!");
 		    CaptionWelcomePage.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
@@ -151,17 +151,17 @@ public class AdminClient {
 		    final Composite AccountPage = new Composite(compositeMain, SWT.NONE);
 		    AccountPage.setBackground(new Color(display,255,255,255));
 		    //compositeMain.setLayoutData(griddataMain);
-		    GridLayout ViewComposite = new GridLayout(3, false);
+		    GridLayout ViewComposite = new GridLayout(2, false);
 		    GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
 		    AccountPage.setLayout(ViewComposite);
-		    ViewCompositeData.horizontalSpan = 3;
+		    ViewCompositeData.horizontalSpan = 2;
 		    Label CaptionViewPage = new Label(AccountPage, SWT.NONE);
 		    CaptionViewPage.setText("All Accounts");
 		    CaptionViewPage.setLayoutData(ViewCompositeData);
 		    final Table table = new Table(AccountPage,
 		    		SWT.SINGLE | SWT.H_SCROLL |
 		    		SWT.V_SCROLL | SWT.BORDER |
-		    		SWT.FULL_SELECTION );
+		    		SWT.FULL_SELECTION | SWT.FILL_EVEN_ODD);
 		    		// Drei Tabellenspalten erzeugen
 		    		final TableColumn col1 = new TableColumn(table,SWT.LEFT);
 		    		col1.setText("ID");
@@ -186,7 +186,7 @@ public class AdminClient {
 		    		table.setLinesVisible(true);
 		    		
 		    		ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, true);
-		    		ViewCompositeData.horizontalSpan=3;
+		    		ViewCompositeData.horizontalSpan=2;
 		    		table.setLayoutData(ViewCompositeData);
 		    CaptionViewPage.pack();
 		    
@@ -224,10 +224,14 @@ public class AdminClient {
 		    CaptionCreateAccountPage.setText("Create an Account");
 		    CaptionCreateAccountPage.setLayoutData(CreateAccountCompositeData);
 		    
-		    GridData griddataLabel = new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false);
-		    griddataLabel.horizontalSpan=1;
+		    Label SepPerform1 = new Label(CreateAccountPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform1.setBackground(new Color(display,255,255,255));
+		    SepPerform1.setLayoutData(CreateAccountCompositeData);
+		    
+		    GridData griddataLabel = new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 1,1);
+		    //griddataLabel.horizontalSpan=1;
 		    griddataLabel.widthHint=90;
-		    //GridData griddataText = new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false);
+		    GridData griddataText = new GridData(GridData.FILL, GridData.CENTER, true, false, 1,1);
 		    //griddataText.horizontalSpan=1;
 		    //griddataText.widthHint= 400;
 		    
@@ -235,33 +239,37 @@ public class AdminClient {
 		    BankLabel.setText("Bank:");
 		    BankLabel.setLayoutData(griddataLabel);
 			Text CreateAccountTypeBank = new Text(CreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			//CreateAccountTypeBank.setLayoutData(griddataText);
+			CreateAccountTypeBank.setLayoutData(griddataText);
 			
 			Label CustomerLabel = new Label(CreateAccountPage, SWT.NONE);
 			CustomerLabel.setText("Customer:");
 			CustomerLabel.setLayoutData(griddataLabel);
 			Text CreateAccountTypeCustomer = new Text(CreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			//CreateAccountTypeCustomer.setLayoutData(griddataText);
+			CreateAccountTypeCustomer.setLayoutData(griddataText);
 			
 			Label ResponsibleLabel = new Label(CreateAccountPage, SWT.NONE);
 			ResponsibleLabel.setText("Responsible:");
 			ResponsibleLabel.setLayoutData(griddataLabel);
 			Text CreateAccountTypeResponsible = new Text(CreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			//CreateAccountTypeResponsible.setLayoutData(griddataText);
+			CreateAccountTypeResponsible.setLayoutData(griddataText);
 			
 			Label AccountTypeLabel = new Label(CreateAccountPage, SWT.NONE);
 			AccountTypeLabel.setText("AccountType:");
 			AccountTypeLabel.setLayoutData(griddataLabel);
 			Text CreateAccountTypeAccountType = new Text(CreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			//CreateAccountTypeAccountType.setLayoutData(griddataText);
+			CreateAccountTypeAccountType.setLayoutData(griddataText);
 			
 			Label ActiveLabel = new Label(CreateAccountPage, SWT.NONE);
 			ActiveLabel.setText("Active:");
 			ActiveLabel.setLayoutData(griddataLabel);
 			Text CreateAccountTypeActive = new Text(CreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			//CreateAccountTypeActive.setLayoutData(griddataText);
+			CreateAccountTypeActive.setLayoutData(griddataText);
 			
 		    CaptionCreateAccountPage.pack();
+		    
+		    Label SepPerform2 = new Label(CreateAccountPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform2.setBackground(new Color(display,255,255,255));
+		    SepPerform2.setLayoutData(CreateAccountCompositeData);
 		    
 		    final Button CreateAccountButton = new Button(CreateAccountPage, SWT.PUSH);
 		    CreateAccountButton.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
@@ -290,7 +298,6 @@ public class AdminClient {
 		    
 		    new Label(CreateCustomerPage, SWT.NONE).setText("Firstname:");
 			Text CreateCustomerTypeFirstname = new Text(CreateCustomerPage, SWT.SINGLE | SWT.BORDER);
-			GridData connectData2 = new GridData(GridData.FILL, GridData.CENTER, true, false);
 			new Label(CreateCustomerPage, SWT.NONE).setText("Secondname:");
 			Text CreateCustomerTypeSecondname = new Text(CreateCustomerPage, SWT.SINGLE | SWT.BORDER);
 			new Label(CreateCustomerPage, SWT.NONE).setText("Initial Password:");

@@ -1,3 +1,4 @@
+
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
@@ -56,6 +57,22 @@ public class Convert {
 		for (int i=0; i<noDecimalPlaces; i++)
 			result /= 10;
 		return result;
+	}
+	
+	public static int toCent(String euro) {
+		
+		double amount = toDouble(euro);
+		return (int)Math.round(amount * 100);
+	}
+	
+	public static String toEuro(int cent) {
+		String euro = "" + cent;
+		if (cent >= 100)
+			return euro.substring(0, euro.length() - 2) + "." + euro.substring(euro.length() - 2, euro.length());
+		else if (cent >= 10)
+			return "0." + euro.substring(euro.length() - 2, euro.length());
+		else
+			return "0.0" + euro.substring(euro.length() - 1, euro.length());
 	}
 	
 	public static Date currentDate() {

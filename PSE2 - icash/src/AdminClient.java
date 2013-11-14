@@ -37,8 +37,9 @@ public class AdminClient {
 		    GridLayout Loginlayout = new GridLayout(5,false);
 		    final StackLayout stackLoginLayout = new StackLayout();
 		    shell.setLayout(stackLoginLayout);
-		    //shell.setLayout(layout);
-
+		    
+		    //shell.setSize(750,400);
+		    
 		    //
 		    //
 		    //
@@ -50,9 +51,8 @@ public class AdminClient {
 		    griddataWindow.horizontalAlignment=GridData.FILL;
 		    griddataWindow.verticalAlignment=GridData.FILL;
 		    griddataWindow.horizontalSpan=5;
-		    griddataWindow.heightHint=300;
-		    griddataWindow.widthHint=300;
-		    
+		    //griddataWindow.heightHint=500;
+		    //griddataWindow.widthHint=5000;
 		    //
 		    
 		    
@@ -120,6 +120,7 @@ public class AdminClient {
 		    loginButton.setText("Login NOW!");
 		    loginButton.setLayoutData(griddataLoginButton);
 		    
+		    compositeLogin.pack();
 		    
 		    final Composite compositeWindow = new Composite(shell, 0);
 		    compositeWindow.setBackground(new Color(display,255,255,255));
@@ -182,26 +183,39 @@ public class AdminClient {
 		    DeactivateAccount.setText("Deactivate Account");
 		    DeactivateAccount.setBackground(new Color(display, 31, 78, 121));
 		    DeactivateAccount.setLayoutData(griddataVertical);
-		    Label label1 = new Label(compositeVertical, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    label1.setBackground(new Color(display, 200,200,200));
+		    
+		    Label placeholder4 = new Label(compositeVertical, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    placeholder4.setBackground(new Color(display, 200,200,200));
+		    placeholder4.setLayoutData(griddataVertical);
 		    
 		    final Button CreateAccount = new Button(compositeVertical, SWT.PUSH);
 		    CreateAccount.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		    CreateAccount.setText("Create Account");
 		    CreateAccount.setBackground(new Color(display, 31, 78, 121));
 		    CreateAccount.setLayoutData(griddataVertical);
-		    label1.setLayoutData(griddataVertical);
-		    Label label2 = new Label(compositeVertical, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    label2.setBackground(new Color(display, 200,200,200));
+		    
+		    Label placeholder5 = new Label(compositeVertical, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    placeholder5.setBackground(new Color(display, 200,200,200));
+		    placeholder5.setLayoutData(griddataVertical);
 		    
 		    final Button CreateCustomer = new Button(compositeVertical, SWT.PUSH);
 		    CreateCustomer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		    CreateCustomer.setText("Create Customer");
 		    CreateCustomer.setBackground(new Color(display, 31, 78, 121));
 		    CreateCustomer.setLayoutData(griddataVertical);
-		    label2.setLayoutData(griddataVertical);
-		    Label label3 = new Label(compositeVertical, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    label3.setBackground(new Color(display, 200,200,200));
+		    
+		    Label placeholder6 = new Label(compositeVertical, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    placeholder6.setBackground(new Color(display, 200,200,200));
+		    placeholder6.setLayoutData(griddataVertical);
+		    
+		    Label placeholder7 = new Label(compositeVertical, SWT.NONE | SWT.HORIZONTAL);
+		    placeholder7.setBackground(new Color(display, 200,200,200));
+		    placeholder7.setLayoutData(griddataVertical);
+		    
+		    Label placeholder8 = new Label(compositeVertical, SWT.NONE | SWT.HORIZONTAL);
+		    placeholder8.setBackground(new Color(display, 200,200,200));
+		    placeholder8.setLayoutData(griddataVertical);
+		    
 		    compositeVertical.setLayout(layoutCompositeVertical);
 		    
 		    //
@@ -315,8 +329,9 @@ public class AdminClient {
 		    //compositeMain.setLayoutData(griddataMain);
 		    GridLayout CreateAccountComposite = new GridLayout(2, false);
 		    GridData CreateAccountCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
-		    CreateAccountPage.setLayout(CreateAccountComposite);
+		    
 		    CreateAccountCompositeData.horizontalSpan = 2;
+		    CreateAccountPage.setLayout(CreateAccountComposite);
 		    Label CaptionCreateAccountPage = new Label(CreateAccountPage, SWT.NONE);
 		    CaptionCreateAccountPage.setText("Create an Account");
 		    CaptionCreateAccountPage.setLayoutData(CreateAccountCompositeData);
@@ -392,16 +407,33 @@ public class AdminClient {
 		    CaptionCreateCustomerPage.setText("Create a new Customer");
 		    CaptionCreateCustomerPage.setLayoutData(CreateCustomerCompositeData);
 		    
+		    Label SepPerform3 = new Label(CreateCustomerPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform3.setBackground(new Color(display,255,255,255));
+		    SepPerform3.setLayoutData(CreateCustomerCompositeData);
 		    
-		    new Label(CreateCustomerPage, SWT.NONE).setText("Firstname:");
+		    Label FirstnameLabel = new Label(CreateCustomerPage,SWT.NONE);
+		    FirstnameLabel.setText("Firstname:");
+		    FirstnameLabel.setLayoutData(griddataLabel);
 			Text CreateCustomerTypeFirstname = new Text(CreateCustomerPage, SWT.SINGLE | SWT.BORDER);
-			new Label(CreateCustomerPage, SWT.NONE).setText("Secondname:");
-			Text CreateCustomerTypeSecondname = new Text(CreateCustomerPage, SWT.SINGLE | SWT.BORDER);
-			new Label(CreateCustomerPage, SWT.NONE).setText("Initial Password:");
-			Text CreateCustomerTypePassword = new Text(CreateCustomerPage, SWT.SINGLE | SWT.BORDER);
-			//connectData.horizontalSpan = 2;
-			//connectText.setLayoutData(connectData);
-		    CaptionCreateAccountPage.pack();
+			CreateCustomerTypeFirstname.setLayoutData(griddataText);
+			
+			Label LastnameLabel = new Label(CreateCustomerPage, SWT.NONE);
+			LastnameLabel.setText("Lastname:");
+			LastnameLabel.setLayoutData(griddataLabel);
+			Text CreateAccountTypeLastname = new Text(CreateCustomerPage, SWT.SINGLE | SWT.BORDER);
+			CreateAccountTypeLastname.setLayoutData(griddataText);
+			
+			Label InitPasswordLabel = new Label(CreateCustomerPage, SWT.NONE);
+			InitPasswordLabel.setText("Initial Password:");
+			InitPasswordLabel.setLayoutData(griddataLabel);
+			Text CreateAccountTypeInitPassword = new Text(CreateCustomerPage, SWT.SINGLE | SWT.BORDER);
+			CreateAccountTypeInitPassword.setLayoutData(griddataText);
+		    
+		    CaptionCreateCustomerPage.pack();
+		    
+		    Label SepPerform4 = new Label(CreateCustomerPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform4.setBackground(new Color(display,255,255,255));
+		    SepPerform4.setLayoutData(CreateCustomerCompositeData);
 		    
 		    final Button CreateCustomerButton = new Button(CreateCustomerPage, SWT.PUSH);
 		    CreateCustomerButton.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));

@@ -37,11 +37,14 @@ public class AdminClient {
 
 	static StackLayout stackLayoutMain, stackLayoutContent;
 	
-	static GridData griddataWindow, griddataHeader, griddataNavigation, griddataContent, griddataLogoutButton;
+	static GridData griddataWindow, griddataHeader, griddataNavigation, griddataContent, griddataLogoutButton, griddataButton
+					, griddataLabel, griddataText;
 	
-	static Composite compositeLogin, compositeMainClient, compositeHeader, compositeNavigation, compositeContent, compositeWelcomePage;
+	static Composite compositeLogin, compositeMainClient, compositeHeader, compositeNavigation, compositeContent, compositeWelcomePage, compositeAccountPage
+					,compositeCreateAccountPage, compositeCreateCustomerPage;
 	
-	static Button loginButton, buttonLogout, buttonMenuDeactivateAccount, buttonMenuCreateAccount, buttonMenuCreateCustomer;
+	static Button loginButton, buttonLogout, buttonMenuDeactivateAccount, buttonMenuCreateAccount, buttonMenuCreateCustomer, buttonDeactivateAccount
+					, buttonActivateAccount, buttonCreateAccount, buttonCreateCustomer;
 	
 	
 	 public static void main(String[] args) {
@@ -58,7 +61,11 @@ public class AdminClient {
 		 	
 		 	fillCompositeWelcomePage();
 		 	
+		 	fillCompositeAccountPage();
 		 	
+		 	fillCompositeCreateAccountPage();
+		 	
+		 	fillCompositeCreateCustomerPage();
 		 	
 		 	//set WelcomePage to be the first thing to see
 		 	stackLayoutContent.topControl = compositeWelcomePage;
@@ -186,13 +193,247 @@ public class AdminClient {
 		    //
 		    //
 		    
-		    final Composite compositeAccountPage = new Composite(compositeContent, SWT.NONE);
-		    compositeAccountPage.setBackground(new Color(display,255,255,255));
+//		    final Composite compositeAccountPage = new Composite(compositeContent, SWT.NONE);
+	        
 		    //compositeMain.setLayoutData(griddataMain);
 //		    GridLayout ViewComposite = new GridLayout(2, false);
-		    GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
+		    
+		    
+		    //
+		    //
+		    //
+		    //
+		    //
+		    //
+		    
+//		    final Composite compositeCreateAccountPage = new Composite(compositeContent, SWT.NONE);
+	        
+		    //compositeMain.setLayoutData(griddataMain);
+//		    GridLayout CreateAccountComposite = new GridLayout(2, false);
+		    
+		    
+		    //
+		    //
+		    //
+		    //
+		    //
+		    //
+		    
+//		    final Composite compositeCreateCustomer = new Composite(compositeContent, SWT.NONE);
+	        
+		    //compositeMain.setLayoutData(griddataMain);
+//		    GridLayout CreateCustomerComposite = new GridLayout(2, false);
+		    
+		    
+		    //
+		    //
+		    //
+		    //
+		    //
+		    //
+		    
+		    //Events
+		    
+		    loginButton.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+			          stackLayoutMain.topControl = compositeMainClient;
+			          shell.layout();
+			        }
+			      });
+		    
+		    buttonMenuDeactivateAccount.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositeAccountPage;
+		          compositeContent.layout();
+		        }
+		      });
+		    
+		    buttonMenuCreateAccount.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositeCreateAccountPage;
+			          compositeContent.layout();
+			        }
+			      });
+		    
+		    buttonMenuCreateCustomer.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositeCreateCustomerPage;
+			          compositeContent.layout();
+			        }
+			      });
+		    
+		    buttonLogout.addSelectionListener(new SelectionAdapter() {
+		    	public void widgetSelected(SelectionEvent arg0) {
+		    		display.dispose();
+		    	}
+		    });
+		    
+		    buttonDeactivateAccount.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+			          //do something here to deactivate selected account
+			          //stacklayout.topControl = DepositPage;
+			          //compositeMain.layout();
+			        }
+			      });
+		    
+		    buttonActivateAccount.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+			          //do something here to activate selected account
+			          //stacklayout.topControl = DepositPage;
+			          //compositeMain.layout();
+			        }
+			      });
+		    
+		    buttonCreateAccount.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+			          //do something here to create account
+			          //stacklayout.topControl = DepositPage;
+			          //compositeMain.layout();
+			        }
+			      });
+		    
+		    buttonCreateCustomer.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+			          //do something here to create customer
+			          //stacklayout.topControl = DepositPage;
+			          //compositeMain.layout();
+			        }
+			      });
+		    
+		    //Events Ende
+		    
+		    
+		    //shell.setLayout(layout);
+		    stackLayoutMain.topControl=compositeLogin;
+		    //compositeWindow.layout();
+		    //shell.layout();
+		    
+		    shell.pack();
+		    shell.open();
+		    while (!shell.isDisposed()) {
+		      if (!display.readAndDispatch()) {
+		        display.sleep();
+		      }
+		    }
+		    display.dispose();
+}
+
+	 private static void fillCompositeCreateCustomerPage() {
+		
+		 GridData CreateCustomerCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
+//		    CreateCustomerPage.setLayout(CreateCustomerComposite);
+		    
+		    CreateCustomerCompositeData.horizontalSpan = 2;
+		    Label CaptionCreateCustomerPage = new Label(compositeCreateCustomerPage, SWT.NONE);
+		    CaptionCreateCustomerPage.setText("Create a new Customer");
+		    CaptionCreateCustomerPage.setLayoutData(CreateCustomerCompositeData);
+		    
+		    Label SepPerform3 = new Label(compositeCreateCustomerPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform3.setBackground(new Color(display,255,255,255));
+		    SepPerform3.setLayoutData(CreateCustomerCompositeData);
+		    
+		    Label FirstnameLabel = new Label(compositeCreateCustomerPage,SWT.NONE);
+		    FirstnameLabel.setText("Firstname:");
+		    FirstnameLabel.setLayoutData(griddataLabel);
+			Text CreateCustomerTypeFirstname = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
+			CreateCustomerTypeFirstname.setLayoutData(griddataText);
+			
+			Label LastnameLabel = new Label(compositeCreateCustomerPage, SWT.NONE);
+			LastnameLabel.setText("Lastname:");
+			LastnameLabel.setLayoutData(griddataLabel);
+			Text CreateAccountTypeLastname = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
+			CreateAccountTypeLastname.setLayoutData(griddataText);
+			
+			Label InitPasswordLabel = new Label(compositeCreateCustomerPage, SWT.NONE);
+			InitPasswordLabel.setText("Initial Password:");
+			InitPasswordLabel.setLayoutData(griddataLabel);
+			Text CreateAccountTypeInitPassword = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
+			CreateAccountTypeInitPassword.setLayoutData(griddataText);
+		    
+		    CaptionCreateCustomerPage.pack();
+		    
+		    Label SepPerform4 = new Label(compositeCreateCustomerPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform4.setBackground(new Color(display,255,255,255));
+		    SepPerform4.setLayoutData(CreateCustomerCompositeData);
+		    
+//		    final Button buttonCreateCustomer = new Button(compositeCreateCustomer, SWT.PUSH);
+		    buttonCreateCustomer = new Button(compositeCreateCustomerPage, SWT.PUSH);
+		    buttonCreateCustomer.setText("Create Customer");
+		    buttonCreateCustomer.setBackground(new Color(display, 31, 78, 121));
+		    buttonCreateCustomer.setLayoutData(griddataButton);
+		
+	}
+
+	private static void fillCompositeCreateAccountPage() {
+		
+		 GridData CreateAccountCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
+		    
+		    CreateAccountCompositeData.horizontalSpan = 2;
+//		    CreateAccountPage.setLayout(CreateAccountComposite);
+		    
+		    Label CaptionCreateAccountPage = new Label(compositeCreateAccountPage, SWT.NONE);
+		    CaptionCreateAccountPage.setText("Create an Account");
+		    CaptionCreateAccountPage.setLayoutData(CreateAccountCompositeData);
+		    
+		    Label SepPerform1 = new Label(compositeCreateAccountPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform1.setBackground(new Color(display,255,255,255));
+		    SepPerform1.setLayoutData(CreateAccountCompositeData);
+		    
+//		    GridData griddataLabel = new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 1,1);
+		    
+		    //griddataText.horizontalSpan=1;
+		    //griddataText.widthHint= 400;
+		    
+		    Label BankLabel = new Label(compositeCreateAccountPage,SWT.NONE);
+		    BankLabel.setText("Bank:");
+		    BankLabel.setLayoutData(griddataLabel);
+			Text CreateAccountTypeBank = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
+			CreateAccountTypeBank.setLayoutData(griddataText);
+			
+			Label CustomerLabel = new Label(compositeCreateAccountPage, SWT.NONE);
+			CustomerLabel.setText("Customer:");
+			CustomerLabel.setLayoutData(griddataLabel);
+			Text CreateAccountTypeCustomer = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
+			CreateAccountTypeCustomer.setLayoutData(griddataText);
+			
+			Label ResponsibleLabel = new Label(compositeCreateAccountPage, SWT.NONE);
+			ResponsibleLabel.setText("Responsible:");
+			ResponsibleLabel.setLayoutData(griddataLabel);
+			Text CreateAccountTypeResponsible = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
+			CreateAccountTypeResponsible.setLayoutData(griddataText);
+			
+			Label AccountTypeLabel = new Label(compositeCreateAccountPage, SWT.NONE);
+			AccountTypeLabel.setText("AccountType:");
+			AccountTypeLabel.setLayoutData(griddataLabel);
+			Text CreateAccountTypeAccountType = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
+			CreateAccountTypeAccountType.setLayoutData(griddataText);
+			
+			Label ActiveLabel = new Label(compositeCreateAccountPage, SWT.NONE);
+			ActiveLabel.setText("Active:");
+			ActiveLabel.setLayoutData(griddataLabel);
+			Text CreateAccountTypeActive = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
+			CreateAccountTypeActive.setLayoutData(griddataText);
+			
+		    CaptionCreateAccountPage.pack();
+		    
+		    Label SepPerform2 = new Label(compositeCreateAccountPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform2.setBackground(new Color(display,255,255,255));
+		    SepPerform2.setLayoutData(CreateAccountCompositeData);
+		    
+//		    final Button buttonCreateAccount = new Button(compositeCreateAccountPage, SWT.PUSH);
+		    buttonCreateAccount = new Button(compositeCreateAccountPage, SWT.PUSH);
+		    buttonCreateAccount.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
+		    buttonCreateAccount.setText("Create Account");
+		    buttonCreateAccount.setBackground(new Color(display, 31, 78, 121));
+		    buttonCreateAccount.setLayoutData(griddataButton);
+		
+	}
+
+	private static void fillCompositeAccountPage() {
+		 
+		 GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
 //		    AccountPage.setLayout(ViewComposite);
-		    compositeAccountPage.setLayout(layoutMainClient);
+		    
 		    ViewCompositeData.horizontalSpan = 2;
 		    Label CaptionViewPage = new Label(compositeAccountPage, SWT.NONE);
 		    CaptionViewPage.setText("All Accounts");
@@ -229,242 +470,26 @@ public class AdminClient {
 		    		table.setLayoutData(ViewCompositeData);
 		    CaptionViewPage.pack();
 		    
-		    final GridData griddataButton = new GridData(GridData.BEGINNING, GridData.BEGINNING,true, false);
-		    griddataButton.horizontalAlignment = GridData.BEGINNING;
-		    griddataButton.widthHint = 110;
-		    griddataButton.horizontalSpan=1;
-		    
-		    final Button DeactivateAccountButton = new Button(compositeAccountPage, SWT.PUSH);
-		    DeactivateAccountButton.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
-		    DeactivateAccountButton.setText("Deacitvate Account");
-		    DeactivateAccountButton.setBackground(new Color(display, 31, 78, 121));
-		    DeactivateAccountButton.setLayoutData(griddataButton);
-		    final Button ActivateAccountButton = new Button(compositeAccountPage, SWT.PUSH);
-		    ActivateAccountButton.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
-		    ActivateAccountButton.setText("Acitvate Account");
-		    ActivateAccountButton.setBackground(new Color(display, 31, 78, 121));
-		    ActivateAccountButton.setLayoutData(griddataButton);
-		    
-		    //
-		    //
-		    //
-		    //
-		    //
-		    //
-		    
-		    final Composite CreateAccountPage = new Composite(compositeContent, SWT.NONE);
-		    CreateAccountPage.setBackground(new Color(display,255,255,255));
-		    //compositeMain.setLayoutData(griddataMain);
-//		    GridLayout CreateAccountComposite = new GridLayout(2, false);
-		    GridData CreateAccountCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
-		    
-		    CreateAccountCompositeData.horizontalSpan = 2;
-//		    CreateAccountPage.setLayout(CreateAccountComposite);
-		    CreateAccountPage.setLayout(layoutMainClient);
-		    Label CaptionCreateAccountPage = new Label(CreateAccountPage, SWT.NONE);
-		    CaptionCreateAccountPage.setText("Create an Account");
-		    CaptionCreateAccountPage.setLayoutData(CreateAccountCompositeData);
-		    
-		    Label SepPerform1 = new Label(CreateAccountPage, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform1.setBackground(new Color(display,255,255,255));
-		    SepPerform1.setLayoutData(CreateAccountCompositeData);
-		    
-		    GridData griddataLabel = new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 1,1);
-		    //griddataLabel.horizontalSpan=1;
-		    griddataLabel.widthHint=90;
-		    GridData griddataText = new GridData(GridData.FILL, GridData.CENTER, true, false, 1,1);
-		    //griddataText.horizontalSpan=1;
-		    //griddataText.widthHint= 400;
-		    
-		    Label BankLabel = new Label(CreateAccountPage,SWT.NONE);
-		    BankLabel.setText("Bank:");
-		    BankLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeBank = new Text(CreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			CreateAccountTypeBank.setLayoutData(griddataText);
-			
-			Label CustomerLabel = new Label(CreateAccountPage, SWT.NONE);
-			CustomerLabel.setText("Customer:");
-			CustomerLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeCustomer = new Text(CreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			CreateAccountTypeCustomer.setLayoutData(griddataText);
-			
-			Label ResponsibleLabel = new Label(CreateAccountPage, SWT.NONE);
-			ResponsibleLabel.setText("Responsible:");
-			ResponsibleLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeResponsible = new Text(CreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			CreateAccountTypeResponsible.setLayoutData(griddataText);
-			
-			Label AccountTypeLabel = new Label(CreateAccountPage, SWT.NONE);
-			AccountTypeLabel.setText("AccountType:");
-			AccountTypeLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeAccountType = new Text(CreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			CreateAccountTypeAccountType.setLayoutData(griddataText);
-			
-			Label ActiveLabel = new Label(CreateAccountPage, SWT.NONE);
-			ActiveLabel.setText("Active:");
-			ActiveLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeActive = new Text(CreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			CreateAccountTypeActive.setLayoutData(griddataText);
-			
-		    CaptionCreateAccountPage.pack();
-		    
-		    Label SepPerform2 = new Label(CreateAccountPage, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform2.setBackground(new Color(display,255,255,255));
-		    SepPerform2.setLayoutData(CreateAccountCompositeData);
-		    
-		    final Button CreateAccountButton = new Button(CreateAccountPage, SWT.PUSH);
-		    CreateAccountButton.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
-		    CreateAccountButton.setText("Create Account");
-		    CreateAccountButton.setBackground(new Color(display, 31, 78, 121));
-		    CreateAccountButton.setLayoutData(griddataButton);
-		    
-		    //
-		    //
-		    //
-		    //
-		    //
-		    //
-		    
-		    final Composite CreateCustomerPage = new Composite(compositeContent, SWT.NONE);
-		    CreateCustomerPage.setBackground(new Color(display,255,255,255));
-		    //compositeMain.setLayoutData(griddataMain);
-//		    GridLayout CreateCustomerComposite = new GridLayout(2, false);
-		    GridData CreateCustomerCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
-//		    CreateCustomerPage.setLayout(CreateCustomerComposite);
-		    CreateCustomerPage.setLayout(layoutMainClient);
-		    CreateCustomerCompositeData.horizontalSpan = 2;
-		    Label CaptionCreateCustomerPage = new Label(CreateCustomerPage, SWT.NONE);
-		    CaptionCreateCustomerPage.setText("Create a new Customer");
-		    CaptionCreateCustomerPage.setLayoutData(CreateCustomerCompositeData);
-		    
-		    Label SepPerform3 = new Label(CreateCustomerPage, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform3.setBackground(new Color(display,255,255,255));
-		    SepPerform3.setLayoutData(CreateCustomerCompositeData);
-		    
-		    Label FirstnameLabel = new Label(CreateCustomerPage,SWT.NONE);
-		    FirstnameLabel.setText("Firstname:");
-		    FirstnameLabel.setLayoutData(griddataLabel);
-			Text CreateCustomerTypeFirstname = new Text(CreateCustomerPage, SWT.SINGLE | SWT.BORDER);
-			CreateCustomerTypeFirstname.setLayoutData(griddataText);
-			
-			Label LastnameLabel = new Label(CreateCustomerPage, SWT.NONE);
-			LastnameLabel.setText("Lastname:");
-			LastnameLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeLastname = new Text(CreateCustomerPage, SWT.SINGLE | SWT.BORDER);
-			CreateAccountTypeLastname.setLayoutData(griddataText);
-			
-			Label InitPasswordLabel = new Label(CreateCustomerPage, SWT.NONE);
-			InitPasswordLabel.setText("Initial Password:");
-			InitPasswordLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeInitPassword = new Text(CreateCustomerPage, SWT.SINGLE | SWT.BORDER);
-			CreateAccountTypeInitPassword.setLayoutData(griddataText);
-		    
-		    CaptionCreateCustomerPage.pack();
-		    
-		    Label SepPerform4 = new Label(CreateCustomerPage, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform4.setBackground(new Color(display,255,255,255));
-		    SepPerform4.setLayoutData(CreateCustomerCompositeData);
-		    
-		    final Button CreateCustomerButton = new Button(CreateCustomerPage, SWT.PUSH);
-		    CreateCustomerButton.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
-		    CreateCustomerButton.setText("Create Customer");
-		    CreateCustomerButton.setBackground(new Color(display, 31, 78, 121));
-		    CreateCustomerButton.setLayoutData(griddataButton);
-		    
-		    //
-		    //
-		    //
-		    //
-		    //
-		    //
-		    
-		    //Events
-		    
-		    loginButton.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-			          stackLayoutMain.topControl = compositeMainClient;
-			          shell.layout();
-			        }
-			      });
-		    
-		    buttonMenuDeactivateAccount.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	stackLayoutContent.topControl = compositeAccountPage;
-		          compositeContent.layout();
-		        }
-		      });
-		    
-		    buttonMenuCreateAccount.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	stackLayoutContent.topControl = CreateAccountPage;
-			          compositeContent.layout();
-			        }
-			      });
-		    
-		    buttonMenuCreateCustomer.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	stackLayoutContent.topControl = CreateCustomerPage;
-			          compositeContent.layout();
-			        }
-			      });
-		    
-		    buttonLogout.addSelectionListener(new SelectionAdapter() {
-		    	public void widgetSelected(SelectionEvent arg0) {
-		    		display.dispose();
-		    	}
-		    });
-		    
-		    DeactivateAccountButton.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-			          //do something here to deactivate selected account
-			          //stacklayout.topControl = DepositPage;
-			          //compositeMain.layout();
-			        }
-			      });
-		    
-		    ActivateAccountButton.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-			          //do something here to activate selected account
-			          //stacklayout.topControl = DepositPage;
-			          //compositeMain.layout();
-			        }
-			      });
-		    
-		    CreateAccountButton.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-			          //do something here to create account
-			          //stacklayout.topControl = DepositPage;
-			          //compositeMain.layout();
-			        }
-			      });
-		    
-		    CreateCustomerButton.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-			          //do something here to create customer
-			          //stacklayout.topControl = DepositPage;
-			          //compositeMain.layout();
-			        }
-			      });
-		    
-		    //Events Ende
+//		    final GridData griddataButton = new GridData(GridData.BEGINNING, GridData.BEGINNING,true, false);
 		    
 		    
-		    //shell.setLayout(layout);
-		    stackLayoutMain.topControl=compositeLogin;
-		    //compositeWindow.layout();
-		    //shell.layout();
+//		    final Button buttonDeactivateAccount = new Button(compositeAccountPage, SWT.PUSH);
+		    buttonDeactivateAccount = new Button(compositeAccountPage, SWT.PUSH);
+		    buttonDeactivateAccount.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
+		    buttonDeactivateAccount.setText("Deacitvate Account");
+		    buttonDeactivateAccount.setBackground(new Color(display, 31, 78, 121));
+		    buttonDeactivateAccount.setLayoutData(griddataButton);
 		    
-		    shell.pack();
-		    shell.open();
-		    while (!shell.isDisposed()) {
-		      if (!display.readAndDispatch()) {
-		        display.sleep();
-		      }
-		    }
-		    display.dispose();
-}
+//		    final Button buttonActivateAccount = new Button(compositeAccountPage, SWT.PUSH);
+		    buttonActivateAccount = new Button(compositeAccountPage, SWT.PUSH);
+		    buttonActivateAccount.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
+		    buttonActivateAccount.setText("Acitvate Account");
+		    buttonActivateAccount.setBackground(new Color(display, 31, 78, 121));
+		    buttonActivateAccount.setLayoutData(griddataButton);
+		
+	}
 
-	 private static void fillCompositeWelcomePage() {
+	private static void fillCompositeWelcomePage() {
 		 
 		 GridData WelcomeCompositeData = new GridData(GridData.BEGINNING, GridData.FILL,true, false);
 		    WelcomeCompositeData.horizontalSpan = 2;
@@ -507,6 +532,18 @@ public class AdminClient {
 	    compositeWelcomePage = new Composite(compositeContent, SWT.NONE);
 		    compositeWelcomePage.setBackground(new Color(display,255,255,255));
 		    compositeWelcomePage.setLayout(layoutMainClient);
+		    
+	    compositeAccountPage = new Composite(compositeContent, SWT.NONE);
+		    compositeAccountPage.setBackground(new Color(display,255,255,255));
+		    compositeAccountPage.setLayout(layoutMainClient);
+		    
+	    compositeCreateAccountPage = new Composite(compositeContent, SWT.NONE);
+		    compositeCreateAccountPage.setBackground(new Color(display,255,255,255));
+		    compositeCreateAccountPage.setLayout(layoutMainClient);
+		    
+	    compositeCreateCustomerPage = new Composite(compositeContent, SWT.NONE);
+		    compositeCreateCustomerPage.setBackground(new Color(display,255,255,255));
+		    compositeCreateCustomerPage.setLayout(layoutMainClient);
 	}
 
 	private static void fillCompositeMainClient() {
@@ -587,6 +624,17 @@ public class AdminClient {
 		
 	    griddataContent = new GridData(GridData.FILL, GridData.CENTER,true, false);
 		    griddataContent.verticalAlignment = GridData.FILL; 
+		    
+	    griddataButton = new GridData(GridData.BEGINNING, GridData.BEGINNING,true, false);
+		    griddataButton.horizontalAlignment = GridData.BEGINNING;
+		    griddataButton.widthHint = 110;
+		    griddataButton.horizontalSpan=1;
+		    
+	    griddataLabel = new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 1,1);
+		    //griddataLabel.horizontalSpan=1;
+		    griddataLabel.widthHint=90;
+//		    GridData griddataText = new GridData(GridData.FILL, GridData.CENTER, true, false, 1,1);
+	    griddataText = new GridData(GridData.FILL, GridData.CENTER, true, false, 1,1);
 		
 	}
 

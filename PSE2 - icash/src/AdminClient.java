@@ -30,16 +30,34 @@ import org.eclipse.swt.widgets.Text;
 
 public class AdminClient {
 		
+	static Display display;
+	static Shell shell;
+	
+	static GridLayout layoutMainClient;
+	static GridLayout layoutLogin;
+	static GridLayout layoutOneColumn;
+	static StackLayout stackLayoutMain;
+	static StackLayout stackLayoutContent;
+	
+	static GridData griddataWindow;
+	static GridData griddataHeader;
+	
+	static Composite compositeLogin;
+	static Composite compositeMainClient;
+	
+	static Button loginButton;
+	
+	
 	 public static void main(String[] args) {
-		 final Display display = new Display();
-		    final Shell shell = new Shell(display);
-		    GridLayout layout = new GridLayout(2, false);
-		    GridLayout Loginlayout = new GridLayout(5,false);
-		    final StackLayout stackLoginLayout = new StackLayout();
-		    shell.setLayout(stackLoginLayout);
+		 
+		 	Initialize();
+		 	
+		 	FillLoginWindow();
+		 	
+		 	
+//		 	final Display display = new Display();
+		 	
 		    
-		    //shell.setSize(750,400);
-		    
 		    //
 		    //
 		    //
@@ -47,85 +65,34 @@ public class AdminClient {
 		    //
 		    //
 		    
-		    GridData griddataWindow = new GridData(GridData.FILL, GridData.CENTER,true, true);
-		    griddataWindow.horizontalAlignment=GridData.FILL;
-		    griddataWindow.verticalAlignment=GridData.FILL;
-		    griddataWindow.horizontalSpan=5;
+//		    GridData griddataWindow = new GridData(GridData.FILL, GridData.CENTER,true, true);
+		    
 		    //griddataWindow.heightHint=500;
 		    //griddataWindow.widthHint=5000;
 		    //
 		    
 		    
-		    final Composite compositeLogin = new Composite(shell,0);
-		    compositeLogin.setBackground(new Color(display,200,200,200));
-		    compositeLogin.setLayoutData(griddataWindow);
-		    compositeLogin.setLayout(Loginlayout);
+//		    final Composite compositeLogin = new Composite(shell,0);
 		    
-		    final GridData griddataCaption = new GridData(GridData.FILL, GridData.FILL,true, false);
-		    griddataCaption.heightHint=35;
-		    griddataCaption.horizontalSpan=5;
 		    
-		    final GridData griddataDescription = new GridData(GridData.FILL, GridData.FILL,false, false);
-		    griddataDescription.horizontalSpan=2;
 		    
-		    final GridData griddataTexts = new GridData(GridData.FILL, GridData.FILL,false, false);
-		    griddataTexts.horizontalSpan=3;
 		    
-		    final GridData griddataLoginButton = new GridData(GridData.FILL, GridData.CENTER,false, false);
-		    griddataLoginButton.horizontalSpan=1;
-		    griddataLoginButton.heightHint = 35;
 		    
-		    Label LoginCaption = new Label(compositeLogin,SWT.NONE);
-		    LoginCaption.setText("iCash - Administration");
-		    LoginCaption.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
-		    LoginCaption.setLayoutData(griddataCaption);
 		    
-		    Label ServerLabel = new Label(compositeLogin, SWT.NONE);
-		    ServerLabel.setText("Server:");
-		    ServerLabel.setLayoutData(griddataDescription);
 		    
-		    Text ServerText = new Text(compositeLogin,SWT.BORDER);
-		    ServerText.setLayoutData(griddataTexts);
 		    
-		    Label UserLabel = new Label(compositeLogin, SWT.NONE);
-		    UserLabel.setText("Username:");
-		    UserLabel.setLayoutData(griddataDescription);
 		    
-		    Text UserText = new Text(compositeLogin,SWT.BORDER);
-		    UserText.setLayoutData(griddataTexts);
 		    
-		    Label PasswortLabel = new Label(compositeLogin, SWT.NONE);
-		    PasswortLabel.setText("Password:");
-		    PasswortLabel.setLayoutData(griddataDescription);
 		    
-		    Text PasswordText = new Text(compositeLogin,SWT.BORDER);
-		    PasswordText.setLayoutData(griddataTexts);
 		    
-		    Label placeholder1 = new Label(compositeLogin,SWT.NONE);
-		    placeholder1.setBackground(new Color(display,200,200,200));
-		    placeholder1.setText("");
-		    placeholder1.setLayoutData(griddataLoginButton);
 		    
-		    Label placeholder2 = new Label(compositeLogin,SWT.NONE);
-		    placeholder2.setText("");
-		    placeholder2.setBackground(new Color(display,200,200,200));
-		    placeholder2.setLayoutData(griddataLoginButton);
 		    
-		    Label placeholder3 = new Label(compositeLogin,SWT.NONE);
-		    placeholder3.setText("");
-		    placeholder3.setBackground(new Color(display,200,200,200));
-		    placeholder3.setLayoutData(griddataLoginButton);
 		    
-		    final Button loginButton = new Button(compositeLogin,SWT.PUSH);
-		    loginButton.setText("Login NOW!");
-		    loginButton.setLayoutData(griddataLoginButton);
 		    
-		    compositeLogin.pack();
 		    
-		    final Composite compositeWindow = new Composite(shell, 0);
-		    compositeWindow.setBackground(new Color(display,255,255,255));
-		    compositeWindow.setLayoutData(griddataWindow);
-		    compositeWindow.setLayout(layout);
+		    
+//		    final Composite compositeMainClient = new Composite(shell, 0);
+		 	
 		    
 		    //
 		    //
@@ -134,21 +101,21 @@ public class AdminClient {
 		    //
 		    //
 		    
-		    GridData griddatahorizontal = new GridData(GridData.FILL, GridData.CENTER,true, false);
-		    griddatahorizontal.horizontalSpan = 2;
+//		    GridData griddataHeader = new GridData(GridData.FILL, GridData.CENTER,true, false);
+		 	
 		    
-		    GridData griddatavertical = new GridData();
-		    griddatavertical.verticalAlignment = GridData.FILL;
-		    griddatavertical.grabExcessVerticalSpace = true;
+		    GridData griddataNavigation = new GridData();
+		    griddataNavigation.verticalAlignment = GridData.FILL;
+		    griddataNavigation.grabExcessVerticalSpace = true;
 		    
 		    GridData griddataMain = new GridData(GridData.FILL, GridData.CENTER,true, false);
 		    griddataMain.verticalAlignment = GridData.FILL;
 		    
-		    final Composite compositeHorizontal = new Composite(compositeWindow, 0);
+		    final Composite compositeHorizontal = new Composite(compositeMainClient, 0);
 		    compositeHorizontal.setBackground(new Color(display,200,200,200));	
-		    compositeHorizontal.setLayoutData(griddatahorizontal);
+		    compositeHorizontal.setLayoutData(griddataHeader);
 		    
-		    GridLayout layoutCompositeHorizontal = new GridLayout(2, false);
+//		    GridLayout layoutCompositeHorizontal = new GridLayout(2, false);
 		    Label LabelHorizontal = new Label(compositeHorizontal,SWT.NONE);
 		    LabelHorizontal.setText("iCash - Administration");
 		    LabelHorizontal.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
@@ -159,7 +126,8 @@ public class AdminClient {
 		    LogOut.setLayoutData(griddataHorizontal);
 		    LogOut.setBackground(new Color(display, 31, 78, 121));
 		    LogOut.setText("Log out!");
-		    compositeHorizontal.setLayout(layoutCompositeHorizontal);
+//		    compositeHorizontal.setLayout(layoutCompositeHorizontal);
+		    compositeHorizontal.setLayout(layoutMainClient);
 		    
 		    //
 		    //
@@ -168,13 +136,13 @@ public class AdminClient {
 		    //
 		    //
 		    
-		    final Composite compositeVertical = new Composite(compositeWindow, 0);
+		    final Composite compositeVertical = new Composite(compositeMainClient, 0);
 		    compositeVertical.setBackground(new Color(display,200,200,200));
 		    compositeVertical.setBounds(100,200,200,200);
-		    compositeVertical.setLayoutData(griddatavertical);
+		    compositeVertical.setLayoutData(griddataNavigation);
 		    ((GridData)compositeVertical.getLayoutData()).widthHint=150;
 		    
-		    GridLayout layoutCompositeVertical = new GridLayout(1, false);
+//		    GridLayout layoutCompositeVertical = new GridLayout(1, false);
 		    final GridData griddataVertical = new GridData(GridData.FILL, GridData.FILL,true, false);
 		    griddataVertical.verticalAlignment = GridData.CENTER;
 		    
@@ -216,8 +184,9 @@ public class AdminClient {
 		    placeholder8.setBackground(new Color(display, 200,200,200));
 		    placeholder8.setLayoutData(griddataVertical);
 		    
-		    compositeVertical.setLayout(layoutCompositeVertical);
 		    
+//		    compositeVertical.setLayout(layoutCompositeVertical);
+		    compositeVertical.setLayout(layoutOneColumn);
 		    //
 		    //
 		    //
@@ -225,11 +194,12 @@ public class AdminClient {
 		    //
 		    //
 		    
-		    final Composite compositeMain = new Composite(compositeWindow, 0);
+		    final Composite compositeMain = new Composite(compositeMainClient, 0);
 		    compositeMain.setBackground(new Color(display,255,255,255));
 		    compositeMain.setLayoutData(griddataMain);
-		    final StackLayout stacklayout = new StackLayout();
-		    compositeMain.setLayout(stacklayout);
+//		    final StackLayout stacklayout = new StackLayout();
+		    stackLayoutContent = new StackLayout();
+		    compositeMain.setLayout(stackLayoutContent);
 		    
 		    //
 		    //
@@ -241,15 +211,16 @@ public class AdminClient {
 		    final Composite WelcomePage = new Composite(compositeMain, SWT.NONE);
 		    WelcomePage.setBackground(new Color(display,255,255,255));
 		    //compositeMain.setLayoutData(griddataMain);
-		    GridLayout WelcomeComposite = new GridLayout(2, false);
+//		    GridLayout WelcomeComposite = new GridLayout(2, false);
 		    GridData WelcomeCompositeData = new GridData(GridData.BEGINNING, GridData.FILL,true, false);
-		    WelcomePage.setLayout(WelcomeComposite);
+//		    WelcomePage.setLayout(WelcomeComposite);
+		    WelcomePage.setLayout(layoutMainClient);
 		    WelcomeCompositeData.horizontalSpan = 2;
 		    Label CaptionWelcomePage = new Label(WelcomePage, SWT.NONE);
 		    CaptionWelcomePage.setText("Welcome to the Adminstration Frontend!");
 		    CaptionWelcomePage.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
 		    CaptionWelcomePage.setLayoutData(WelcomeCompositeData);
-		    stacklayout.topControl = WelcomePage;
+		    stackLayoutContent.topControl = WelcomePage;
 	        compositeMain.layout();
 	        
 		    //
@@ -262,9 +233,10 @@ public class AdminClient {
 		    final Composite AccountPage = new Composite(compositeMain, SWT.NONE);
 		    AccountPage.setBackground(new Color(display,255,255,255));
 		    //compositeMain.setLayoutData(griddataMain);
-		    GridLayout ViewComposite = new GridLayout(2, false);
+//		    GridLayout ViewComposite = new GridLayout(2, false);
 		    GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
-		    AccountPage.setLayout(ViewComposite);
+//		    AccountPage.setLayout(ViewComposite);
+		    AccountPage.setLayout(layoutMainClient);
 		    ViewCompositeData.horizontalSpan = 2;
 		    Label CaptionViewPage = new Label(AccountPage, SWT.NONE);
 		    CaptionViewPage.setText("All Accounts");
@@ -327,11 +299,12 @@ public class AdminClient {
 		    final Composite CreateAccountPage = new Composite(compositeMain, SWT.NONE);
 		    CreateAccountPage.setBackground(new Color(display,255,255,255));
 		    //compositeMain.setLayoutData(griddataMain);
-		    GridLayout CreateAccountComposite = new GridLayout(2, false);
+//		    GridLayout CreateAccountComposite = new GridLayout(2, false);
 		    GridData CreateAccountCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
 		    
 		    CreateAccountCompositeData.horizontalSpan = 2;
-		    CreateAccountPage.setLayout(CreateAccountComposite);
+//		    CreateAccountPage.setLayout(CreateAccountComposite);
+		    CreateAccountPage.setLayout(layoutMainClient);
 		    Label CaptionCreateAccountPage = new Label(CreateAccountPage, SWT.NONE);
 		    CaptionCreateAccountPage.setText("Create an Account");
 		    CaptionCreateAccountPage.setLayoutData(CreateAccountCompositeData);
@@ -399,9 +372,10 @@ public class AdminClient {
 		    final Composite CreateCustomerPage = new Composite(compositeMain, SWT.NONE);
 		    CreateCustomerPage.setBackground(new Color(display,255,255,255));
 		    //compositeMain.setLayoutData(griddataMain);
-		    GridLayout CreateCustomerComposite = new GridLayout(2, false);
+//		    GridLayout CreateCustomerComposite = new GridLayout(2, false);
 		    GridData CreateCustomerCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
-		    CreateCustomerPage.setLayout(CreateCustomerComposite);
+//		    CreateCustomerPage.setLayout(CreateCustomerComposite);
+		    CreateCustomerPage.setLayout(layoutMainClient);
 		    CreateCustomerCompositeData.horizontalSpan = 2;
 		    Label CaptionCreateCustomerPage = new Label(CreateCustomerPage, SWT.NONE);
 		    CaptionCreateCustomerPage.setText("Create a new Customer");
@@ -452,28 +426,28 @@ public class AdminClient {
 		    
 		    loginButton.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-			          stackLoginLayout.topControl = compositeWindow;
+			          stackLayoutMain.topControl = compositeMainClient;
 			          shell.layout();
 			        }
 			      });
 		    
 		    DeactivateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-		          stacklayout.topControl = AccountPage;
+		        	stackLayoutContent.topControl = AccountPage;
 		          compositeMain.layout();
 		        }
 		      });
 		    
 		    CreateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-			          stacklayout.topControl = CreateAccountPage;
+		        	stackLayoutContent.topControl = CreateAccountPage;
 			          compositeMain.layout();
 			        }
 			      });
 		    
 		    CreateCustomer.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-			          stacklayout.topControl = CreateCustomerPage;
+		        	stackLayoutContent.topControl = CreateCustomerPage;
 			          compositeMain.layout();
 			        }
 			      });
@@ -520,7 +494,7 @@ public class AdminClient {
 		    
 		    
 		    //shell.setLayout(layout);
-		    stackLoginLayout.topControl=compositeLogin;
+		    stackLayoutMain.topControl=compositeLogin;
 		    //compositeWindow.layout();
 		    //shell.layout();
 		    
@@ -533,5 +507,101 @@ public class AdminClient {
 		    }
 		    display.dispose();
 }
-	
+
+	 private static void Initialize() {
+		
+		display = new Display();
+//		    final Shell shell = new Shell(display);
+	 	shell = new Shell(display);
+	    layoutMainClient = new GridLayout(2, false);
+	    layoutLogin = new GridLayout(5,false);
+//		    final StackLayout stackLoginLayout = new StackLayout();
+	    stackLayoutMain = new StackLayout();
+	    layoutOneColumn = new GridLayout(1,false);
+	    
+	    griddataWindow = new GridData(GridData.FILL, GridData.CENTER,true, true);
+		    griddataWindow.horizontalAlignment=GridData.FILL;
+		    griddataWindow.verticalAlignment=GridData.FILL;
+		    griddataWindow.horizontalSpan=5;
+		
+	    griddataHeader = new GridData(GridData.FILL, GridData.CENTER,true, false);
+		    griddataHeader.horizontalSpan = 2;
+		    
+	    compositeMainClient = new Composite(shell, 0);
+		    compositeMainClient.setBackground(new Color(display,255,255,255));
+		    compositeMainClient.setLayoutData(griddataWindow);
+		    compositeMainClient.setLayout(layoutMainClient);
+		 
+		 shell.setLayout(stackLayoutMain);
+	}
+
+	private static void FillLoginWindow()
+	 {
+		 compositeLogin = new Composite(shell,0);
+		    compositeLogin.setBackground(new Color(display,200,200,200));
+		    compositeLogin.setLayoutData(griddataWindow);
+		    compositeLogin.setLayout(layoutLogin);
+		    
+		    final GridData griddataCaption = new GridData(GridData.FILL, GridData.FILL,true, false);
+		    griddataCaption.heightHint=35;
+		    griddataCaption.horizontalSpan=5;
+		    
+		    final GridData griddataDescription = new GridData(GridData.FILL, GridData.FILL,false, false);
+		    griddataDescription.horizontalSpan=2;
+		    
+		    final GridData griddataTexts = new GridData(GridData.FILL, GridData.FILL,false, false);
+		    griddataTexts.horizontalSpan=3;
+		    
+		    final GridData griddataLoginButton = new GridData(GridData.FILL, GridData.CENTER,false, false);
+		    griddataLoginButton.horizontalSpan=1;
+		    griddataLoginButton.heightHint = 35;
+		    
+		    Label LoginCaption = new Label(compositeLogin,SWT.NONE);
+		    LoginCaption.setText("iCash - Administration");
+		    LoginCaption.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
+		    LoginCaption.setLayoutData(griddataCaption);
+		    
+		    Label ServerLabel = new Label(compositeLogin, SWT.NONE);
+		    ServerLabel.setText("Server:");
+		    ServerLabel.setLayoutData(griddataDescription);
+		    
+		    Text ServerText = new Text(compositeLogin,SWT.BORDER);
+		    ServerText.setLayoutData(griddataTexts);
+		    
+		    Label UserLabel = new Label(compositeLogin, SWT.NONE);
+		    UserLabel.setText("Username:");
+		    UserLabel.setLayoutData(griddataDescription);
+		    
+		    Text UserText = new Text(compositeLogin,SWT.BORDER);
+		    UserText.setLayoutData(griddataTexts);
+		    
+		    Label PasswortLabel = new Label(compositeLogin, SWT.NONE);
+		    PasswortLabel.setText("Password:");
+		    PasswortLabel.setLayoutData(griddataDescription);
+		    
+		    Text PasswordText = new Text(compositeLogin,SWT.BORDER);
+		    PasswordText.setLayoutData(griddataTexts);
+		    
+		    Label placeholder1 = new Label(compositeLogin,SWT.NONE);
+		    placeholder1.setBackground(new Color(display,200,200,200));
+		    placeholder1.setText("");
+		    placeholder1.setLayoutData(griddataLoginButton);
+		    
+		    Label placeholder2 = new Label(compositeLogin,SWT.NONE);
+		    placeholder2.setText("");
+		    placeholder2.setBackground(new Color(display,200,200,200));
+		    placeholder2.setLayoutData(griddataLoginButton);
+		    
+		    Label placeholder3 = new Label(compositeLogin,SWT.NONE);
+		    placeholder3.setText("");
+		    placeholder3.setBackground(new Color(display,200,200,200));
+		    placeholder3.setLayoutData(griddataLoginButton);
+		    
+//		    final Button loginButton = new Button(compositeLogin,SWT.PUSH);
+		    loginButton = new Button(compositeLogin,SWT.PUSH);
+		    loginButton.setText("Login NOW!");
+		    loginButton.setLayoutData(griddataLoginButton);
+		    
+		    compositeLogin.pack();
+	 }
 }

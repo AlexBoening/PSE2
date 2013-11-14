@@ -39,7 +39,7 @@ public class AdminClient {
 	
 	static GridData griddataWindow, griddataHeader, griddataNavigation, griddataContent, griddataLogoutButton;
 	
-	static Composite compositeLogin, compositeMainClient, compositeHeader, compositeNavigation;
+	static Composite compositeLogin, compositeMainClient, compositeHeader, compositeNavigation, compositeContent, compositeWelcomePage;
 	
 	static Button loginButton, buttonLogout, buttonMenuDeactivateAccount, buttonMenuCreateAccount, buttonMenuCreateCustomer;
 	
@@ -52,9 +52,24 @@ public class AdminClient {
 		 	
 		 	initializeComposites();
 		 	
-		 	fillLoginWindow();
+		 	fillCompositeLogin();
 		 	
 		 	fillCompositeMainClient();
+		 	
+		 	fillCompositeWelcomePage();
+		 	
+		 	
+		 	
+		 	//set WelcomePage to be the first thing to see
+		 	stackLayoutContent.topControl = compositeWelcomePage;
+	        compositeContent.layout();
+		 	
+		 	
+		 	
+		 	
+		 	
+		 	
+		 	
 		 	
 		 	
 		 	
@@ -145,12 +160,8 @@ public class AdminClient {
 		    //
 		    //
 		    
-		    final Composite compositeMain = new Composite(compositeMainClient, 0);
-		    compositeMain.setBackground(new Color(display,255,255,255));
-		    compositeMain.setLayoutData(griddataContent);
-//		    final StackLayout stacklayout = new StackLayout();
-		    stackLayoutContent = new StackLayout();
-		    compositeMain.setLayout(stackLayoutContent);
+//		    final Composite compositeContent = new Composite(compositeMainClient, 0);
+		 	
 		    
 		    //
 		    //
@@ -159,20 +170,14 @@ public class AdminClient {
 		    //
 		    //
 		    
-		    final Composite WelcomePage = new Composite(compositeMain, SWT.NONE);
-		    WelcomePage.setBackground(new Color(display,255,255,255));
+//		    final Composite compositeWelcomePage = new Composite(compositeContent, SWT.NONE);
+		 	
 		    //compositeMain.setLayoutData(griddataMain);
 //		    GridLayout WelcomeComposite = new GridLayout(2, false);
-		    GridData WelcomeCompositeData = new GridData(GridData.BEGINNING, GridData.FILL,true, false);
+		    
 //		    WelcomePage.setLayout(WelcomeComposite);
-		    WelcomePage.setLayout(layoutMainClient);
-		    WelcomeCompositeData.horizontalSpan = 2;
-		    Label CaptionWelcomePage = new Label(WelcomePage, SWT.NONE);
-		    CaptionWelcomePage.setText("Welcome to the Adminstration Frontend!");
-		    CaptionWelcomePage.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
-		    CaptionWelcomePage.setLayoutData(WelcomeCompositeData);
-		    stackLayoutContent.topControl = WelcomePage;
-	        compositeMain.layout();
+		    
+		    
 	        
 		    //
 		    //
@@ -181,18 +186,18 @@ public class AdminClient {
 		    //
 		    //
 		    
-		    final Composite AccountPage = new Composite(compositeMain, SWT.NONE);
-		    AccountPage.setBackground(new Color(display,255,255,255));
+		    final Composite compositeAccountPage = new Composite(compositeContent, SWT.NONE);
+		    compositeAccountPage.setBackground(new Color(display,255,255,255));
 		    //compositeMain.setLayoutData(griddataMain);
 //		    GridLayout ViewComposite = new GridLayout(2, false);
 		    GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
 //		    AccountPage.setLayout(ViewComposite);
-		    AccountPage.setLayout(layoutMainClient);
+		    compositeAccountPage.setLayout(layoutMainClient);
 		    ViewCompositeData.horizontalSpan = 2;
-		    Label CaptionViewPage = new Label(AccountPage, SWT.NONE);
+		    Label CaptionViewPage = new Label(compositeAccountPage, SWT.NONE);
 		    CaptionViewPage.setText("All Accounts");
 		    CaptionViewPage.setLayoutData(ViewCompositeData);
-		    final Table table = new Table(AccountPage,
+		    final Table table = new Table(compositeAccountPage,
 		    		SWT.SINGLE | SWT.H_SCROLL |
 		    		SWT.V_SCROLL | SWT.BORDER |
 		    		SWT.FULL_SELECTION | SWT.FILL_EVEN_ODD);
@@ -229,12 +234,12 @@ public class AdminClient {
 		    griddataButton.widthHint = 110;
 		    griddataButton.horizontalSpan=1;
 		    
-		    final Button DeactivateAccountButton = new Button(AccountPage, SWT.PUSH);
+		    final Button DeactivateAccountButton = new Button(compositeAccountPage, SWT.PUSH);
 		    DeactivateAccountButton.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
 		    DeactivateAccountButton.setText("Deacitvate Account");
 		    DeactivateAccountButton.setBackground(new Color(display, 31, 78, 121));
 		    DeactivateAccountButton.setLayoutData(griddataButton);
-		    final Button ActivateAccountButton = new Button(AccountPage, SWT.PUSH);
+		    final Button ActivateAccountButton = new Button(compositeAccountPage, SWT.PUSH);
 		    ActivateAccountButton.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
 		    ActivateAccountButton.setText("Acitvate Account");
 		    ActivateAccountButton.setBackground(new Color(display, 31, 78, 121));
@@ -247,7 +252,7 @@ public class AdminClient {
 		    //
 		    //
 		    
-		    final Composite CreateAccountPage = new Composite(compositeMain, SWT.NONE);
+		    final Composite CreateAccountPage = new Composite(compositeContent, SWT.NONE);
 		    CreateAccountPage.setBackground(new Color(display,255,255,255));
 		    //compositeMain.setLayoutData(griddataMain);
 //		    GridLayout CreateAccountComposite = new GridLayout(2, false);
@@ -320,7 +325,7 @@ public class AdminClient {
 		    //
 		    //
 		    
-		    final Composite CreateCustomerPage = new Composite(compositeMain, SWT.NONE);
+		    final Composite CreateCustomerPage = new Composite(compositeContent, SWT.NONE);
 		    CreateCustomerPage.setBackground(new Color(display,255,255,255));
 		    //compositeMain.setLayoutData(griddataMain);
 //		    GridLayout CreateCustomerComposite = new GridLayout(2, false);
@@ -384,22 +389,22 @@ public class AdminClient {
 		    
 		    buttonMenuDeactivateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-		        	stackLayoutContent.topControl = AccountPage;
-		          compositeMain.layout();
+		        	stackLayoutContent.topControl = compositeAccountPage;
+		          compositeContent.layout();
 		        }
 		      });
 		    
 		    buttonMenuCreateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
 		        	stackLayoutContent.topControl = CreateAccountPage;
-			          compositeMain.layout();
+			          compositeContent.layout();
 			        }
 			      });
 		    
 		    buttonMenuCreateCustomer.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
 		        	stackLayoutContent.topControl = CreateCustomerPage;
-			          compositeMain.layout();
+			          compositeContent.layout();
 			        }
 			      });
 		    
@@ -459,7 +464,18 @@ public class AdminClient {
 		    display.dispose();
 }
 
-	 private static void initializeComposites() {
+	 private static void fillCompositeWelcomePage() {
+		 
+		 GridData WelcomeCompositeData = new GridData(GridData.BEGINNING, GridData.FILL,true, false);
+		    WelcomeCompositeData.horizontalSpan = 2;
+		    Label CaptionWelcomePage = new Label(compositeWelcomePage, SWT.NONE);
+		    CaptionWelcomePage.setText("Welcome to the Adminstration Frontend!");
+		    CaptionWelcomePage.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
+		    CaptionWelcomePage.setLayoutData(WelcomeCompositeData);
+		
+	}
+
+	private static void initializeComposites() {
 		 
 		 compositeLogin = new Composite(shell,0);
 		    compositeLogin.setBackground(new Color(display,200,200,200));
@@ -482,6 +498,15 @@ public class AdminClient {
 		    compositeNavigation.setLayoutData(griddataNavigation);
 		    ((GridData)compositeNavigation.getLayoutData()).widthHint=150;
 		    compositeNavigation.setLayout(layoutOneColumn);
+		    
+	    compositeContent = new Composite(compositeMainClient, 0);
+		    compositeContent.setBackground(new Color(display,255,255,255));
+		    compositeContent.setLayoutData(griddataContent);
+		    compositeContent.setLayout(stackLayoutContent);
+		    
+	    compositeWelcomePage = new Composite(compositeContent, SWT.NONE);
+		    compositeWelcomePage.setBackground(new Color(display,255,255,255));
+		    compositeWelcomePage.setLayout(layoutMainClient);
 	}
 
 	private static void fillCompositeMainClient() {
@@ -574,12 +599,13 @@ public class AdminClient {
 	    layoutLogin = new GridLayout(5,false);
 //		    final StackLayout stackLoginLayout = new StackLayout();
 	    stackLayoutMain = new StackLayout();
+	    stackLayoutContent = new StackLayout();
 	    layoutOneColumn = new GridLayout(1,false);
 	      
     	shell.setLayout(stackLayoutMain);
 	}
 
-	private static void fillLoginWindow()
+	private static void fillCompositeLogin()
 	 {
 		 
 		    

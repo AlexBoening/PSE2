@@ -33,17 +33,13 @@ public class AdminClient {
 	static Display display;
 	static Shell shell;
 	
-	static GridLayout layoutMainClient;
-	static GridLayout layoutLogin;
-	static GridLayout layoutOneColumn;
-	static StackLayout stackLayoutMain;
-	static StackLayout stackLayoutContent;
+	static GridLayout layoutMainClient, layoutLogin, layoutOneColumn;
+
+	static StackLayout stackLayoutMain, stackLayoutContent;
 	
-	static GridData griddataWindow;
-	static GridData griddataHeader;
+	static GridData griddataWindow, griddataHeader, griddataNavigation, griddataContent, griddataLogoutButton;
 	
-	static Composite compositeLogin;
-	static Composite compositeMainClient;
+	static Composite compositeLogin, compositeMainClient;
 	
 	static Button loginButton;
 	
@@ -104,12 +100,11 @@ public class AdminClient {
 //		    GridData griddataHeader = new GridData(GridData.FILL, GridData.CENTER,true, false);
 		 	
 		    
-		    GridData griddataNavigation = new GridData();
-		    griddataNavigation.verticalAlignment = GridData.FILL;
-		    griddataNavigation.grabExcessVerticalSpace = true;
+//		    GridData griddataNavigation = new GridData();
+		 	
 		    
-		    GridData griddataMain = new GridData(GridData.FILL, GridData.CENTER,true, false);
-		    griddataMain.verticalAlignment = GridData.FILL;
+//		    GridData griddataContent = new GridData(GridData.FILL, GridData.CENTER,true, false);
+		 	
 		    
 		    final Composite compositeHorizontal = new Composite(compositeMainClient, 0);
 		    compositeHorizontal.setBackground(new Color(display,200,200,200));	
@@ -121,9 +116,9 @@ public class AdminClient {
 		    LabelHorizontal.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
 		    LabelHorizontal.setBackground(new Color(display, 200,200,200));
 		    final Button LogOut = new Button(compositeHorizontal, SWT.PUSH);
-		    GridData griddataHorizontal = new GridData(GridData.FILL, GridData.CENTER, true, false);
-		    griddataHorizontal.horizontalAlignment = GridData.END;
-		    LogOut.setLayoutData(griddataHorizontal);
+		    GridData griddataLogoutButton = new GridData(GridData.FILL, GridData.CENTER, true, false);
+		    griddataLogoutButton.horizontalAlignment = GridData.END;
+		    LogOut.setLayoutData(griddataLogoutButton);
 		    LogOut.setBackground(new Color(display, 31, 78, 121));
 		    LogOut.setText("Log out!");
 //		    compositeHorizontal.setLayout(layoutCompositeHorizontal);
@@ -143,8 +138,8 @@ public class AdminClient {
 		    ((GridData)compositeVertical.getLayoutData()).widthHint=150;
 		    
 //		    GridLayout layoutCompositeVertical = new GridLayout(1, false);
-		    final GridData griddataVertical = new GridData(GridData.FILL, GridData.FILL,true, false);
-		    griddataVertical.verticalAlignment = GridData.CENTER;
+		    final GridData griddataVertical = new GridData(GridData.FILL, GridData.CENTER,true, false);
+//		    griddataVertical.verticalAlignment = GridData.CENTER;
 		    
 		    final Button DeactivateAccount = new Button(compositeVertical, SWT.PUSH);
 		    DeactivateAccount.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -196,7 +191,7 @@ public class AdminClient {
 		    
 		    final Composite compositeMain = new Composite(compositeMainClient, 0);
 		    compositeMain.setBackground(new Color(display,255,255,255));
-		    compositeMain.setLayoutData(griddataMain);
+		    compositeMain.setLayoutData(griddataContent);
 //		    final StackLayout stacklayout = new StackLayout();
 		    stackLayoutContent = new StackLayout();
 		    compositeMain.setLayout(stackLayoutContent);
@@ -527,12 +522,21 @@ public class AdminClient {
 	    griddataHeader = new GridData(GridData.FILL, GridData.CENTER,true, false);
 		    griddataHeader.horizontalSpan = 2;
 		    
+	    griddataNavigation = new GridData();
+		    griddataNavigation.verticalAlignment = GridData.FILL;
+		    griddataNavigation.grabExcessVerticalSpace = true;
+		    
 	    compositeMainClient = new Composite(shell, 0);
 		    compositeMainClient.setBackground(new Color(display,255,255,255));
 		    compositeMainClient.setLayoutData(griddataWindow);
 		    compositeMainClient.setLayout(layoutMainClient);
-		 
-		 shell.setLayout(stackLayoutMain);
+		    
+	    griddataContent = new GridData(GridData.FILL, GridData.CENTER,true, false);
+		    griddataContent.verticalAlignment = GridData.FILL; 
+		    
+	    
+		    
+    	shell.setLayout(stackLayoutMain);
 	}
 
 	private static void FillLoginWindow()

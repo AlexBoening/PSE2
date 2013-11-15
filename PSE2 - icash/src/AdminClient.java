@@ -4,6 +4,9 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -74,6 +77,8 @@ public class AdminClient {
 		 	
 		    //Events
 		    
+	        
+	        
 		    buttonLogin.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
 			          stackLayoutMain.topControl = compositeMainClient;
@@ -312,6 +317,16 @@ public class AdminClient {
 		    buttonActivateAccount.setText("Acitvate Account");
 		    buttonActivateAccount.setBackground(new Color(display, 31, 78, 121));
 		    buttonActivateAccount.setLayoutData(griddataButton);
+		    
+		    ControlAdapter adapter = new ControlAdapter() 
+			{
+			    public void controlResized(ControlEvent e)
+			    {
+			    	kalkuliereSpaltenbreite(table,10);
+			    }
+			};
+			
+			table.addControlListener(adapter);
 		
 	}
 
@@ -550,4 +565,38 @@ public class AdminClient {
     	shell.setLayout(stackLayoutMain);
 	}
 
+	
+
+private static void kalkuliereSpaltenbreite(Table tabelle, int minBreite)
+	{
+		if(tabelle == null || tabelle.getColumns().length == 0)
+			return;
+		
+		int breite = tabelle.getSize().x - tabelle.getBorderWidth() * 2;
+		if(tabelle.getVerticalBar() != null && tabelle.getVerticalBar().isVisible())
+		{
+			breite -= tabelle.getVerticalBar().getSize().x;
+		}
+		
+		if(breite > minBreite)
+		{
+			int aktuelleBreite = 0;
+			int neueBreite = 0;
+			
+			for(TableColumn spalte : tabelle.getColumns())
+			{
+				aktuelleBreite += spalte.getWidth();
+			}
+			
+			for(int i = 0; i < tabelle.getColumns().length - 1; i++)
+			{
+				int spaltenBreite = (int)(tabelle.getColumn(i).getWidth() / (float)aktuelleBreite * breite);
+				
+				tabelle.getColumn(i).setWidth(spaltenBreite > 10 ? spaltenBreite : 10);
+				neueBreite += tabelle.getColumn(i).getWidth();
+			}
+			
+			tabelle.getColumn(tabelle.getColumns().length - 1).setWidth(breite - neueBreite);
+		}
+	}
 }

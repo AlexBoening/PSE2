@@ -53,7 +53,7 @@ public class RestResource {
 		
 		for (int i=0; i<t.length; i++) {
 			JSONObject transaction = new JSONObject();
-			transaction.put("amount", t[i].getAmount());
+			transaction.put("amount", Convert.toEuro(t[i].getAmount()));
 			transaction.put("id", t[i].getId());
 			
 			JSONObject receiver = new JSONObject();
@@ -135,7 +135,7 @@ public class RestResource {
 		// Build up transaction data
 		for (int i=0; i<t.length; i++) {
 			JSONObject transaction = new JSONObject();
-			transaction.put("amount", t[i].getAmount());
+			transaction.put("amount", Convert.toEuro(t[i].getAmount()));
 			transaction.put("id", t[i].getId());
 			
 			// Receiver Data
@@ -172,7 +172,7 @@ public class RestResource {
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
 	public Response transferMoney(@FormParam("senderNumber")int sender, 
 			                      @FormParam("receiverNumber")int receiver, 
-			                      @FormParam("amount")int amount, 
+			                      @FormParam("amount")String amountEuro, 
 			                      @FormParam("reference")String reference,
 			                      @Context HttpServletRequest req) {
     		
@@ -181,8 +181,9 @@ public class RestResource {
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
 		logger.info(new java.util.Date() + ": Method: transferMoney");
 		logger.info(new java.util.Date() + ": Sender: " + sender + "/ Receiver: " + receiver
-				                         + "/ Amount: " + amount + "/ Reference: " + reference);
+				                         + "/ Amount: " + amountEuro + "/ Reference: " + reference);
 
+		int amount = Convert.toCent(amountEuro);
 		if (sender == 0 || receiver == 0 || amount == 0)
 			return Response.status(400).build();
 		try {
@@ -211,7 +212,7 @@ public class RestResource {
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
 	public Response transferMoney(@FormParam("senderNumber")int sender, 
 			                      @FormParam("receiverNumber")int receiver, 
-			                      @FormParam("amount")int amount, 
+			                      @FormParam("amount")String amountEuro, 
 			                      @FormParam("reference")String reference,
 			                      @FormParam("kundenId")int customer,
 				                  @FormParam("passwortHash")String password,
@@ -222,8 +223,9 @@ public class RestResource {
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
 		logger.info(new java.util.Date() + ": Method: transferMoney");
 		logger.info(new java.util.Date() + ": Sender: " + sender + "/ Receiver: " + receiver
-				                         + "/ Amount: " + amount + "/ Reference: " + reference);
-
+				                         + "/ Amount: " + amountEuro + "/ Reference: " + reference);
+		
+		int amount = Convert.toCent(amountEuro);
 		Account outgoingAccount;
 		Account incomingAccount;
 		Transaction t;

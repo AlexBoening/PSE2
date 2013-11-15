@@ -318,15 +318,15 @@ public class AdminClient {
 		    buttonActivateAccount.setBackground(new Color(display, 31, 78, 121));
 		    buttonActivateAccount.setLayoutData(griddataButton);
 		    
-		    ControlAdapter adapter = new ControlAdapter() 
-			{
-			    public void controlResized(ControlEvent e)
-			    {
-			    	kalkuliereSpaltenbreite(table,10);
-			    }
-			};
+//		    ControlAdapter adapter = new ControlAdapter() 
+//			{
+//			    public void controlResized(ControlEvent e)
+//			    {
+//			    	kalkuliereSpaltenbreite(table,100);
+//			    }
+//			};
 			
-			table.addControlListener(adapter);
+//			table.addControlListener(adapter);
 		
 	}
 
@@ -567,36 +567,20 @@ public class AdminClient {
 
 	
 
-private static void kalkuliereSpaltenbreite(Table tabelle, int minBreite)
+	private static void kalkuliereSpaltenbreite(Table tabelle, int minBreite)
 	{
-		if(tabelle == null || tabelle.getColumns().length == 0)
-			return;
-		
 		int breite = tabelle.getSize().x - tabelle.getBorderWidth() * 2;
-		if(tabelle.getVerticalBar() != null && tabelle.getVerticalBar().isVisible())
-		{
-			breite -= tabelle.getVerticalBar().getSize().x;
-		}
+		int columns = tabelle.getColumns().length;
+		int neueBreite = 0;
 		
-		if(breite > minBreite)
-		{
-			int aktuelleBreite = 0;
-			int neueBreite = 0;
-			
-			for(TableColumn spalte : tabelle.getColumns())
-			{
-				aktuelleBreite += spalte.getWidth();
-			}
+	
 			
 			for(int i = 0; i < tabelle.getColumns().length - 1; i++)
 			{
-				int spaltenBreite = (int)(tabelle.getColumn(i).getWidth() / (float)aktuelleBreite * breite);
+				int spaltenBreite = (int)(tabelle.getColumn(i).getWidth());
 				
-				tabelle.getColumn(i).setWidth(spaltenBreite > 10 ? spaltenBreite : 10);
-				neueBreite += tabelle.getColumn(i).getWidth();
+				tabelle.getColumn(i).setWidth(spaltenBreite + breite/columns);
 			}
 			
-			tabelle.getColumn(tabelle.getColumns().length - 1).setWidth(breite - neueBreite);
 		}
 	}
-}

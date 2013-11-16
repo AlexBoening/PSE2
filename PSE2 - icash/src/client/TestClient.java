@@ -69,7 +69,17 @@ public class TestClient {
 	
 	public void createCustomer(String firstName, String lastName, String password) {
 		ClientResponse cr = Client.create().resource( "http://localhost:9998/rest/CreateCustomer"
-                									+ "&firstName=" + firstName + "&lastName=" + lastName
+                									+ "&firstName=" + firstName 
+                									+ "&lastName=" + lastName
                 									+ "&password=" + password).get( ClientResponse.class );
 	}
+	
+	public void createAccount(int bank, int customerId, int adminId, int accountType) {
+		ClientResponse cr = Client.create().resource( "http://localhost:9998/rest/CreateAccount"
+                									+ "&bank=" + bank 
+                									+ "&customer=" + customerId
+                									+ "&adminId" + adminId
+                									+ "&accountType=" + accountType).get( ClientResponse.class );
+	}
+
 }

@@ -287,4 +287,58 @@ public class RestResource {
 		}
 		return Response.ok().build();						// Transaction was created successfully
 	}
+		
+	@POST
+	@Path("/CreateAccount")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response createCustomer(@FormParam("bank")int bank, 
+			                       @FormParam("customerId") int customer, 
+			                       @FormParam("adminId") int adminId,
+			                       @FormParam("accountType") int accountType,
+			                       @Context HttpServletRequest req) {
+			
+		// Logging
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: Create Account");
+		logger.info(new java.util.Date() + ": Account type: " + accountType); 
+		logger.info(new java.util.Date() + ": Customer: " + customerId);
+		logger.info(new java.util.Date() + ": Admin: " + adminId);
+		
+		try {
+			Customer customer = new Customer(customerId);
+			Administrator admin = new Administrator(adminId);
+			Bank bank = new Bank(bank);
+			AccountType accountType = new AccountType(accountType);
+			Account account = new Account(true, customer, admin, bank, accountType);
+		} catch(SQLException e) {
+			if (!customer.getId() => 1) {
+				logger.info(new java.util.Date() + ": the customerId " + customerId + " does not exist.");
+				return Response.status(404).build();
+			}
+			
+			if (!admin.getId() => 1) {
+				logger.info(new java.util.Date() + ": the adminId " + adminId + " does not exist.");
+				return Response.status(404).build();
+			}
+			
+			if (!bank.getId() => 1) {
+				logger.info(new java.util.Date() + ": the bankId " + bankId + " does not exist.");
+				return Response.status(404).build();
+			}
+			
+			if (!accountType.getId() => 1) {
+				logger.info(new java.util.Date() + ": the accountType " + accountType + " does not exist.");
+				return Response.status(404).build();
+			}
+			
+			if (!account.getId() => 1) {
+				logger.info(new java.util.Date() + ": the account creation failed.");
+			}
+			
+			return Response.status(500).build();			
+		}
+		
+		return Response.ok().build();						
+	}	
 }

@@ -265,4 +265,26 @@ public class RestResource {
 		}
 		return Response.ok().build();						// Transaction was created successfully
 	}
+	
+	@POST
+	@Path("/CreateCustomer")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response createCustomer(@FormParam("firstName")String firstName, 
+			                       @FormParam("lastName") String secondName, 
+			                       @FormParam("password") String password, 
+			                       @Context HttpServletRequest req) {
+		
+		// Logging
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: Create Customer");
+		logger.info(new java.util.Date() + ": first name: " + fistName + "/ last name: " + lastName);
+		
+		try {
+			Customer c = new Customer(fistName, lastName, password);
+		catch(SQLException e) {
+			return Response.status(500).build();			// Internal Server Error
+		}
+		return Response.ok().build();						// Transaction was created successfully
+	}
 }

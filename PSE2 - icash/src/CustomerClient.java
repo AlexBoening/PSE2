@@ -1,6 +1,7 @@
 
 
-import java.sql.Date;
+import java.sql.*;
+import java.util.ArrayList;
 
 import javax.ws.rs.core.MediaType;
 
@@ -127,8 +128,12 @@ public class CustomerClient {
 		    
 		    buttonMenuViewTransaction.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
+		    	    compositeViewTransaction = new Composite(compositeContent, SWT.NONE);
+				    compositeViewTransaction.setBackground(new Color(display,255,255,255));
+				    compositeViewTransaction.setLayout(layoutMainClient);
+		        	fillcompositeViewTransaction();
 		        	stackLayoutContent.topControl = compositeViewTransaction;
-		          compositeContent.layout();
+		        	compositeContent.layout();
 		        }
 		      });
 		    
@@ -178,7 +183,7 @@ public class CustomerClient {
 		        public void handleEvent(Event event) {
 		        	  String amount = ((Text)event.widget.getData("amount")).getText();
 		        	  String description = ((Text)event.widget.getData("description")).getText();
-		        	  int status = transferMoney(accountId, getBankAccount(accountId), amount, description);
+		        	  int status = transferMoney(getBankAccount(accountId), accountId, amount, description);
 			        }
 			});
 		    
@@ -186,7 +191,7 @@ public class CustomerClient {
 		        public void handleEvent(Event event) {
 		        	  String amount = ((Text)event.widget.getData("amount")).getText();
 		        	  String description = ((Text)event.widget.getData("description")).getText();
-		        	  int status = transferMoney(getBankAccount(accountId),accountId, amount, description);
+		        	  int status = transferMoney(accountId, getBankAccount(accountId), amount, description);
 			    }
 			});
 		    
@@ -263,7 +268,7 @@ public class CustomerClient {
 		    		SWT.V_SCROLL | SWT.BORDER |
 		    		SWT.FULL_SELECTION );
 		    		// Drei Tabellenspalten erzeugen
-		    		final TableColumn col1 = new TableColumn(table,SWT.LEFT);
+		    		final TableColumn col1 = new TableColumn(table,SWT.RIGHT);
 		    		col1.setText("Amount");
 		    		col1.setWidth(100);
 		    		final TableColumn col2 = new TableColumn(table,SWT.LEFT);
@@ -284,7 +289,35 @@ public class CustomerClient {
 		    		
 		    		GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, true);
 		    		table.setLayoutData(ViewCompositeData);
-		
+		    		
+		    		if (accountId == 0)
+		    			return;
+		    		Account a = getAccount(accountId);
+		    		if (a != null) 
+		    			try {
+		    				Transaction[] t = new Transaction[a.getTransactions().size()];
+		    				a.getTransactions().toArray(t);
+		    		
+		    				for (int i=0; i<t.length; i++) {
+		    					TableItem item = new TableItem(table, SWT.NONE);
+		    					String[] column = new String[5];
+		    					column[0] = classes.Convert.toEuro(t[i].getAmount());
+		    					column[1] = t[i].getOutgoingAccount().getCustomer().getFirstName() + " " +
+		    								t[i].getOutgoingAccount().getCustomer().getSecondName();
+		    					column[2] = t[i].getIncomingAccount().getCustomer().getFirstName() + " " +
+		    								t[i].getIncomingAccount().getCustomer().getSecondName();
+		    					column[3] = t[i].getDescription();
+		    					column[4] = t[i].getDate().toString();
+		    					item.setText(column);
+		    				}
+		    			}
+		    			catch (SQLException e) {
+		    				// ToDo: Fehlerbehandlung!
+		    			}
+		    			else {
+		    				// Fehlermeldung: Account nicht gefunden!
+		    			}
+		    		compositeViewTransaction.pack();
 	}
 
 	private static void fillcompositePerformTransaction() {
@@ -683,7 +716,7 @@ public static Account getAccount(int number) {
     for (int i=0; i<ja.length(); i++) {
     	Transaction t = new Transaction();
     	JSONObject transaction = ja.getJSONObject(i);
-    	t.setAmount(transaction.getInt("amount"));
+    	t.setAmount(classes.Convert.toCent((transaction.getString("amount"))));
     	t.setDate(Date.valueOf(transaction.getString("transactionDate").substring(0, 10)));
     	t.setDescription(transaction.getString("reference"));
     	

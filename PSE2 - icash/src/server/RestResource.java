@@ -6,6 +6,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.core.Context;
@@ -170,6 +171,7 @@ public class RestResource {
 	@POST
 	@Path("/transferMoney")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response transferMoney(@FormParam("senderNumber")int sender, 
 			                      @FormParam("receiverNumber")int receiver, 
 			                      @FormParam("amount")String amountEuro, 
@@ -210,6 +212,7 @@ public class RestResource {
 	@POST
 	@Path("/s/transferMoney")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response transferMoney(@FormParam("senderNumber")int sender, 
 			                      @FormParam("receiverNumber")int receiver, 
 			                      @FormParam("amount")String amountEuro, 
@@ -278,10 +281,11 @@ public class RestResource {
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
 		logger.info(new java.util.Date() + ": Method: Create Customer");
-		logger.info(new java.util.Date() + ": first name: " + fistName + "/ last name: " + lastName);
+		logger.info(new java.util.Date() + ": first name: " + firstName + "/ last name: " + secondName);
 		
 		try {
-			Customer c = new Customer(fistName, lastName, password);
+			Customer c = new Customer(firstName, secondName, password);
+		}
 		catch(SQLException e) {
 			return Response.status(500).build();			// Internal Server Error
 		}
@@ -291,48 +295,55 @@ public class RestResource {
 	@POST
 	@Path("/CreateAccount")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
-	public Response createCustomer(@FormParam("bank")int bank, 
-			                       @FormParam("customerId") int customer, 
+	public Response createCustomer(@FormParam("bank")int bankId, 
+			                       @FormParam("customerId") int customerId, 
 			                       @FormParam("adminId") int adminId,
-			                       @FormParam("accountType") int accountType,
+			                       @FormParam("accountType") int accountTypeId,
 			                       @Context HttpServletRequest req) {
-			
+		
+		// Declarations
+		Customer customer = new Customer();
+		Administrator admin = new Administrator();
+		Bank bank = new Bank();
+		AccountType accountType = new AccountType();
+		Account account = new Account();
+		
 		// Logging
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
 		logger.info(new java.util.Date() + ": Method: Create Account");
-		logger.info(new java.util.Date() + ": Account type: " + accountType); 
+		logger.info(new java.util.Date() + ": Account type: " + accountTypeId); 
 		logger.info(new java.util.Date() + ": Customer: " + customerId);
 		logger.info(new java.util.Date() + ": Admin: " + adminId);
 		
 		try {
-			Customer customer = new Customer(customerId);
-			Administrator admin = new Administrator(adminId);
-			Bank bank = new Bank(bank);
-			AccountType accountType = new AccountType(accountType);
-			Account account = new Account(true, customer, admin, bank, accountType);
+			customer = new Customer(customerId);
+			admin = new Administrator(adminId);
+			bank = new Bank(bankId);
+			accountType = new AccountType(accountTypeId);
+			account = new Account(true, customer, admin, bank, accountType);
 		} catch(SQLException e) {
-			if (!customer.getId() => 1) {
+			if (customer.getId() <= 0) {
 				logger.info(new java.util.Date() + ": the customerId " + customerId + " does not exist.");
 				return Response.status(404).build();
 			}
 			
-			if (!admin.getId() => 1) {
+			if (admin.getId() <= 0) {
 				logger.info(new java.util.Date() + ": the adminId " + adminId + " does not exist.");
 				return Response.status(404).build();
 			}
 			
-			if (!bank.getId() => 1) {
+			if (bank.getId() <= 0) {
 				logger.info(new java.util.Date() + ": the bankId " + bankId + " does not exist.");
 				return Response.status(404).build();
 			}
 			
-			if (!accountType.getId() => 1) {
-				logger.info(new java.util.Date() + ": the accountType " + accountType + " does not exist.");
+			if (accountType.getId() <= 0) {
+				logger.info(new java.util.Date() + ": the accountType " + accountTypeId + " does not exist.");
 				return Response.status(404).build();
 			}
 			
-			if (!account.getId() => 1) {
+			if (account.getId() <= 0) {
 				logger.info(new java.util.Date() + ": the account creation failed.");
 			}
 			
@@ -341,4 +352,30 @@ public class RestResource {
 		
 		return Response.ok().build();						
 	}	
+	
+	@GET
+	@Path("/getBankAccount")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response getBankAccount(@QueryParam("account")int account,
+			                       @Context HttpServletRequest req) {
+		
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: getBankAccount");
+		logger.info(new java.util.Date() + ": Account: " + account);
+		
+		JSONObject jo = new JSONObject();
+		
+		try {
+			Account a = new Account(account);
+			if (a.getId() == 0)
+				return Response.status(404).build();			// Account does not exist
+		
+			jo.put("bankAccount", a.getBank().getBank_account().getId());
+			return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+		}
+		catch(SQLException e) {
+			return Response.status(500).build();            // Internal Server Error
+		}
+	}
 }

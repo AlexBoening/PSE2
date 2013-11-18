@@ -209,9 +209,7 @@ public class CustomerClient {
 
 	 private static void fillcompositeDepositPage() {
 		
-		 GridData DepositCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
-//		    CreateCustomerPage.setLayout(CreateCustomerComposite);
-		    
+		 GridData DepositCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);		    
 		 DepositCompositeData.horizontalSpan = 2;
 		    Label DepositCaptionLabel = new Label(compositeDepositPage, SWT.NONE);
 		    DepositCaptionLabel.setText("Deposit your Money");
@@ -239,7 +237,6 @@ public class CustomerClient {
 		    SepPerform4.setBackground(new Color(display,255,255,255));
 		    SepPerform4.setLayoutData(DepositCompositeData);
 		    
-//		    final Button buttonCreateCustomer = new Button(compositeCreateCustomer, SWT.PUSH);
 		    buttonCommitDeposit = new Button(compositeDepositPage, SWT.PUSH);
 		    buttonCommitDeposit.setText("Commit");
 		    buttonCommitDeposit.setBackground(new Color(display, 31, 78, 121));
@@ -253,7 +250,6 @@ public class CustomerClient {
 		 GridData CreateAccountCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
 		    
 		    CreateAccountCompositeData.horizontalSpan = 2;
-//		    CreateAccountPage.setLayout(CreateAccountComposite);
 		    
 		    Label PerformTransactionCaptionLabel = new Label(compositeViewTransaction, SWT.NONE);
 		    PerformTransactionCaptionLabel.setText("View Your Transaction");
@@ -331,13 +327,10 @@ public class CustomerClient {
 		    PerformTransactionCaptionLabel.setLayoutData(ViewCompositeData);
 		   
 		    PerformTransactionCaptionLabel.pack();
-		    //GridData CreateCustomerCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
-		    
-		    
+		    	    
 		    Label SepPerform3 = new Label(compositePerformTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    SepPerform3.setBackground(new Color(display,255,255,255));
 		    SepPerform3.setLayoutData(ViewCompositeData);
-		    //SepPerform3.setLayoutData(CreateCustomerCompositeData);
 		    
 		    Label PerformTransactionToAccountLabel = new Label(compositePerformTransaction,SWT.NONE);
 		    PerformTransactionToAccountLabel.setText("To Acc.:");
@@ -382,7 +375,6 @@ public class CustomerClient {
 	
 	private static void fillcompositeWithdrawPage() {
 		 GridData CreateCustomerCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
-//		    CreateCustomerPage.setLayout(CreateCustomerComposite);
 		    
 		    CreateCustomerCompositeData.horizontalSpan = 2;
 		    Label WithdrawCaptionLabel = new Label(compositeWithdrawPage, SWT.NONE);
@@ -411,7 +403,6 @@ public class CustomerClient {
 		    SepPerform4.setBackground(new Color(display,255,255,255));
 		    SepPerform4.setLayoutData(CreateCustomerCompositeData);
 		    
-//		    final Button buttonCreateCustomer = new Button(compositeCreateCustomer, SWT.PUSH);
 		    buttonCommitWithdraw = new Button(compositeWithdrawPage, SWT.PUSH);
 		    buttonCommitWithdraw.setText("Commit");
 		    buttonCommitWithdraw.setBackground(new Color(display, 31, 78, 121));
@@ -438,7 +429,6 @@ public class CustomerClient {
 	    LabelHorizontal.setText("iCash - The Best Bank");
 	    LabelHorizontal.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
 	    LabelHorizontal.setBackground(new Color(display, 200,200,200));
-//		    final Button buttonLogout = new Button(compositeHeader, SWT.PUSH);
 	    GridData griddataLogoutButton = new GridData(GridData.FILL, GridData.CENTER, true, false);
 	    griddataLogoutButton.horizontalAlignment = GridData.END;
 	    buttonLogout = new Button(compositeHeader, SWT.PUSH);
@@ -448,9 +438,7 @@ public class CustomerClient {
 	    
 	    //Navigation
 	    final GridData griddataMenuContent = new GridData(GridData.FILL, GridData.CENTER,true, false);
-//	    griddataVertical.verticalAlignment = GridData.CENTER;
 	    
-//	    final Button buttonDeactivateAccount = new Button(compositeNavigation, SWT.PUSH);
 	    buttonMenuViewTransaction = new Button(compositeNavigation, SWT.PUSH);
 		    buttonMenuViewTransaction.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		    buttonMenuViewTransaction.setText("View Transaction");
@@ -461,7 +449,6 @@ public class CustomerClient {
 		    placeholder4.setBackground(new Color(display, 200,200,200));
 		    placeholder4.setLayoutData(griddataMenuContent);
 	    
-//	    final Button buttonCreateAccount = new Button(compositeNavigation, SWT.PUSH);
 	    buttonMenuPerformPage = new Button(compositeNavigation, SWT.PUSH);
 	    buttonMenuPerformPage.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	    buttonMenuPerformPage.setText("Perform Transaction");
@@ -496,6 +483,16 @@ public class CustomerClient {
 	    Label placeholder8 = new Label(compositeNavigation, SWT.NONE | SWT.HORIZONTAL);
 		    placeholder8.setBackground(new Color(display, 200,200,200));
 		    placeholder8.setLayoutData(griddataMenuContent);
+		    
+		    Label CurrentBalanceText = new Label(compositeNavigation, SWT.END);
+		    CurrentBalanceText.setBackground(new Color(display, 200,200,200));
+		    griddataMenuContent.verticalAlignment = GridData.FILL;
+		    CurrentBalanceText.setText("Current Balance");
+		    CurrentBalanceText.setLayoutData(new GridData(SWT.FILL, SWT.END, true, true));
+		    Label CurrentBalance = new Label(compositeNavigation, SWT.FILL);
+		    CurrentBalance.setBackground(new Color(display, 70,200,230));
+		    griddataMenuContent.verticalAlignment = GridData.FILL;
+		    CurrentBalance.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 	    
 	}
 

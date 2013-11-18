@@ -152,7 +152,6 @@ public class AdminClient {
 	 private static void fillCompositeCreateCustomerPage() {
 		
 		 GridData CreateCustomerCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
-//		    CreateCustomerPage.setLayout(CreateCustomerComposite);
 		    
 		    CreateCustomerCompositeData.horizontalSpan = 2;
 		    Label CaptionCreateCustomerPage = new Label(compositeCreateCustomerPage, SWT.NONE);
@@ -187,7 +186,6 @@ public class AdminClient {
 		    SepPerform4.setBackground(new Color(display,255,255,255));
 		    SepPerform4.setLayoutData(CreateCustomerCompositeData);
 		    
-//		    final Button buttonCreateCustomer = new Button(compositeCreateCustomer, SWT.PUSH);
 		    buttonCreateCustomer = new Button(compositeCreateCustomerPage, SWT.PUSH);
 		    buttonCreateCustomer.setText("Create Customer");
 		    buttonCreateCustomer.setBackground(new Color(display, 31, 78, 121));
@@ -200,7 +198,6 @@ public class AdminClient {
 		 GridData CreateAccountCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
 		    
 		    CreateAccountCompositeData.horizontalSpan = 2;
-//		    CreateAccountPage.setLayout(CreateAccountComposite);
 		    
 		    Label CaptionCreateAccountPage = new Label(compositeCreateAccountPage, SWT.NONE);
 		    CaptionCreateAccountPage.setText("Create an Account");
@@ -209,11 +206,6 @@ public class AdminClient {
 		    Label SepPerform1 = new Label(compositeCreateAccountPage, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    SepPerform1.setBackground(new Color(display,255,255,255));
 		    SepPerform1.setLayoutData(CreateAccountCompositeData);
-		    
-//		    GridData griddataLabel = new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 1,1);
-		    
-		    //griddataText.horizontalSpan=1;
-		    //griddataText.widthHint= 400;
 		    
 		    Label BankLabel = new Label(compositeCreateAccountPage,SWT.NONE);
 		    BankLabel.setText("Bank:");
@@ -251,7 +243,6 @@ public class AdminClient {
 		    SepPerform2.setBackground(new Color(display,255,255,255));
 		    SepPerform2.setLayoutData(CreateAccountCompositeData);
 		    
-//		    final Button buttonCreateAccount = new Button(compositeCreateAccountPage, SWT.PUSH);
 		    buttonCreateAccount = new Button(compositeCreateAccountPage, SWT.PUSH);
 		    buttonCreateAccount.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
 		    buttonCreateAccount.setText("Create Account");
@@ -263,7 +254,6 @@ public class AdminClient {
 	private static void fillCompositeAccountPage() {
 		 
 		 GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
-//		    AccountPage.setLayout(ViewComposite);
 		    
 		    ViewCompositeData.horizontalSpan = 2;
 		    Label CaptionViewPage = new Label(compositeAccountPage, SWT.NONE);
@@ -273,7 +263,7 @@ public class AdminClient {
 		    		SWT.SINGLE | SWT.H_SCROLL |
 		    		SWT.V_SCROLL | SWT.BORDER |
 		    		SWT.FULL_SELECTION | SWT.FILL_EVEN_ODD);
-		    		// Drei Tabellenspalten erzeugen
+
 		    		final TableColumn col1 = new TableColumn(table,SWT.LEFT);
 		    		col1.setText("ID");
 		    		col1.setWidth(80);
@@ -292,7 +282,7 @@ public class AdminClient {
 		    		final TableColumn col6 = new TableColumn(table,SWT.LEFT);
 		    		col6.setText("Active");
 		    		col6.setWidth(80);
-		    		// Spaltenköpfe und Trennlinien sichtbar machen
+		    		
 		    		table.setHeaderVisible(true);
 		    		table.setLinesVisible(true);
 		    		
@@ -301,33 +291,17 @@ public class AdminClient {
 		    		table.setLayoutData(ViewCompositeData);
 		    CaptionViewPage.pack();
 		    
-//		    final GridData griddataButton = new GridData(GridData.BEGINNING, GridData.BEGINNING,true, false);
-		    
-		    
-//		    final Button buttonDeactivateAccount = new Button(compositeAccountPage, SWT.PUSH);
 		    buttonDeactivateAccount = new Button(compositeAccountPage, SWT.PUSH);
 		    buttonDeactivateAccount.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
 		    buttonDeactivateAccount.setText("Deacitvate Account");
 		    buttonDeactivateAccount.setBackground(new Color(display, 31, 78, 121));
 		    buttonDeactivateAccount.setLayoutData(griddataButton);
 		    
-//		    final Button buttonActivateAccount = new Button(compositeAccountPage, SWT.PUSH);
 		    buttonActivateAccount = new Button(compositeAccountPage, SWT.PUSH);
 		    buttonActivateAccount.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
 		    buttonActivateAccount.setText("Acitvate Account");
 		    buttonActivateAccount.setBackground(new Color(display, 31, 78, 121));
 		    buttonActivateAccount.setLayoutData(griddataButton);
-		    
-//		    ControlAdapter adapter = new ControlAdapter() 
-//			{
-//			    public void controlResized(ControlEvent e)
-//			    {
-//			    	kalkuliereSpaltenbreite(table,100);
-//			    }
-//			};
-			
-//			table.addControlListener(adapter);
-		
 	}
 
 	private static void fillCompositeWelcomePage() {
@@ -350,9 +324,7 @@ public class AdminClient {
 	    LabelHorizontal.setText("iCash - Administration");
 	    LabelHorizontal.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
 	    LabelHorizontal.setBackground(new Color(display, 200,200,200));
-//		    final Button buttonLogout = new Button(compositeHeader, SWT.PUSH);
-	    GridData griddataLogoutButton = new GridData(GridData.FILL, GridData.CENTER, true, false);
-	    griddataLogoutButton.horizontalAlignment = GridData.END;
+	    GridData griddataLogoutButton = new GridData(GridData.END, GridData.CENTER, true, false);
 	    buttonLogout = new Button(compositeHeader, SWT.PUSH);
 	    buttonLogout.setLayoutData(griddataLogoutButton);
 	    buttonLogout.setBackground(new Color(display, 31, 78, 121));
@@ -360,9 +332,7 @@ public class AdminClient {
 	    
 	    //Navigation
 	    final GridData griddataMenuContent = new GridData(GridData.FILL, GridData.CENTER,true, false);
-//	    griddataVertical.verticalAlignment = GridData.CENTER;
 	    
-//	    final Button buttonDeactivateAccount = new Button(compositeNavigation, SWT.PUSH);
 	    buttonMenuDeactivateAccount = new Button(compositeNavigation, SWT.PUSH);
 		    buttonMenuDeactivateAccount.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		    buttonMenuDeactivateAccount.setText("Deactivate Account");
@@ -373,7 +343,6 @@ public class AdminClient {
 		    placeholder4.setBackground(new Color(display, 200,200,200));
 		    placeholder4.setLayoutData(griddataMenuContent);
 	    
-//	    final Button buttonCreateAccount = new Button(compositeNavigation, SWT.PUSH);
 	    buttonMenuCreateAccount = new Button(compositeNavigation, SWT.PUSH);
 		    buttonMenuCreateAccount.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		    buttonMenuCreateAccount.setText("Create Account");
@@ -384,7 +353,6 @@ public class AdminClient {
 		    placeholder5.setBackground(new Color(display, 200,200,200));
 		    placeholder5.setLayoutData(griddataMenuContent);
 	    
-//	    final Button buttonCreateCustomer = new Button(compositeNavigation, SWT.PUSH);
 	    buttonMenuCreateCustomer = new Button(compositeNavigation, SWT.PUSH);
 		    buttonMenuCreateCustomer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		    buttonMenuCreateCustomer.setText("Create Customer");
@@ -466,7 +434,6 @@ public class AdminClient {
 			    placeholder3.setBackground(new Color(display,200,200,200));
 			    placeholder3.setLayoutData(griddataLoginButton);
 		    
-//		    final Button loginButton = new Button(compositeLogin,SWT.PUSH);
 		    buttonLogin = new Button(compositeLogin,SWT.PUSH);
 			    buttonLogin.setText("Login NOW!");
 			    buttonLogin.setLayoutData(griddataLoginButton);
@@ -522,9 +489,7 @@ public class AdminClient {
 	
 	private static void initializeGridData() {
 
-		griddataWindow = new GridData(GridData.FILL, GridData.CENTER,true, true);
-		    griddataWindow.horizontalAlignment=GridData.FILL;
-		    griddataWindow.verticalAlignment=GridData.FILL;
+		griddataWindow = new GridData(GridData.FILL, GridData.FILL,true, true);
 		    griddataWindow.horizontalSpan=5;
 		
 	    griddataHeader = new GridData(GridData.FILL, GridData.CENTER,true, false);
@@ -534,18 +499,15 @@ public class AdminClient {
 		    griddataNavigation.verticalAlignment = GridData.FILL;
 		    griddataNavigation.grabExcessVerticalSpace = true;
 		
-	    griddataContent = new GridData(GridData.FILL, GridData.CENTER,true, false);
-		    griddataContent.verticalAlignment = GridData.FILL; 
+	    griddataContent = new GridData(GridData.FILL, GridData.FILL,true, false);
 		    
 	    griddataButton = new GridData(GridData.BEGINNING, GridData.BEGINNING,true, false);
-		    griddataButton.horizontalAlignment = GridData.BEGINNING;
 		    griddataButton.widthHint = 110;
 		    griddataButton.horizontalSpan=1;
 		    
 	    griddataLabel = new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 1,1);
-		    //griddataLabel.horizontalSpan=1;
 		    griddataLabel.widthHint=90;
-//		    GridData griddataText = new GridData(GridData.FILL, GridData.CENTER, true, false, 1,1);
+		    
 	    griddataText = new GridData(GridData.FILL, GridData.CENTER, true, false, 1,1);
 		
 	}
@@ -553,34 +515,13 @@ public class AdminClient {
 	private static void initializeShell() {
 		
 		display = new Display();
-//		    final Shell shell = new Shell(display);
 	 	shell = new Shell(display);
 	    layoutMainClient = new GridLayout(2, false);
 	    layoutLogin = new GridLayout(5,false);
-//		    final StackLayout stackLoginLayout = new StackLayout();
 	    stackLayoutMain = new StackLayout();
 	    stackLayoutContent = new StackLayout();
 	    layoutOneColumn = new GridLayout(1,false);
 	      
     	shell.setLayout(stackLayoutMain);
 	}
-
-	
-
-	private static void kalkuliereSpaltenbreite(Table tabelle, int minBreite)
-	{
-		int breite = tabelle.getSize().x - tabelle.getBorderWidth() * 2;
-		int columns = tabelle.getColumns().length;
-		int neueBreite = 0;
-		
-	
-			
-			for(int i = 0; i < tabelle.getColumns().length - 1; i++)
-			{
-				int spaltenBreite = (int)(tabelle.getColumn(i).getWidth());
-				
-				tabelle.getColumn(i).setWidth(spaltenBreite + breite/columns);
-			}
-			
-		}
 	}

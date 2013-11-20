@@ -49,6 +49,7 @@ public class AdminClient {
 	static Button buttonLogin, buttonLogout, buttonMenuDeactivateAccount, buttonMenuCreateAccount, buttonMenuCreateCustomer, buttonDeactivateAccount
 					, buttonActivateAccount, buttonCreateAccount, buttonCreateCustomer;
 	
+	static Image imageLogo, imageTablePull;
 	
 	 public static void main(String[] args) {
 		 
@@ -393,6 +394,8 @@ public class AdminClient {
 			    griddataLoginButton.horizontalSpan=1;
 			    griddataLoginButton.heightHint = 35;
 		    
+			//imageLogo = new Image(compositeLogin)
+			    
 		    Label LoginCaption = new Label(compositeLogin,SWT.NONE);
 			    LoginCaption.setText("iCash - Administration");
 			    LoginCaption.setFont(new Font(null, "Tahoma",20, SWT.BOLD));

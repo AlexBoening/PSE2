@@ -1,9 +1,9 @@
-import java.sql.Date;
-
+import java.sql.*;
+import classes.*;
 
 public class DBTest {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException{
 		SQL.getConnection();
 		/*String[] values = {"2", "Festgeld-Konto", "5.70"};
 		

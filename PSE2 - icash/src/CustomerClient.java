@@ -1,6 +1,7 @@
 
 
 import java.sql.*;
+import classes.*;
 import java.util.ArrayList;
 
 import javax.ws.rs.core.MediaType;
@@ -123,7 +124,7 @@ public class CustomerClient {
 		        public void handleEvent(Event event) {
 		        	  server = ((Text)event.widget.getData("server")).getText();
 		        	  password = ((Text)event.widget.getData("password")).getText();
-		        	  accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
+		        	  accountId = classes.Convert.toInt(((Text)event.widget.getData("user")).getText());
 		        	  CurrentBalance.setText(getBalance(accountId));
 			          stackLayoutMain.topControl = compositeMainClient;
 			          shell.layout();

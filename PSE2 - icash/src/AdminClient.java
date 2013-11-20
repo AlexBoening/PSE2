@@ -31,6 +31,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+
 public class AdminClient {
 		
 	static Display display;
@@ -50,6 +53,10 @@ public class AdminClient {
 					, buttonActivateAccount, buttonCreateAccount, buttonCreateCustomer;
 	
 	static Image imageLogo, imageTablePull;
+	
+	private static String firstname;
+	private static String lastname;
+	private static String password;
 	
 	 public static void main(String[] args) {
 		 
@@ -134,7 +141,13 @@ public class AdminClient {
 		    
 		    buttonCreateCustomer.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-			          //do something here to create customer
+		        	Text t = (Text)event.widget.getData("firstname");
+		        	firstname = ((Text)event.widget.getData("firstname")).getText();
+		        	//lastname  = ((Text)event.widget.getData("lastname")).getText();
+		        	//password  = ((Text)event.widget.getData("password")).getText();
+		        	System.out.println(firstname + " " + lastname + " " + password);
+		        	//AdminClient.createCustomer(firstname, lastname, password);
+		        	//do something here to create customer
 			        }
 			      });
 		    
@@ -166,22 +179,26 @@ public class AdminClient {
 		    Label FirstnameLabel = new Label(compositeCreateCustomerPage,SWT.NONE);
 		    FirstnameLabel.setText("Firstname:");
 		    FirstnameLabel.setLayoutData(griddataLabel);
-			Text CreateCustomerTypeFirstname = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
+			Text CreateCustomerTypeFirstname = new Text(compositeCreateCustomerPage,SWT.BORDER);
+			//Text CreateCustomerTypeFirstname = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
+			//CreateCustomerTypeFirstname.setText("Jonas");
 			CreateCustomerTypeFirstname.setLayoutData(griddataText);
 			
 			Label LastnameLabel = new Label(compositeCreateCustomerPage, SWT.NONE);
 			LastnameLabel.setText("Lastname:");
 			LastnameLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeLastname = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
+			Text CreateAccountTypeLastname = new Text(compositeCreateCustomerPage,SWT.BORDER);
+			//Text CreateAccountTypeLastname = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
 			CreateAccountTypeLastname.setLayoutData(griddataText);
 			
 			Label InitPasswordLabel = new Label(compositeCreateCustomerPage, SWT.NONE);
 			InitPasswordLabel.setText("Initial Password:");
 			InitPasswordLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeInitPassword = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
+			Text CreateAccountTypeInitPassword = new Text(compositeCreateCustomerPage,SWT.BORDER);
+			//Text CreateAccountTypeInitPassword = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
 			CreateAccountTypeInitPassword.setLayoutData(griddataText);
 		    
-		    CaptionCreateCustomerPage.pack();
+			CaptionCreateCustomerPage.pack();
 		    
 		    Label SepPerform4 = new Label(compositeCreateCustomerPage, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    SepPerform4.setBackground(new Color(display,255,255,255));
@@ -191,7 +208,12 @@ public class AdminClient {
 		    buttonCreateCustomer.setText("Create Customer");
 		    buttonCreateCustomer.setBackground(new Color(display, 31, 78, 121));
 		    buttonCreateCustomer.setLayoutData(griddataButton);
-		
+			buttonCreateCustomer.setData("fistname", CreateCustomerTypeFirstname);
+		    buttonCreateCustomer.setData("lastname", CreateAccountTypeLastname);
+		    buttonCreateCustomer.setData("password", CreateAccountTypeInitPassword);
+		    compositeCreateCustomerPage.pack();
+		    
+		    
 	}
 
 	private static void fillCompositeCreateAccountPage() {
@@ -544,4 +566,14 @@ public class AdminClient {
 	    
     	shell.setLayout(stackLayoutMain);
 	}
+	
+
+// Methoden zur Datenübertragung an die Rest-ressource
+	public static void createCustomer(String firstName, String lastName, String password) {
+		ClientResponse cr = Client.create().resource( "http://localhost:9998/rest/CreateCustomer"
+            										+ "&firstName=" + firstName 
+            										+ "&lastName=" + lastName
+            										+ "&password=" + password).get( ClientResponse.class );
 	}
+
+}

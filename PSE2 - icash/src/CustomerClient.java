@@ -425,6 +425,14 @@ public class CustomerClient {
 		    CaptionWelcomePage.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
 		    CaptionWelcomePage.setLayoutData(WelcomeCompositeData);
 		
+		    Label labelForImage = new Label(compositeWelcomePage, SWT.None);
+		    final GridData griddataCaption = new GridData(GridData.FILL, GridData.FILL,false, false);
+		    griddataCaption.heightHint=236;
+		    griddataCaption.widthHint=310;
+		    
+		    labelForImage.setBackgroundImage(imageTablePull);
+		    labelForImage.setLayoutData(griddataCaption);
+		    
 	}
 
 	private static void fillCompositeMainClient() {
@@ -675,7 +683,7 @@ public class CustomerClient {
 	    stackLayoutContent = new StackLayout();
 	    layoutOneColumn = new GridLayout(1,false);
 	    imageLogo = new Image(display, ".\\src\\iCash - Logo.png");
-	      
+	    imageTablePull = new Image(display, ".\\src\\TablePull.png");  
     	shell.setLayout(stackLayoutMain);
 	}
 

@@ -1,7 +1,6 @@
 
 
 import java.sql.*;
-import classes.*;
 import java.util.ArrayList;
 
 import javax.ws.rs.core.MediaType;
@@ -46,6 +45,7 @@ import classes.Transaction;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.representation.Form;
+import classes.*;
 
 public class CustomerClient {
 		
@@ -67,6 +67,8 @@ public class CustomerClient {
 	
 	static Image imageLogo, imageTablePull;
 	
+	private static boolean securityMode = true;
+	private static int customerId;
 	private static int accountId;
 	private static String password;
 	private static String server;
@@ -124,10 +126,13 @@ public class CustomerClient {
 		        public void handleEvent(Event event) {
 		        	  server = ((Text)event.widget.getData("server")).getText();
 		        	  password = ((Text)event.widget.getData("password")).getText();
-		        	  accountId = classes.Convert.toInt(((Text)event.widget.getData("user")).getText());
-		        	  CurrentBalance.setText(getBalance(accountId));
-			          stackLayoutMain.topControl = compositeMainClient;
-			          shell.layout();
+		        	  accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
+		        	  customerId = getCustomer(accountId);
+		        	  if (customerId != 0) {
+		        		  CurrentBalance.setText(getBalance(accountId));
+		        		  stackLayoutMain.topControl = compositeMainClient;
+			          	shell.layout();
+		        	  }
 			          //compositeNavigation.layout();
 			        }
 			      });
@@ -182,6 +187,7 @@ public class CustomerClient {
 		        	  String amount = ((Text)event.widget.getData("amount")).getText();
 		        	  String description = ((Text)event.widget.getData("description")).getText();
 		        	  int status = transferMoney(accountId, toAccount, amount, description);
+		        	  CurrentBalance.setText(getBalance(accountId));
 		        }
 			});
 		    
@@ -190,6 +196,7 @@ public class CustomerClient {
 		        	  String amount = ((Text)event.widget.getData("amount")).getText();
 		        	  String description = ((Text)event.widget.getData("description")).getText();
 		        	  int status = transferMoney(getBankAccount(accountId), accountId, amount, description);
+		        	  CurrentBalance.setText(getBalance(accountId));
 			        }
 			});
 		    
@@ -198,6 +205,7 @@ public class CustomerClient {
 		        	  String amount = ((Text)event.widget.getData("amount")).getText();
 		        	  String description = ((Text)event.widget.getData("description")).getText();
 		        	  int status = transferMoney(accountId, getBankAccount(accountId), amount, description);
+		        	  CurrentBalance.setText(getBalance(accountId));
 			    }
 			});
 		    
@@ -727,8 +735,12 @@ private static void kalkuliereSpaltenbreite(Table tabelle, int minBreite)
 //------------ Business Logic ----------------------------//
 
 public static Account getAccount(int number) {
-	ClientResponse cr = Client.create().resource( server + "/rest/getAccount?number=" + number ).get( ClientResponse.class );
-    if (cr.hasEntity()) {
+	
+	String GETString = server + "/rest/getAccount?number=" + number;
+	if (securityMode) 
+		GETString = server + "/rest/s/getAccount?number=" + number + "&kundenID=" + customerId + "&passwortHash=" + password; 
+	ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+    if (cr.hasEntity() && cr.getStatus() == 200) {
 	JSONObject jo = new JSONObject(cr.getEntity(String.class));
     Account a = new Account();
     a.setId(jo.getInt("number"));
@@ -779,19 +791,25 @@ public static int transferMoney(int senderNumber, int receiverNumber, String amo
 	f.add("receiverNumber", receiverNumber);
 	f.add("amount", amount);
 	f.add("reference", reference);
+	if (securityMode) {
+		f.add("kundenID", customerId);
+		f.add("passwortHash", password);
+	}
 	
 	ClientResponse cr = Client.create().resource( server + "/rest/transferMoney" ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
-	if (cr.hasEntity())
+	if (cr.hasEntity() && cr.getStatus() == 200)
 		return cr.getStatus();
 	else
 		return 500;
 }
 
 	public static int getBankAccount(int id) {
-		ClientResponse cr = Client.create().resource( server 
-				                                    + "/rest/getBankAccount"
-				                                    + "?account=" + id).get( ClientResponse.class );
-		if (cr.hasEntity()) {
+		String GETString = server + "/rest/getBankAccount" + "?account=" + id;
+		if (securityMode) {
+			GETString = server + "/rest/s/getBankAccount" + "?account=" + id + "&kundenID=" + customerId + "&passwortHash=" + password; 
+		}
+		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		if (cr.hasEntity() && cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			return jo.getInt("bankAccount");
 		}
@@ -800,15 +818,37 @@ public static int transferMoney(int senderNumber, int receiverNumber, String amo
 	}
 	
 	public static String getBalance(int id) {
-		ClientResponse cr = Client.create().resource( server 
-                                                    + "/rest/getBalance"
-                                                    + "?account=" + id).get( ClientResponse.class );
-		if (cr.hasEntity()) {
+		
+		String GETString = server + "/rest/getBalance" + "?account=" + id;
+		if (securityMode) {
+			GETString = server + "/rest/s/getBalance" + "?account=" + id + "&kundenID=" + customerId + "&passwortHash=" + password; 
+		}
+		
+		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		if (cr.hasEntity() && cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			String balance = jo.getString("balance");
 			return balance;
 		}
 		else
 			return "";
+	}
+	
+	public static int getCustomer(int id) {
+		
+		String GETString = server + "/rest/getCustomer" + "?account=" + id;
+		if (securityMode) {
+			GETString = server + "/rest/s/getCustomer" + "?account=" + id + "&passwortHash=" + password; 
+		}
+		
+		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		
+		if (cr.hasEntity() && cr.getStatus() == 200) {
+			JSONObject jo = new JSONObject(cr.getEntity(String.class));
+			int customer = jo.getInt("customer");
+			return customer;
+		}
+		else
+			return 0;
 	}
 }

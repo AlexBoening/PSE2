@@ -64,6 +64,8 @@ public class CustomerClient {
 	static Button buttonLogin, buttonLogout, buttonMenuViewTransaction, buttonCommitViewTransaction, buttonMenuPerformPage, buttonMenuDepositPage
 					, buttonMenuWithdrawPage, buttonCommitWithdraw, buttonCommitDeposit, buttonCommitPerformTransaction;
 	
+	static Label labelDisplayCurrentBalance;
+	
 	private static int accountId;
 	private static String password;
 	private static String server;
@@ -122,6 +124,7 @@ public class CustomerClient {
 		        	  password = ((Text)event.widget.getData("password")).getText();
 		        	  accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
 			          stackLayoutMain.topControl = compositeMainClient;
+			          //labelDisplayCurrentBalance.setText
 			          shell.layout();
 			        }
 			      });
@@ -489,10 +492,10 @@ public class CustomerClient {
 		    griddataMenuContent.verticalAlignment = GridData.FILL;
 		    CurrentBalanceText.setText("Current Balance");
 		    CurrentBalanceText.setLayoutData(new GridData(SWT.FILL, SWT.END, true, true));
-		    Label CurrentBalance = new Label(compositeNavigation, SWT.FILL);
-		    CurrentBalance.setBackground(new Color(display, 70,200,230));
+		    labelDisplayCurrentBalance = new Label(compositeNavigation, SWT.FILL);
+		    labelDisplayCurrentBalance.setBackground(new Color(display, 70,200,230));
 		    griddataMenuContent.verticalAlignment = GridData.FILL;
-		    CurrentBalance.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+		    labelDisplayCurrentBalance.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 	    
 	}
 

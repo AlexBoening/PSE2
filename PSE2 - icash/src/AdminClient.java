@@ -322,8 +322,8 @@ public class AdminClient {
 
 		//Header
 		final GridData griddataCaption = new GridData(GridData.FILL, GridData.FILL,false, false);
-	    griddataCaption.heightHint=100;
-	    griddataCaption.widthHint=650;
+	    griddataCaption.heightHint=58;
+	    griddataCaption.widthHint=625;
 	    
 	    Label LabelHorizontal = new Label(compositeHeader,SWT.NONE);
 	    //LabelHorizontal.setText("iCash - Administration");
@@ -386,9 +386,9 @@ public class AdminClient {
 		 
 		    
 		    final GridData griddataCaption = new GridData(GridData.FILL, GridData.FILL,false, false);
-			    griddataCaption.heightHint=100;
+			    griddataCaption.heightHint=58;
 			    griddataCaption.horizontalSpan=5;
-			    griddataCaption.widthHint=650;
+			    griddataCaption.widthHint=625;
 		    
 		    final GridData griddataDescription = new GridData(GridData.FILL, GridData.FILL,false, false);
 		    	griddataDescription.horizontalSpan=2;

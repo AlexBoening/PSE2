@@ -64,11 +64,10 @@ public class CustomerClient {
 	static Button buttonLogin, buttonLogout, buttonMenuViewTransaction, buttonCommitViewTransaction, buttonMenuPerformPage, buttonMenuDepositPage
 					, buttonMenuWithdrawPage, buttonCommitWithdraw, buttonCommitDeposit, buttonCommitPerformTransaction;
 	
-	static Label labelDisplayCurrentBalance;
-	
 	private static int accountId;
 	private static String password;
 	private static String server;
+	private static Label CurrentBalance;
 		   
 	
 /*    GridData Captiondata = new GridData(GridData.FILL, GridData.FILL,true, false);
@@ -123,9 +122,10 @@ public class CustomerClient {
 		        	  server = ((Text)event.widget.getData("server")).getText();
 		        	  password = ((Text)event.widget.getData("password")).getText();
 		        	  accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
+		        	  CurrentBalance.setText(getBalance(accountId));
 			          stackLayoutMain.topControl = compositeMainClient;
-			          //labelDisplayCurrentBalance.setText
 			          shell.layout();
+			          //compositeNavigation.layout();
 			        }
 			      });
 		    
@@ -492,11 +492,16 @@ public class CustomerClient {
 		    griddataMenuContent.verticalAlignment = GridData.FILL;
 		    CurrentBalanceText.setText("Current Balance");
 		    CurrentBalanceText.setLayoutData(new GridData(SWT.FILL, SWT.END, true, true));
-		    labelDisplayCurrentBalance = new Label(compositeNavigation, SWT.FILL);
-		    labelDisplayCurrentBalance.setBackground(new Color(display, 70,200,230));
+		    
+		    //GridData test  = new GridData(SWT.CENTER, SWT.CENTER, true, false);
+		    
+		    CurrentBalance = new Label(compositeNavigation, SWT.FILL);
+		    CurrentBalance.setBackground(new Color(display, 70,200,230));
+		    CurrentBalance.setAlignment(SWT.HORIZONTAL);
 		    griddataMenuContent.verticalAlignment = GridData.FILL;
-		    labelDisplayCurrentBalance.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-	    
+		    if (accountId != 0)
+		        CurrentBalance.setText(getBalance(accountId));
+		    CurrentBalance.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 	}
 
 	private static void fillCompositeLogin()
@@ -771,5 +776,18 @@ public static int transferMoney(int senderNumber, int receiverNumber, String amo
 		}
 		else
 			return 0;
+	}
+	
+	public static String getBalance(int id) {
+		ClientResponse cr = Client.create().resource( server 
+                                                    + "/rest/getBalance"
+                                                    + "?account=" + id).get( ClientResponse.class );
+		if (cr.hasEntity()) {
+			JSONObject jo = new JSONObject(cr.getEntity(String.class));
+			String balance = jo.getString("balance");
+			return balance;
+		}
+		else
+			return "";
 	}
 }

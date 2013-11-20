@@ -420,6 +420,7 @@ public class AdminClient {
 			    ServerLabel.setLayoutData(griddataDescription);
 		    
 		    Text ServerText = new Text(compositeLogin,SWT.BORDER);
+		    	ServerText.setText("http://localhost:9998");
 		    	ServerText.setLayoutData(griddataTexts);
 		    
 		    Label UserLabel = new Label(compositeLogin, SWT.NONE);

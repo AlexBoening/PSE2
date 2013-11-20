@@ -424,7 +424,7 @@ public class AdminClient {
 		    	ServerText.setLayoutData(griddataTexts);
 		    
 		    Label UserLabel = new Label(compositeLogin, SWT.NONE);
-			    UserLabel.setText("Username:");
+			    UserLabel.setText("Account:");
 			    UserLabel.setLayoutData(griddataDescription);
 		    
 		    Text UserText = new Text(compositeLogin,SWT.BORDER);

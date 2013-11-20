@@ -321,10 +321,15 @@ public class AdminClient {
 	private static void fillCompositeMainClient() {
 
 		//Header
+		final GridData griddataCaption = new GridData(GridData.FILL, GridData.FILL,false, false);
+	    griddataCaption.heightHint=100;
+	    griddataCaption.widthHint=650;
+	    
 	    Label LabelHorizontal = new Label(compositeHeader,SWT.NONE);
-	    LabelHorizontal.setText("iCash - Administration");
+	    //LabelHorizontal.setText("iCash - Administration");
+	    LabelHorizontal.setBackgroundImage(imageLogo);
 	    LabelHorizontal.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
-	    LabelHorizontal.setBackground(new Color(display, 200,200,200));
+	    LabelHorizontal.setLayoutData(griddataCaption);
 	    GridData griddataLogoutButton = new GridData(GridData.END, GridData.CENTER, true, false);
 	    buttonLogout = new Button(compositeHeader, SWT.PUSH);
 	    buttonLogout.setLayoutData(griddataLogoutButton);
@@ -380,9 +385,10 @@ public class AdminClient {
 	 {
 		 
 		    
-		    final GridData griddataCaption = new GridData(GridData.FILL, GridData.FILL,true, false);
-			    griddataCaption.heightHint=35;
+		    final GridData griddataCaption = new GridData(GridData.FILL, GridData.FILL,false, false);
+			    griddataCaption.heightHint=100;
 			    griddataCaption.horizontalSpan=5;
+			    griddataCaption.widthHint=650;
 		    
 		    final GridData griddataDescription = new GridData(GridData.FILL, GridData.FILL,false, false);
 		    	griddataDescription.horizontalSpan=2;
@@ -394,11 +400,12 @@ public class AdminClient {
 			    griddataLoginButton.horizontalSpan=1;
 			    griddataLoginButton.heightHint = 35;
 		    
-			//imageLogo = new Image(compositeLogin)
-			    
+			
+			//compositeLogin.setBackgroundImage(imageLogo);    
 		    Label LoginCaption = new Label(compositeLogin,SWT.NONE);
-			    LoginCaption.setText("iCash - Administration");
+			    //LoginCaption.setText("iCash - Administration");
 			    LoginCaption.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
+			    LoginCaption.setBackgroundImage(imageLogo);
 			    LoginCaption.setLayoutData(griddataCaption);
 		    
 		    Label ServerLabel = new Label(compositeLogin, SWT.NONE);
@@ -524,7 +531,8 @@ public class AdminClient {
 	    stackLayoutMain = new StackLayout();
 	    stackLayoutContent = new StackLayout();
 	    layoutOneColumn = new GridLayout(1,false);
-	      
+	    imageLogo = new Image(display, ".\\src\\iCash - Logo.png");
+	    
     	shell.setLayout(stackLayoutMain);
 	}
 	}

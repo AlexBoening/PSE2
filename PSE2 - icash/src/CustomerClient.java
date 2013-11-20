@@ -64,6 +64,8 @@ public class CustomerClient {
 	static Button buttonLogin, buttonLogout, buttonMenuViewTransaction, buttonCommitViewTransaction, buttonMenuPerformPage, buttonMenuDepositPage
 					, buttonMenuWithdrawPage, buttonCommitWithdraw, buttonCommitDeposit, buttonCommitPerformTransaction;
 	
+	static Image imageLogo, imageTablePull;
+	
 	private static int accountId;
 	private static String password;
 	private static String server;
@@ -428,10 +430,16 @@ public class CustomerClient {
 	private static void fillCompositeMainClient() {
 
 		//Header
+		final GridData griddataCaption = new GridData(GridData.FILL, GridData.FILL,false, false);
+	    griddataCaption.heightHint=58;
+	    griddataCaption.widthHint=625;
+		
 	    Label LabelHorizontal = new Label(compositeHeader,SWT.NONE);
-	    LabelHorizontal.setText("iCash - The Best Bank");
-	    LabelHorizontal.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
-	    LabelHorizontal.setBackground(new Color(display, 200,200,200));
+	    LabelHorizontal.setBackgroundImage(imageLogo);
+	    //LabelHorizontal.setText("iCash - The Best Bank");
+	    //LabelHorizontal.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
+	    //LabelHorizontal.setBackground(new Color(display, 200,200,200));
+	    LabelHorizontal.setLayoutData(griddataCaption);
 	    GridData griddataLogoutButton = new GridData(GridData.FILL, GridData.CENTER, true, false);
 	    griddataLogoutButton.horizontalAlignment = GridData.END;
 	    buttonLogout = new Button(compositeHeader, SWT.PUSH);
@@ -508,8 +516,9 @@ public class CustomerClient {
 	 {
 		 
 		    
-		    final GridData griddataCaption = new GridData(GridData.FILL, GridData.FILL,true, false);
-			    griddataCaption.heightHint=35;
+		    final GridData griddataCaption = new GridData(GridData.FILL, GridData.FILL,false, false);
+			    griddataCaption.heightHint=58;
+			    griddataCaption.widthHint=625;
 			    griddataCaption.horizontalSpan=5;
 		    
 		    final GridData griddataDescription = new GridData(GridData.FILL, GridData.FILL,false, false);
@@ -523,8 +532,9 @@ public class CustomerClient {
 			    griddataLoginButton.heightHint = 35;
 		    
 		    Label LoginCaption = new Label(compositeLogin,SWT.NONE);
-			    LoginCaption.setText("iCash - The Best Bank");
-			    LoginCaption.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
+		    LoginCaption.setBackgroundImage(imageLogo);
+			    //LoginCaption.setText("iCash - The Best Bank");
+			    //LoginCaption.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
 			    LoginCaption.setLayoutData(griddataCaption);
 		    
 		    Label ServerLabel = new Label(compositeLogin, SWT.NONE);
@@ -664,6 +674,7 @@ public class CustomerClient {
 	    stackLayoutMain = new StackLayout();
 	    stackLayoutContent = new StackLayout();
 	    layoutOneColumn = new GridLayout(1,false);
+	    imageLogo = new Image(display, ".\\src\\iCash - Logo.png");
 	      
     	shell.setLayout(stackLayoutMain);
 	}

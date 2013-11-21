@@ -63,7 +63,7 @@ public class CustomerClient {
 					,compositePerformTransaction, compositeDepositPage,compositeWithdrawPage;
 	
 	static Button buttonLogin, buttonLogout, buttonMenuViewTransaction, buttonCommitViewTransaction, buttonMenuPerformPage, buttonMenuDepositPage
-					, buttonMenuWithdrawPage, buttonCommitWithdraw, buttonCommitDeposit, buttonCommitPerformTransaction;
+					, buttonMenuWithdrawPage, buttonCommitWithdraw, buttonCommitDeposit, buttonCommitPerformTransaction, buttonCommitPDF;
 	
 	static Image imageLogo, imageTablePull;
 	
@@ -209,6 +209,12 @@ public class CustomerClient {
 			    }
 			});
 		    
+		    buttonCommitPDF.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	  // Methode für PDF Druck hier!
+			    }
+			});
+
 		    //Events
 		    
 		    shell.pack();
@@ -261,17 +267,17 @@ public class CustomerClient {
 
 	private static void fillcompositeViewTransaction() {
 		
-		 GridData CreateAccountCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
+		 GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
 		    
-		    CreateAccountCompositeData.horizontalSpan = 2;
+		 ViewCompositeData.horizontalSpan = 2;
 		    
 		    Label PerformTransactionCaptionLabel = new Label(compositeViewTransaction, SWT.NONE);
 		    PerformTransactionCaptionLabel.setText("View Your Transaction");
-		    PerformTransactionCaptionLabel.setLayoutData(CreateAccountCompositeData);
+		    PerformTransactionCaptionLabel.setLayoutData(ViewCompositeData);//(CreateAccountCompositeData);
 		    
 		    Label SepPerform1 = new Label(compositeViewTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    SepPerform1.setBackground(new Color(display,255,255,255));
-		    SepPerform1.setLayoutData(CreateAccountCompositeData);
+		    SepPerform1.setLayoutData(ViewCompositeData);
 		    
 		    final Table table = new Table(compositeViewTransaction,
 		    		SWT.SINGLE | SWT.H_SCROLL |
@@ -297,8 +303,13 @@ public class CustomerClient {
 		    		table.setHeaderVisible(true);
 		    		table.setLinesVisible(true);
 		    		
-		    		GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, true);
+		    		ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, true);
 		    		table.setLayoutData(ViewCompositeData);
+		    		
+				    buttonCommitPDF = new Button(compositeDepositPage, SWT.PUSH);
+				    buttonCommitPDF.setText("Print Transactions");
+				    buttonCommitPDF.setBackground(new Color(display, 31, 78, 121));
+				    buttonCommitPDF.setLayoutData(griddataButton);
 		    		
 		    		if (accountId == 0)
 		    			return;

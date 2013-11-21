@@ -307,6 +307,7 @@ public class CustomerClient {
 		    		ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, true);
 		    		table.setLayoutData(ViewCompositeData);
 		    		
+		    		ViewCompositeData.horizontalSpan = 2;
 				    buttonCommitPDF = new Button(compositeViewTransaction, SWT.PUSH);
 				    buttonCommitPDF.setText("Print Transactions");
 				    buttonCommitPDF.setBackground(new Color(display, 31, 78, 121));

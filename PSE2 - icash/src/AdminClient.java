@@ -38,7 +38,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 
 public class AdminClient {
-		
+		//Test-Kommentar
 	static Display display;
 	static Shell shell;
 	

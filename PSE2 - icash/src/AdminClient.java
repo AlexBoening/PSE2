@@ -30,6 +30,9 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
+import org.json.JSONObject;
+
+import classes.Convert;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -54,9 +57,10 @@ public class AdminClient {
 	
 	static Image imageLogo, imageTablePull;
 	
-	private static String firstname;
-	private static String lastname;
+	private static boolean securityMode = true;
+	private static int accountId;
 	private static String password;
+	private static String server;
 	
 	 public static void main(String[] args) {
 		 
@@ -89,10 +93,16 @@ public class AdminClient {
 	        
 		    buttonLogin.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
+	        	  server = ((Text)event.widget.getData("server")).getText();
+	        	  password = ((Text)event.widget.getData("password")).getText();
+	        	  accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
+	        	  int adminId = getAdmin(accountId);
+	        	  //if (adminId != 0) {
 			          stackLayoutMain.topControl = compositeMainClient;
 			          shell.layout();
-			        }
-			      });
+	        	  //}
+			    }
+			   });
 		    
 		    buttonMenuDeactivateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
@@ -104,9 +114,9 @@ public class AdminClient {
 		    buttonMenuCreateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
 		        	stackLayoutContent.topControl = compositeCreateAccountPage;
-			          compositeContent.layout();
-			        }
-			      });
+			        compositeContent.layout();
+			    }
+			});
 		    
 		    buttonMenuCreateCustomer.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
@@ -135,21 +145,25 @@ public class AdminClient {
 		    
 		    buttonCreateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-			          //do something here to create account
-			        }
-			      });
+		        	int bank = Convert.toInt(((Text)event.widget.getData("bank")).getText());
+		        	int customer = Convert.toInt(((Text)event.widget.getData("customer")).getText());
+		        	int responsible = Convert.toInt(((Text)event.widget.getData("responsible")).getText());
+		        	int accountType = Convert.toInt(((Text)event.widget.getData("accountType")).getText());
+		        	//String active = ((Text)event.widget.getData("active")).getText();
+		        	AdminClient.createAccount(bank, customer, responsible, accountType);
+		        }
+	        });
 		    
 		    buttonCreateCustomer.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-		        	Text t = (Text)event.widget.getData("firstname");
-		        	firstname = ((Text)event.widget.getData("firstname")).getText();
-		        	//lastname  = ((Text)event.widget.getData("lastname")).getText();
-		        	//password  = ((Text)event.widget.getData("password")).getText();
-		        	System.out.println(firstname + " " + lastname + " " + password);
-		        	//AdminClient.createCustomer(firstname, lastname, password);
-		        	//do something here to create customer
-			        }
-			      });
+		        	//Text t = (Text)event.widget.getData("firstname");
+		        	String firstname = ((Text)event.widget.getData("firstname")).getText();
+		        	String lastname  = ((Text)event.widget.getData("lastname")).getText();
+		        	String password  = ((Text)event.widget.getData("password")).getText();
+		        	//System.out.println(firstname + " " + lastname + " " + password);
+		        	AdminClient.createCustomer(firstname, lastname, password);
+        	  	}
+	        });
 		    
 		    //Events
 		    
@@ -166,7 +180,7 @@ public class AdminClient {
 	 private static void fillCompositeCreateCustomerPage() {
 		
 		 GridData CreateCustomerCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
-		    
+		 
 		    CreateCustomerCompositeData.horizontalSpan = 2;
 		    Label CaptionCreateCustomerPage = new Label(compositeCreateCustomerPage, SWT.NONE);
 		    CaptionCreateCustomerPage.setText("Create a new Customer");
@@ -179,41 +193,35 @@ public class AdminClient {
 		    Label FirstnameLabel = new Label(compositeCreateCustomerPage,SWT.NONE);
 		    FirstnameLabel.setText("Firstname:");
 		    FirstnameLabel.setLayoutData(griddataLabel);
-			Text CreateCustomerTypeFirstname = new Text(compositeCreateCustomerPage,SWT.BORDER);
-			//Text CreateCustomerTypeFirstname = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
+			Text CreateCustomerTypeFirstname = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
 			//CreateCustomerTypeFirstname.setText("Jonas");
 			CreateCustomerTypeFirstname.setLayoutData(griddataText);
 			
 			Label LastnameLabel = new Label(compositeCreateCustomerPage, SWT.NONE);
 			LastnameLabel.setText("Lastname:");
 			LastnameLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeLastname = new Text(compositeCreateCustomerPage,SWT.BORDER);
-			//Text CreateAccountTypeLastname = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
+			Text CreateAccountTypeLastname = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
 			CreateAccountTypeLastname.setLayoutData(griddataText);
 			
 			Label InitPasswordLabel = new Label(compositeCreateCustomerPage, SWT.NONE);
 			InitPasswordLabel.setText("Initial Password:");
 			InitPasswordLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeInitPassword = new Text(compositeCreateCustomerPage,SWT.BORDER);
-			//Text CreateAccountTypeInitPassword = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
+			Text CreateAccountTypeInitPassword = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
 			CreateAccountTypeInitPassword.setLayoutData(griddataText);
 		    
 			CaptionCreateCustomerPage.pack();
-		    
-		    Label SepPerform4 = new Label(compositeCreateCustomerPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+			
+			Label SepPerform4 = new Label(compositeCreateCustomerPage, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    SepPerform4.setBackground(new Color(display,255,255,255));
 		    SepPerform4.setLayoutData(CreateCustomerCompositeData);
-		    
+
 		    buttonCreateCustomer = new Button(compositeCreateCustomerPage, SWT.PUSH);
 		    buttonCreateCustomer.setText("Create Customer");
 		    buttonCreateCustomer.setBackground(new Color(display, 31, 78, 121));
 		    buttonCreateCustomer.setLayoutData(griddataButton);
-			buttonCreateCustomer.setData("fistname", CreateCustomerTypeFirstname);
-		    buttonCreateCustomer.setData("lastname", CreateAccountTypeLastname);
-		    buttonCreateCustomer.setData("password", CreateAccountTypeInitPassword);
-		    compositeCreateCustomerPage.pack();
-		    
-		    
+			buttonCreateCustomer.setData("fistname",CreateCustomerTypeFirstname);
+		    buttonCreateCustomer.setData("lastname",CreateAccountTypeLastname);
+		    buttonCreateCustomer.setData("password",CreateAccountTypeInitPassword);	    
 	}
 
 	private static void fillCompositeCreateAccountPage() {
@@ -271,7 +279,11 @@ public class AdminClient {
 		    buttonCreateAccount.setText("Create Account");
 		    buttonCreateAccount.setBackground(new Color(display, 31, 78, 121));
 		    buttonCreateAccount.setLayoutData(griddataButton);
-		
+		    buttonCreateAccount.setData("bank",CreateAccountTypeBank);
+		    buttonCreateAccount.setData("customer",CreateAccountTypeCustomer);
+		    buttonCreateAccount.setData("responsible",CreateAccountTypeResponsible);
+    		buttonCreateAccount.setData("accountType",CreateAccountTypeAccountType);
+    		buttonCreateAccount.setData("active",CreateAccountTypeActive);
 	}
 
 	private static void fillCompositeAccountPage() {
@@ -477,7 +489,9 @@ public class AdminClient {
 		    buttonLogin = new Button(compositeLogin,SWT.PUSH);
 			    buttonLogin.setText("Login NOW!");
 			    buttonLogin.setLayoutData(griddataLoginButton);
-		    
+			    buttonLogin.setData("server", ServerText);
+			    buttonLogin.setData("user", UserText);
+			    buttonLogin.setData("password", PasswordText);		    
 		    compositeLogin.pack();
 	 }
 	
@@ -569,11 +583,38 @@ public class AdminClient {
 	
 
 // Methoden zur Datenübertragung an die Rest-ressource
+	
+	public static int getAdmin(int id) {
+		
+		String GETString = server + "/rest/getAdmin" + "?account=" + id;
+		if (securityMode) {
+			GETString = server + "/rest/s/getAdmin" + "?account=" + id + "&passwortHash=" + password; 
+		}
+		
+		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		
+		if (cr.hasEntity() && cr.getStatus() == 200) {
+			JSONObject jo = new JSONObject(cr.getEntity(String.class));
+			int admin = jo.getInt("admin");
+			return admin;
+		}
+		else
+			return 0;
+	}
+	
 	public static void createCustomer(String firstName, String lastName, String password) {
 		ClientResponse cr = Client.create().resource( "http://localhost:9998/rest/CreateCustomer"
             										+ "&firstName=" + firstName 
             										+ "&lastName=" + lastName
             										+ "&password=" + password).get( ClientResponse.class );
+	}
+	
+	public static void createAccount(int bank, int customerId, int adminId, int accountType) {
+		ClientResponse cr = Client.create().resource( "http://localhost:9998/rest/CreateAccount"
+                									+ "&bank=" + bank 
+                									+ "&customer=" + customerId
+                									+ "&adminId" + adminId
+                									+ "&accountType=" + accountType).get( ClientResponse.class );
 	}
 
 }

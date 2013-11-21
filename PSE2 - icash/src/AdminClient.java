@@ -1,5 +1,7 @@
 
 
+import java.io.InputStream;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -31,7 +33,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.json.JSONObject;
-import org.omg.CORBA.portable.InputStream;
 
 import classes.Convert;
 
@@ -577,7 +578,7 @@ public class AdminClient {
 	    stackLayoutContent = new StackLayout();
 	    layoutOneColumn = new GridLayout(1,false);
 	    
-	    final InputStream stream = (InputStream) AdminClient.class.getResourceAsStream("/src/iCash - Logo.png");
+	    final InputStream stream = AdminClient.class.getResourceAsStream("/src/iCash - Logo.png");
 	    imageLogo = new Image(Display.getDefault(), stream);
 	    
 //	    imageLogo = new Image(display, ".\\src\\iCash - Logo.png");

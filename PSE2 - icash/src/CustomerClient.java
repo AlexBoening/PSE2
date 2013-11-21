@@ -211,8 +211,8 @@ public class CustomerClient {
 		    
 		    buttonCommitPDF.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-		        	  // Methode für PDF Druck hier!
-			    }
+		        	  PDF.print();
+		        }
 			});
 
 		    //Events
@@ -703,8 +703,8 @@ public class CustomerClient {
 	    stackLayoutMain = new StackLayout();
 	    stackLayoutContent = new StackLayout();
 	    layoutOneColumn = new GridLayout(1,false);
-	    imageLogo = new Image(display, ".\\src\\iCash - Logo.png");
-	    imageTablePull = new Image(display, ".\\src\\TablePull.png");  
+	    imageLogo = new Image(display, ".\\src\\images\\iCash - Logo.png");
+	    imageTablePull = new Image(display, ".\\src\\images\\TablePull.png");  
     	shell.setLayout(stackLayoutMain);
 	}
 

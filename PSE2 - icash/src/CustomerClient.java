@@ -128,12 +128,12 @@ public class CustomerClient {
 		        	  server = ((Text)event.widget.getData("server")).getText();
 		        	  password = ((Text)event.widget.getData("password")).getText();
 		        	  accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
-		        	  customerId = getCustomer(accountId);
-		        	  if (customerId != 0) {
+		        	 // customerId = getCustomer(accountId);
+		        	 // if (customerId != 0) {
 		        		  CurrentBalance.setText(getBalance(accountId));
 		        		  stackLayoutMain.topControl = compositeMainClient;
 			          	shell.layout();
-		        	  }
+		        	  //}
 			          //compositeNavigation.layout();
 			        }
 			      });
@@ -307,7 +307,7 @@ public class CustomerClient {
 		    		ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, true);
 		    		table.setLayoutData(ViewCompositeData);
 		    		
-				    buttonCommitPDF = new Button(compositeDepositPage, SWT.PUSH);
+				    buttonCommitPDF = new Button(compositeViewTransaction, SWT.PUSH);
 				    buttonCommitPDF.setText("Print Transactions");
 				    buttonCommitPDF.setBackground(new Color(display, 31, 78, 121));
 				    buttonCommitPDF.setLayoutData(griddataButton);

@@ -1,4 +1,4 @@
-package server;
+package server_neu;
 
 import java.sql.*;
 

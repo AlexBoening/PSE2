@@ -190,7 +190,8 @@ public class RestResource {
 		    Account outgoingAccount = new Account(sender);
 			if (outgoingAccount.getId() == 0)
 				return Response.status(404).build();		// Account does not exist
-		    if (outgoingAccount.getCustomer().getId() != c.getId())
+		    if (outgoingAccount.getCustomer().getId() != c.getId()
+		    &&  outgoingAccount.getAccountType().getId() != 1)
 		    	return Response.status(400).build();		// Customer Number and Account Number do not match
 			if (sender == 0 || receiver == 0 || amount == 0)
 				return Response.status(400).build();			// Client Error 
@@ -476,59 +477,6 @@ public class RestResource {
 			if (!a.getCustomer().getPassword().equals(password))
 				return Response.status(403).build();
 			jo.put("customer", customer);
-			return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
-		}
-		catch(SQLException e) {
-			return Response.status(500).build();            // Internal Server Error
-		}
-    }
-	
-	@GET
-	@Path("/getAdmin")
-	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
-	public Response getAdmin(@QueryParam("account")int account,
-                                @Context HttpServletRequest req) {
-        Logger logger = Logger.getRootLogger();
-        logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
-        logger.info(new java.util.Date() + ": Method: getAdmin");
-        logger.info(new java.util.Date() + ": Account: " + account);
-                        		
-        JSONObject jo = new JSONObject();
-        
-        try {
-			Account a = new Account(account);
-			if (a.getId() == 0)
-				return Response.status(404).build();			// Account does not exist
-		    
-			int admin = a.getAdmin().getId();
-			jo.put("admin", admin);
-			return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
-		}
-		catch(SQLException e) {
-			return Response.status(500).build();            // Internal Server Error
-		}
-    }
-	
-	@GET
-	@Path("/s/getAdmin")
-	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
-	public Response getAdmin(@QueryParam("account")int account,
-								@QueryParam("passwortHash")String password,
-                                @Context HttpServletRequest req) {
-        Logger logger = Logger.getRootLogger();
-        logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
-        logger.info(new java.util.Date() + ": Method: getAdmin");
-        logger.info(new java.util.Date() + ": Account: " + account);
-                        		
-        JSONObject jo = new JSONObject();
-        
-        try {
-			Account a = new Account(account);
-			if (a.getId() == 0)
-				return Response.status(404).build();			// Account does not exist
-		    
-			int admin = a.getAdmin().getId();
-			jo.put("admin", admin);
 			return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
 		}
 		catch(SQLException e) {

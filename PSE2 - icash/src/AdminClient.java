@@ -578,11 +578,12 @@ public class AdminClient {
 	    stackLayoutContent = new StackLayout();
 	    layoutOneColumn = new GridLayout(1,false);
 	    
-	    final InputStream stream = AdminClient.class.getResourceAsStream("/src/iCash - Logo.png");
+	    final InputStream stream = AdminClient.class.getResourceAsStream("iCash - Logo.png");
+	    final InputStream stream2 = AdminClient.class.getResourceAsStream("TablePull.png");
 	    imageLogo = new Image(Display.getDefault(), stream);
 	    
 //	    imageLogo = new Image(display, ".\\src\\iCash - Logo.png");
-	    imageTablePull = new Image(display, ".\\src\\TablePull.png");  
+	    imageTablePull = new Image(display, stream2);  
 	    
     	shell.setLayout(stackLayoutMain);
 	}

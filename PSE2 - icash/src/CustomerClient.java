@@ -1,5 +1,6 @@
 
 
+import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -703,8 +704,14 @@ public class CustomerClient {
 	    stackLayoutMain = new StackLayout();
 	    stackLayoutContent = new StackLayout();
 	    layoutOneColumn = new GridLayout(1,false);
-	    imageLogo = new Image(display, ".\\src\\images\\iCash - Logo.png");
-	    imageTablePull = new Image(display, ".\\src\\images\\TablePull.png");  
+	    
+	    final InputStream stream = CustomerClient.class.getResourceAsStream("iCash - Logo.png");
+	    final InputStream stream2 = CustomerClient.class.getResourceAsStream("TablePull.png");
+	    imageLogo = new Image(Display.getDefault(), stream);
+	    
+//	    imageLogo = new Image(display, ".\\src\\images\\iCash - Logo.png");
+//	    imageTablePull = new Image(display, ".\\src\\images\\TablePull.png");  
+	    imageTablePull = new Image(Display.getDefault(), stream2);
     	shell.setLayout(stackLayoutMain);
 	}
 

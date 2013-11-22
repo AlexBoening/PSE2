@@ -38,7 +38,7 @@ public class Transaction {
     
     public Transaction(int id) throws SQLException {
      	
-    	String[] column = {"amountTransaction", "descriptionTransaction", "dateTransaction", "shownIncomingTransaction", "shownOutgoingTransaction"};
+    	String[] column = {"amountTransaction", "descriptionTransaction", "dateTransaction", "sentIncomingTransaction", "sentOutgoingTransaction"};
         String[] condition = {"idTransaction = " + id};
         String[][] value = SQL.select(column, "Transaction", condition, "and");
         
@@ -142,8 +142,8 @@ public class Transaction {
 		column[0] = "amountTransaction";
 		column[1] = "descriptionTransaction";
 		column[2] = "dateTransaction";
-		column[3] = "shownIncomingTransaction";
-		column[4] = "shownOutgoingTransaction";
+		column[3] = "sentIncomingTransaction";
+		column[4] = "sentOutgoingTransaction";
 		column[5] = "incomingAccount_idAccount";
 		column[6] = "outgoingAccount_idAccount";
 		

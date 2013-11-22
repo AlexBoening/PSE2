@@ -27,7 +27,7 @@ public class Bank {
     
     public Bank(int id) throws SQLException {
     	
-    	String[] column = {"idBank", "blzBank", "descriptionBank" };
+    	String[] column = {"idBank", "blzBank", "descriptionBank", "Account_idAccount" };
         String[] condition = {"idBank = " + id};
         String[][] value = SQL.select(column, "Bank", condition, "and");
         
@@ -36,15 +36,16 @@ public class Bank {
     	this.id = id;
     	this.blz = Convert.toInt(value[0][1]);
     	this.description = value[0][2];
+    	this.bank_account = new Account(Convert.toInt(value[0][3]));
     	
     	// get Bank account
-    	column = new String[1];
+    	/*column = new String[1];
     	column[0] = "idAccount";
     	condition = new String[2];
     	condition[0] = "Bank_idBank = " + id;
     	condition[1] = "AccountTyp_idAccountTyp = 1";
     	value = SQL.select(column, "Account", condition, "and");
-    	this.bank_account = new Account(Convert.toInt(value[0][0]));
+    	this.bank_account = new Account(Convert.toInt(value[0][0]));*/
     }
     
     public Bank() {
@@ -123,9 +124,11 @@ public class Bank {
 		
 		column[0] = "blzBank";
 		column[1] = "descriptionBank";
+		column[2] = "Account_idAccount";
 		
 		value[0] = "" + blz;
 		value[1] = description;
+		value[2] = "" + bank_account.getId();
 		
 		SQL.update(column, value, "Bank", condition, "and");
 	}

@@ -213,7 +213,8 @@ public class RestResource {
 			
 			int balance = outgoingAccount.getBalance();
 			
-			if (balance >= amount || outgoingAccount.getAccountType().getId() == 1)
+			if (balance >= amount || outgoingAccount.getId() 
+					              == incomingAccount.getBank().getBank_account().getId())
 			    t = new Transaction(amount, reference, Convert.currentDate(), incomingAccount, outgoingAccount);
 			else
 				return Response.status(412).build();			// Insufficient Money

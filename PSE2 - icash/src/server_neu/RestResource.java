@@ -213,7 +213,8 @@ public class RestResource {
 			
 			int balance = outgoingAccount.getBalance();
 			
-			if (balance >= amount || outgoingAccount.getAccountType().getId() == 1)
+			if (balance >= amount || outgoingAccount.getId() 
+					              == incomingAccount.getBank().getBank_account().getId())
 			    t = new Transaction(amount, reference, Convert.currentDate(), incomingAccount, outgoingAccount);
 			else
 				return Response.status(412).build();			// Insufficient Money
@@ -483,4 +484,59 @@ public class RestResource {
 			return Response.status(500).build();            // Internal Server Error
 		}
     }
+	
+		
+		@GET
+		@Path("/getAdmin")
+		@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+		public Response getAdmin(@QueryParam("account")int account,
+	                                @Context HttpServletRequest req) {
+	        Logger logger = Logger.getRootLogger();
+	        logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+	        logger.info(new java.util.Date() + ": Method: getAdmin");
+	        logger.info(new java.util.Date() + ": Account: " + account);
+	                        		
+	        JSONObject jo = new JSONObject();
+	        
+	        try {
+				Account a = new Account(account);
+				if (a.getId() == 0)
+					return Response.status(404).build();			// Account does not exist
+			    
+				int admin = a.getAdministrator().getId();
+				jo.put("admin", admin);
+				return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+			}
+			catch(SQLException e) {
+				return Response.status(500).build();            // Internal Server Error
+			}
+	    }
+		
+		@GET
+		@Path("/s/getAdmin")
+		@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+		public Response getAdmin(@QueryParam("account")int account,
+									@QueryParam("passwortHash")String password,
+	                                @Context HttpServletRequest req) {
+	        Logger logger = Logger.getRootLogger();
+	        logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+	        logger.info(new java.util.Date() + ": Method: getAdmin");
+	        logger.info(new java.util.Date() + ": Account: " + account);
+	                        		
+	        JSONObject jo = new JSONObject();
+	        
+	        try {
+				Account a = new Account(account);
+				if (a.getId() == 0)
+					return Response.status(404).build();			// Account does not exist
+			    
+				int admin = a.getAdministrator().getId();
+				jo.put("admin", admin);
+				return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+			}
+			catch(SQLException e) {
+				return Response.status(500).build();            // Internal Server Error
+			}
+	    }
+
 }

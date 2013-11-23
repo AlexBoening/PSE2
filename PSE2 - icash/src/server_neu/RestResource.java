@@ -486,7 +486,11 @@ public class RestResource {
 		}
     }
 	
-		
+// Administrator Methods
+
+//!* getAdmin brauchen wir nur im Security Modus... keine öffentliche Schnittstelle! *!//
+	
+	/*
 	@GET
 	@Path("/getAdmin")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -512,7 +516,7 @@ public class RestResource {
 			logger.info(new java.util.Date() + ": SQL-Exception during select for adminId: " + account);
 			return Response.status(500).build();            // Internal Server Error
 		}
-    }
+    }*/
 	
 	@GET
 	@Path("/s/getAdmin")
@@ -532,10 +536,51 @@ public class RestResource {
 			if (a.getId() == 0)
 				return Response.status(404).build();			// Admin does not exist
 			if (a.getPassword().equals(password)) {
-				int admin = a.getId();
-				jo.put("admin", admin);
+
+				jo.put("id", a.getId());
+				jo.put("firstName", a.getFirstName());
+				jo.put("secondName", a.getSecondName());
+				
+				JSONArray ja = new JSONArray();
+				Account[] acc = new Account[a.getAccounts().size()];
+				a.getAccounts().toArray(acc);
+				
+				for (int i=0; i<acc.length; i++) {
+					JSONObject currentAccount = new JSONObject();
+					currentAccount.put("id", acc[i].getId());
+					
+					JSONObject bank = new JSONObject();
+					bank.put("id", acc[i].getBank().getId());
+					bank.put("description", acc[i].getBank().getDescription());
+					currentAccount.put("bank", bank);
+					
+					JSONObject customer = new JSONObject();
+					customer.put("id", acc[i].getCustomer().getId());
+					customer.put("firstName", acc[i].getCustomer().getFirstName());
+					customer.put("secondName", acc[i].getCustomer().getSecondName());
+					currentAccount.put("customer", customer);
+					
+					//!* eigentlich unnötig.... *!//
+					/*JSONObject administrator = new JSONObject();
+					administrator.put("id", a.getId());
+					administrator.put("firstName", a.getFirstName());
+					administrator.put("secondName", a.getSecondName());
+					currentAccount.put("administrator", administrator);*/
+					
+					JSONObject accountType = new JSONObject();
+					accountType.put("id", acc[i].getAccountType().getId());
+					accountType.put("description", acc[i].getAccountType().getDescription());
+					currentAccount.put("accountType", accountType);
+					currentAccount.put("active", acc[i].isFlagActive());
+					
+					ja.put(currentAccount);
+				}
+				
+				jo.put("accounts", ja);
 				return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
-			} else {
+			} 
+			else 
+			{
 				logger.info(new java.util.Date() + ": wrong password!");
 				return Response.status(404).build();
 			}
@@ -546,5 +591,9 @@ public class RestResource {
 			return Response.status(500).build();            // Internal Server Error
 		}
     }
+	
+	/*@GET
+	@Path("/s/getCustomers")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })*/
 
 }

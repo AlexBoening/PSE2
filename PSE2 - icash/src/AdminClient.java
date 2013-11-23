@@ -32,9 +32,10 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
-import org.json.JSONObject;
 
-import classes.Convert;
+import org.json.*;
+import classes.*;
+import java.sql.*;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -60,7 +61,7 @@ public class AdminClient {
 	static Image imageLogo, imageTablePull;
 	
 	private static boolean securityMode = true;
-	private static int accountId;
+	private static Administrator admin;
 	private static String password;
 	private static String server;
 	
@@ -93,14 +94,12 @@ public class AdminClient {
 	        
 		    buttonLogin.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-		          accountId = 0; 
-		          server = "";
-		          password = "";
+
 	        	  server = ((Text)event.widget.getData("server")).getText();
 	        	  password = ((Text)event.widget.getData("password")).getText();
 	        	  int adminId = Convert.toInt(((Text)event.widget.getData("user")).getText());
-	        	  accountId  = getAdmin(adminId);
-	        	  if (accountId  != 0) {
+	        	  admin  = getAdmin(adminId);
+	        	  if (admin != null) {
 			          stackLayoutMain.topControl = compositeMainClient;
 			          shell.layout();
 	        	  }	        	  
@@ -108,7 +107,11 @@ public class AdminClient {
 			   });
 		    
 		    buttonMenuDeactivateAccount.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {		        	     	
+		        public void handleEvent(Event event) {		   
+		    	    compositeAccountPage = new Composite(compositeContent, SWT.NONE);
+				    compositeAccountPage.setBackground(new Color(display,255,255,255));
+				    compositeAccountPage.setLayout(layoutMainClient);
+				    fillCompositeAccountPage();
 		        	stackLayoutContent.topControl = compositeAccountPage;
 		            compositeContent.layout();
 		        }
@@ -136,8 +139,7 @@ public class AdminClient {
 		    
 		    buttonDeactivateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-		        	//int deactivateAccountId = Convert.toInt(((Text)event.widget.getData("accountId")).getText());
-		        	//deactivateAccount(deactivateAccountId);	
+
 			        }
 			      });
 		    
@@ -338,6 +340,35 @@ public class AdminClient {
 		    		ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, true);
 		    		ViewCompositeData.horizontalSpan=2;
 		    		table.setLayoutData(ViewCompositeData);
+		    		
+		    		// Fill in the Customer data
+		    		if (admin != null)
+		    		try {
+				    admin = getAdmin(admin.getId());
+    				Account[] acc = new Account[admin.getAccounts().size()];
+    				admin.getAccounts().toArray(acc);
+    				
+		    		for (int i=0; i<acc.length; i++) {
+    					TableItem item = new TableItem(table, SWT.NONE);
+    					String[] column = new String[6];
+    					column[0] = "" + acc[i].getId();
+    					column[1] = acc[i].getBank().getDescription();
+    					column[2] = acc[i].getCustomer().getFirstName() + " " +
+    								acc[i].getCustomer().getSecondName();
+    					column[3] = acc[i].getAdministrator().getFirstName() + " " +
+    								acc[i].getAdministrator().getSecondName();
+    					column[4] = acc[i].getAccountType().getDescription();
+    					if (acc[i].isFlagActive())
+    						column[5] = "X";
+    					else
+    						column[5] = " ";
+    					item.setText(column);
+    				}
+		    		}
+		    		catch (SQLException e) {
+		    			// Statuszeile auf Status 500 setzen
+		    		}
+		    		
 		    CaptionViewPage.pack();
 		    
 		    buttonDeactivateAccount = new Button(compositeAccountPage, SWT.PUSH);
@@ -603,7 +634,7 @@ public class AdminClient {
 
 // Methoden zur Datenübertragung an die Rest-ressource
 	
-	public static int getAdmin(int id) {
+	public static Administrator getAdmin(int id) {
 		String GETString;
 		if (securityMode) {
 			GETString = server + "/rest/s/getAdmin" + "?account=" + id + "&passwortHash=" + password; 
@@ -615,11 +646,49 @@ public class AdminClient {
 			ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );	
 			if (cr.getStatus() == 200) {
 				JSONObject jo = new JSONObject(cr.getEntity(String.class));
-				int admin = jo.getInt("admin");
+				
+				Administrator admin = new Administrator();
+				admin.setId(jo.getInt("id"));
+				admin.setFirstName(jo.getString("firstName"));
+				admin.setSecondName(jo.getString("secondName"));
+				
+				JSONArray ja = jo.getJSONArray("accounts");
+				
+				for (int i=0; i<ja.length(); i++) {
+					Account acc = new Account();
+					JSONObject currentAccount = ja.getJSONObject(i);
+					
+					acc.setId(currentAccount.getInt("id"));
+					
+					JSONObject bank = currentAccount.getJSONObject("bank");
+					Bank b = new Bank();
+					acc.setBank(b);				
+					b.setId(bank.getInt("id"));
+					b.setDescription(bank.getString("description"));
+					
+					JSONObject customer = currentAccount.getJSONObject("customer");
+					Customer c = new Customer();
+					acc.setCustomer(c);
+					c.setId(customer.getInt("id"));
+					c.setFirstName(customer.getString("firstName"));
+					c.setSecondName(customer.getString("secondName"));
+					
+					acc.setAdministrator(admin);
+					
+					JSONObject accountType = currentAccount.getJSONObject("accountType");
+					AccountType at = new AccountType();
+					acc.setAccountType(at);
+					at.setId(accountType.getInt("id"));
+					at.setDescription(accountType.getString("description"));
+					
+					acc.setFlagActive(currentAccount.getBoolean("active"));
+					
+                    admin.add(acc);
+				}
 				return admin;
 			}
 		}
-		return 0;
+		return null;
 	}
 	
 	public static int createCustomer(String firstName, String lastName, String password) {

@@ -75,7 +75,15 @@ public abstract class Person {
     public void login() {
     	setLoggedIn(true);
     }
-
+    
+    public int getId() {
+    	return this.id;
+    }
+    
+    public void setId(int id) {
+    	this.id = id;
+    }
+    
 	public boolean isLoggedIn() {
 		return loggedIn;
 	}

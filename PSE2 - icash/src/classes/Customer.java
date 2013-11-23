@@ -69,10 +69,6 @@ public class Customer extends Person {
 		this.password = password;
 	}
 	
-	public int getId() {
-		return id;
-	}
-	
 	public ArrayList<Account> getAccounts() throws SQLException {
 		if (accounts == null) {
 			accounts = new ArrayList<Account>();

@@ -56,16 +56,6 @@ public class Administrator extends Person {
 		this.password = password;
 	}
 	
-	/*public void setAccounts(ArrayList<Account> accounts) {
-		this.accounts = accounts;
-	}*/
-	public int getId() {
-		return id;
-	}
-	/*public void setId(int id) {
-		this.id = id;
-	}*/
-	
 	public ArrayList<Account> getAccounts() throws SQLException {
 		if (accounts == null) {
 			accounts = new ArrayList<Account>();

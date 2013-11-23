@@ -70,9 +70,9 @@ public class CustomerClient {
 	
 	static Image imageLogo, imageTablePull;
 	
-	private static boolean securityMode = true;
+	private static boolean securityMode = false;
 	private static int customerId;
-	private static int accountId;
+	private static Account account;
 	private static String password;
 	private static String server;
 	private static Label CurrentBalance;
@@ -131,14 +131,19 @@ public class CustomerClient {
 		        public void handleEvent(Event event) {
 		        	  server = ((Text)event.widget.getData("server")).getText();
 		        	  password = ((Text)event.widget.getData("password")).getText();
-		        	  accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
-		        	  customerId = getCustomer(accountId);
-		        	  if (customerId != 0) {
-		        		  CurrentBalance.setText(getBalance(accountId));
+		        	  securityMode = ((Button)event.widget.getData("securityMode")).getSelection();
+		        	  int accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
+		        	  if (securityMode)
+		        		  customerId = getCustomer(accountId);
+		        	  if (customerId != 0 || !securityMode)
+		        		  account = getAccount(accountId);
+		        	      
+		        	  if (account != null) {
+		        		  if (securityMode) 
+		        			  CurrentBalance.setText(getBalance(account.getId()));
 		        		  stackLayoutMain.topControl = compositeMainClient;
 			          	shell.layout();
 		        	  }
-			          //compositeNavigation.layout();
 			        }
 			      });
 		    
@@ -191,8 +196,8 @@ public class CustomerClient {
 		        	  int toAccount = Convert.toInt(((Text)event.widget.getData("toAccount")).getText());
 		        	  String amount = ((Text)event.widget.getData("amount")).getText();
 		        	  String description = ((Text)event.widget.getData("description")).getText();
-		        	  transferMoney(accountId, toAccount, amount, description);
-		        	  CurrentBalance.setText(getBalance(accountId));
+		        	  transferMoney(account.getId(), toAccount, amount, description);
+		        	  CurrentBalance.setText(getBalance(account.getId()));
 		        }
 			});
 		    
@@ -200,8 +205,8 @@ public class CustomerClient {
 		        public void handleEvent(Event event) {
 		        	  String amount = ((Text)event.widget.getData("amount")).getText();
 		        	  String description = ((Text)event.widget.getData("description")).getText();
-		        	  transferMoney(getBankAccount(accountId), accountId, amount, description);
-		        	  CurrentBalance.setText(getBalance(accountId));
+		        	  transferMoney(getBankAccount(account.getId()), account.getId(), amount, description);
+		        	  CurrentBalance.setText(getBalance(account.getId()));
 			        }
 			});
 		    
@@ -209,8 +214,8 @@ public class CustomerClient {
 		        public void handleEvent(Event event) {
 		        	  String amount = ((Text)event.widget.getData("amount")).getText();
 		        	  String description = ((Text)event.widget.getData("description")).getText();
-		        	  transferMoney(accountId, getBankAccount(accountId), amount, description);
-		        	  CurrentBalance.setText(getBalance(accountId));
+		        	  transferMoney(account.getId(), getBankAccount(account.getId()), amount, description);
+		        	  CurrentBalance.setText(getBalance(account.getId()));
 			    }
 			});
 		    
@@ -310,13 +315,12 @@ public class CustomerClient {
 				    buttonCommitPDF.setBackground(new Color(display, 31, 78, 121));
 				    buttonCommitPDF.setLayoutData(griddataButton);
 				    
-		    		if (accountId == 0)
-		    			return;
-		    		Account a = getAccount(accountId);
-		    		if (a != null) 
+		    		if (account != null) 
 		    			try {
-		    				Transaction[] t = new Transaction[a.getTransactions().size()];
-		    				a.getTransactions().toArray(t);
+		    				// Get all transactions existing in the database
+						    account = getAccount(account.getId());
+		    				Transaction[] t = new Transaction[account.getTransactions().size()];
+		    				account.getTransactions().toArray(t);
 		    		
 		    				for (int i=0; i<t.length; i++) {
 		    					TableItem item = new TableItem(table, SWT.NONE);
@@ -332,10 +336,10 @@ public class CustomerClient {
 		    				}
 		    			}
 		    			catch (SQLException e) {
-		    				// ToDo: Fehlerbehandlung!
+		    				LabelStatusLine.setText(getMessage(500));
 		    			}
 		    			else {
-		    				// Fehlermeldung: Account nicht gefunden!
+		    				LabelStatusLine.setText(getMessage(400));
 		    			}
 		    		compositeViewTransaction.pack();
 	}
@@ -546,8 +550,8 @@ public class CustomerClient {
 		    CurrentBalance.setBackground(new Color(display, 70,200,230));
 		    CurrentBalance.setAlignment(SWT.HORIZONTAL);
 		    griddataMenuContent.verticalAlignment = GridData.FILL;
-		    if (accountId != 0)
-		        CurrentBalance.setText(getBalance(accountId));
+		    if (account != null)
+		        CurrentBalance.setText(getBalance(account.getId()));
 		    CurrentBalance.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 	}
 
@@ -626,9 +630,15 @@ public class CustomerClient {
 		    buttonLogin = new Button(compositeLogin,SWT.PUSH);
 			buttonLogin.setText("Login NOW!");
 			buttonLogin.setLayoutData(griddataLoginButton);
+			
+			Button ButtonSecurityMode = new Button(compositeLogin, SWT.CHECK);
+			ButtonSecurityMode.setText("SecurityMode");
+			ButtonSecurityMode.setLayoutData(griddataLoginButton);
+			
 		    buttonLogin.setData("server", ServerText);
 		    buttonLogin.setData("user", UserText);
 		    buttonLogin.setData("password", PasswordText);
+		    buttonLogin.setData("securityMode", ButtonSecurityMode);
 		    compositeLogin.pack();
 	 }
 	
@@ -775,14 +785,18 @@ public static Account getAccount(int number) {
 	ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
 	int status = cr.getStatus();
 	LabelStatusLine.setText(getMessage(status));
+	LabelStatusLineLogin.setText(getMessage(status));
 	
+	String[] name;
 	if (status == 200) {
 	JSONObject jo = new JSONObject(cr.getEntity(String.class));
     Account a = new Account();
     a.setId(jo.getInt("number"));
     Customer c = new Customer();
-    c.setFirstName(jo.getString("owner").split(" ")[0]);
-    c.setSecondName(jo.getString("owner").split(" ")[1]);
+    name = jo.getString("owner").split(" ");
+    c.setFirstName(name[0]);
+    if (name.length > 1)
+        c.setSecondName(name[1]);
     a.setCustomer(c);
     
     JSONArray ja = jo.getJSONArray("transactions");
@@ -790,7 +804,7 @@ public static Account getAccount(int number) {
     for (int i=0; i<ja.length(); i++) {
     	Transaction t = new Transaction();
     	JSONObject transaction = ja.getJSONObject(i);
-    	t.setAmount(classes.Convert.toCent((transaction.getString("amount"))));
+    	t.setAmount(transaction.getInt("amount"));
     	t.setDate(Date.valueOf(transaction.getString("transactionDate").substring(0, 10)));
     	t.setDescription(transaction.getString("reference"));
     	
@@ -798,8 +812,10 @@ public static Account getAccount(int number) {
     	JSONObject receiver = transaction.getJSONObject("receiver");
     	incomingAccount.setId(receiver.getInt("number"));
     	Customer c_in = new Customer();
-    	c_in.setFirstName(receiver.getString("owner").split(" ")[0]);
-    	c_in.setSecondName(receiver.getString("owner").split(" ")[1]);
+    	name = receiver.getString("owner").split(" ");
+    	c_in.setFirstName(name[0]);
+    	if (name.length > 1)
+    	    c_in.setSecondName(name[1]);
     	incomingAccount.setCustomer(c_in);
     	t.setIncomingAccount(incomingAccount);
     	
@@ -807,8 +823,10 @@ public static Account getAccount(int number) {
     	JSONObject sender = transaction.getJSONObject("sender");
     	outgoingAccount.setId(sender.getInt("number"));
     	Customer c_out = new Customer();
-    	c_out.setFirstName(sender.getString("owner").split(" ")[0]);
-    	c_out.setSecondName(sender.getString("owner").split(" ")[1]);
+    	name = sender.getString("owner").split(" ");
+    	c_out.setFirstName(name[0]);
+    	if (name.length > 1)
+    	    c_out.setSecondName(name[1]);
     	outgoingAccount.setCustomer(c_out);
     	t.setOutgoingAccount(outgoingAccount);
     	
@@ -825,7 +843,7 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 	Form f = new Form();
 	f.add("senderNumber", senderNumber);
 	f.add("receiverNumber", receiverNumber);
-	f.add("amount", amount);
+	f.add("amount", Convert.toCent(amount));
 	f.add("reference", reference);
 	if (securityMode) {
 		f.add("kundenID", customerId);

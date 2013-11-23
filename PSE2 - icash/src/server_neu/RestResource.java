@@ -64,6 +64,8 @@ public class RestResource {
 		logger.info(new java.util.Date() + ": Method: getAccount");
 		logger.info(new java.util.Date() + ": Account: " + number);
 		
+		if (number == 0 || customer == 0 || password == null) 
+			return Response.status(400).build();
 		try {
 		    Customer c = new Customer(customer);                     
 		    c.login(password);								
@@ -99,7 +101,7 @@ public class RestResource {
 		// Build up transaction data
 		for (int i=0; i<t.length; i++) {
 			JSONObject transaction = new JSONObject();
-			transaction.put("amount", Convert.toEuro(t[i].getAmount()));
+			transaction.put("amount", t[i].getAmount());
 			transaction.put("id", t[i].getId());
 			
 			// Receiver Data
@@ -137,7 +139,7 @@ public class RestResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response transferMoney(@FormParam("senderNumber")int sender, 
 			                      @FormParam("receiverNumber")int receiver, 
-			                      @FormParam("amount")String amountEuro, 
+			                      @FormParam("amount")int amount, 
 			                      @FormParam("reference")String reference,
 			                      @Context HttpServletRequest req) {
     		
@@ -146,9 +148,8 @@ public class RestResource {
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
 		logger.info(new java.util.Date() + ": Method: transferMoney");
 		logger.info(new java.util.Date() + ": Sender: " + sender + "/ Receiver: " + receiver
-				                         + "/ Amount: " + amountEuro + "/ Reference: " + reference);
+				                         + "/ Amount: " + Convert.toEuro(amount) + "/ Reference: " + reference);
 
-		int amount = Convert.toCent(amountEuro);
 		if (sender == 0 || receiver == 0 || amount == 0)
 			return Response.status(400).build();
 		try {
@@ -486,64 +487,64 @@ public class RestResource {
     }
 	
 		
-		@GET
-		@Path("/getAdmin")
-		@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
-		public Response getAdmin(@QueryParam("account")int account,
-	                                @Context HttpServletRequest req) {
-	        Logger logger = Logger.getRootLogger();
-	        logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
-	        logger.info(new java.util.Date() + ": Method: getAdmin");
-	        logger.info(new java.util.Date() + ": Account: " + account);
-	                        		
-	        JSONObject jo = new JSONObject();
-	        
-	        try {
-				Administrator a = new Administrator(account);
-				if (a.getId() == 0)
-					return Response.status(404).build();			// Admin does not exist
-				
+	@GET
+	@Path("/getAdmin")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response getAdmin(@QueryParam("account")int account,
+                                @Context HttpServletRequest req) {
+        Logger logger = Logger.getRootLogger();
+        logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+        logger.info(new java.util.Date() + ": Method: getAdmin");
+        logger.info(new java.util.Date() + ": Account: " + account);
+                        		
+        JSONObject jo = new JSONObject();
+        
+        try {
+			Administrator a = new Administrator(account);
+			if (a.getId() == 0)
+				return Response.status(404).build();			// Admin does not exist
+			
+			int admin = a.getId();
+			jo.put("admin", admin);
+			return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+		}
+		catch(SQLException e) {
+			logger.info(new java.util.Date() + ": SQL-Exception during select for adminId: " + account);
+			return Response.status(500).build();            // Internal Server Error
+		}
+    }
+	
+	@GET
+	@Path("/s/getAdmin")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response getAdmin(@QueryParam("account")int account,
+								@QueryParam("passwortHash")String password,
+                                @Context HttpServletRequest req) {
+        Logger logger = Logger.getRootLogger();
+        logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+        logger.info(new java.util.Date() + ": Method: /s/getAdmin");
+        logger.info(new java.util.Date() + ": Account: " + account);
+                        		
+        JSONObject jo = new JSONObject();
+        
+        try {
+			Administrator a = new Administrator(account);
+			if (a.getId() == 0)
+				return Response.status(404).build();			// Admin does not exist
+			if (a.getPassword().equals(password)) {
 				int admin = a.getId();
 				jo.put("admin", admin);
 				return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+			} else {
+				logger.info(new java.util.Date() + ": wrong password!");
+				return Response.status(404).build();
 			}
-			catch(SQLException e) {
-				logger.info(new java.util.Date() + ": SQL-Exception during select for adminId: " + account);
-				return Response.status(500).build();            // Internal Server Error
-			}
-	    }
-		
-		@GET
-		@Path("/s/getAdmin")
-		@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
-		public Response getAdmin(@QueryParam("account")int account,
-									@QueryParam("passwortHash")String password,
-	                                @Context HttpServletRequest req) {
-	        Logger logger = Logger.getRootLogger();
-	        logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
-	        logger.info(new java.util.Date() + ": Method: /s/getAdmin");
-	        logger.info(new java.util.Date() + ": Account: " + account);
-	                        		
-	        JSONObject jo = new JSONObject();
-	        
-	        try {
-				Administrator a = new Administrator(account);
-				if (a.getId() == 0)
-					return Response.status(404).build();			// Admin does not exist
-				if (a.getPassword().equals(password)) {
-					int admin = a.getId();
-					jo.put("admin", admin);
-					return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
-				} else {
-					logger.info(new java.util.Date() + ": wrong password!");
-					return Response.status(404).build();
-				}
-				
-			}
-			catch(SQLException e) {
-				logger.info(new java.util.Date() + ": SQL-Exception during select for adminId: " + account);
-				return Response.status(500).build();            // Internal Server Error
-			}
-	    }
+			
+		}
+		catch(SQLException e) {
+			logger.info(new java.util.Date() + ": SQL-Exception during select for adminId: " + account);
+			return Response.status(500).build();            // Internal Server Error
+		}
+    }
 
 }

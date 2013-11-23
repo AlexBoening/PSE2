@@ -89,9 +89,7 @@ public class AdminClient {
 		 	stackLayoutContent.topControl = compositeWelcomePage;
 	        compositeContent.layout();
 		 	
-		    //Events
-		    
-	        
+		    //Events   
 	        
 		    buttonLogin.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
@@ -99,17 +97,17 @@ public class AdminClient {
 	        	  password = ((Text)event.widget.getData("password")).getText();
 	        	  accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
 	        	  int adminId = getAdmin(accountId);
-	        	  //if (adminId != 0) {
+	        	  if (adminId != 0) {
 			          stackLayoutMain.topControl = compositeMainClient;
 			          shell.layout();
-	        	  //}
+	        	  }
 			    }
 			   });
 		    
 		    buttonMenuDeactivateAccount.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
+		        public void handleEvent(Event event) {		        	     	
 		        	stackLayoutContent.topControl = compositeAccountPage;
-		          compositeContent.layout();
+		            compositeContent.layout();
 		        }
 		      });
 		    
@@ -135,7 +133,8 @@ public class AdminClient {
 		    
 		    buttonDeactivateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-			          //do something here to deactivate selected account
+		        	//int deactivateAccountId = Convert.toInt(((Text)event.widget.getData("accountId")).getText());
+		        	//deactivateAccount(deactivateAccountId);	
 			        }
 			      });
 		    
@@ -600,7 +599,7 @@ public class AdminClient {
 		
 		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
 		
-		if (cr.hasEntity() && cr.getStatus() == 200) {
+		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			int admin = jo.getInt("admin");
 			return admin;

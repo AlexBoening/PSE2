@@ -499,15 +499,16 @@ public class RestResource {
 	        JSONObject jo = new JSONObject();
 	        
 	        try {
-				Account a = new Account(account);
+				Administrator a = new Administrator(account);
 				if (a.getId() == 0)
-					return Response.status(404).build();			// Account does not exist
-			    
-				int admin = a.getAdministrator().getId();
+					return Response.status(404).build();			// Admin does not exist
+				
+				int admin = a.getId();
 				jo.put("admin", admin);
 				return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
 			}
 			catch(SQLException e) {
+				logger.info(new java.util.Date() + ": SQL-Exception during select for adminId: " + account);
 				return Response.status(500).build();            // Internal Server Error
 			}
 	    }
@@ -520,21 +521,27 @@ public class RestResource {
 	                                @Context HttpServletRequest req) {
 	        Logger logger = Logger.getRootLogger();
 	        logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
-	        logger.info(new java.util.Date() + ": Method: getAdmin");
+	        logger.info(new java.util.Date() + ": Method: /s/getAdmin");
 	        logger.info(new java.util.Date() + ": Account: " + account);
 	                        		
 	        JSONObject jo = new JSONObject();
 	        
 	        try {
-				Account a = new Account(account);
+				Administrator a = new Administrator(account);
 				if (a.getId() == 0)
-					return Response.status(404).build();			// Account does not exist
-			    
-				int admin = a.getAdministrator().getId();
-				jo.put("admin", admin);
-				return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+					return Response.status(404).build();			// Admin does not exist
+				if (a.getPassword().equals(password)) {
+					int admin = a.getId();
+					jo.put("admin", admin);
+					return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+				} else {
+					logger.info(new java.util.Date() + ": wrong password!");
+					return Response.status(404).build();
+				}
+				
 			}
 			catch(SQLException e) {
+				logger.info(new java.util.Date() + ": SQL-Exception during select for adminId: " + account);
 				return Response.status(500).build();            // Internal Server Error
 			}
 	    }

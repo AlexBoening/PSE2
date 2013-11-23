@@ -93,14 +93,17 @@ public class AdminClient {
 	        
 		    buttonLogin.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
+		          accountId = 0; 
+		          server = "";
+		          password = "";
 	        	  server = ((Text)event.widget.getData("server")).getText();
 	        	  password = ((Text)event.widget.getData("password")).getText();
-	        	  accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
-	        	  int adminId = getAdmin(accountId);
-	        	  if (adminId != 0) {
+	        	  int adminId = Convert.toInt(((Text)event.widget.getData("user")).getText());
+	        	  accountId  = getAdmin(adminId);
+	        	  if (accountId  != 0) {
 			          stackLayoutMain.topControl = compositeMainClient;
 			          shell.layout();
-	        	  }
+	        	  }	        	  
 			    }
 			   });
 		    
@@ -151,18 +154,28 @@ public class AdminClient {
 		        	int responsible = Convert.toInt(((Text)event.widget.getData("responsible")).getText());
 		        	int accountType = Convert.toInt(((Text)event.widget.getData("accountType")).getText());
 		        	//String active = ((Text)event.widget.getData("active")).getText();
-		        	AdminClient.createAccount(bank, customer, responsible, accountType);
+		        	int accountId = AdminClient.createAccount(bank, customer, responsible, accountType);
+		        	if (accountId != 0) {
+		        		System.out.println("new AccountId = " + accountId);
+		        	} else {
+		        		System.out.println("no new AccountId available at this point");
+		        	}
 		        }
 	        });
 		    
 		    buttonCreateCustomer.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	//Text t = (Text)event.widget.getData("firstname");
-		        	String firstname = ((Text)event.widget.getData("firstname")).getText();
-		        	String lastname  = ((Text)event.widget.getData("lastname")).getText();
-		        	String password  = ((Text)event.widget.getData("password")).getText();
-		        	//System.out.println(firstname + " " + lastname + " " + password);
-		        	AdminClient.createCustomer(firstname, lastname, password);
+		        public void handleEvent(Event event) {		        		        	
+		        	String firstname = (((Text)event.widget.getData("firstname")).getText());
+		        	String lastname  = (((Text)event.widget.getData("lastname")).getText());
+		        	String password  = (((Text)event.widget.getData("password")).getText());
+		        	if (!(firstname.isEmpty() && lastname.isEmpty())) {
+		        	int customerId = AdminClient.createCustomer(firstname, lastname, password);
+		        		if (customerId != 0) {
+		        			System.out.println("new CustomerId = " + customerId);
+		        		} else {
+		        			System.out.println("no new CustomerId available at this point");
+		        		}
+		        	}
         	  	}
 	        });
 		    
@@ -591,36 +604,49 @@ public class AdminClient {
 // Methoden zur Datenübertragung an die Rest-ressource
 	
 	public static int getAdmin(int id) {
-		
-		String GETString = server + "/rest/getAdmin" + "?account=" + id;
+		String GETString;
 		if (securityMode) {
 			GETString = server + "/rest/s/getAdmin" + "?account=" + id + "&passwortHash=" + password; 
+		} else {
+			GETString = server + "/rest/getAdmin" + "?account=" + id;
 		}
 		
-		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
-		
+		if (!GETString.isEmpty()) {
+			ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );	
+			if (cr.getStatus() == 200) {
+				JSONObject jo = new JSONObject(cr.getEntity(String.class));
+				int admin = jo.getInt("admin");
+				return admin;
+			}
+		}
+		return 0;
+	}
+	
+	public static int createCustomer(String firstName, String lastName, String password) {
+		ClientResponse cr = Client.create().resource( "http://localhost:9998/rest/CreateCustomer"
+            										+ "&firstName=" + firstName 
+            										+ "&lastName=" + lastName
+            										+ "&password=" + password).get( ClientResponse.class );
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
-			int admin = jo.getInt("admin");
-			return admin;
+			int customer = jo.getInt("customer");
+			return customer;
 		}
 		else
 			return 0;
 	}
 	
-	public static void createCustomer(String firstName, String lastName, String password) {
-		ClientResponse cr = Client.create().resource( "http://localhost:9998/rest/CreateCustomer"
-            										+ "&firstName=" + firstName 
-            										+ "&lastName=" + lastName
-            										+ "&password=" + password).get( ClientResponse.class );
-	}
-	
-	public static void createAccount(int bank, int customerId, int adminId, int accountType) {
+	public static int createAccount(int bank, int customerId, int adminId, int accountType) {
 		ClientResponse cr = Client.create().resource( "http://localhost:9998/rest/CreateAccount"
                 									+ "&bank=" + bank 
                 									+ "&customer=" + customerId
                 									+ "&adminId" + adminId
                 									+ "&accountType=" + accountType).get( ClientResponse.class );
+		if (cr.getStatus() == 200) {
+			JSONObject jo = new JSONObject(cr.getEntity(String.class));
+			return jo.getInt("bankAccount");
+		}
+		return 0;
 	}
 
 }

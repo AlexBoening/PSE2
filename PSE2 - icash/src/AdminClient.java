@@ -18,6 +18,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -32,13 +33,17 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
-
 import org.json.*;
+
 import classes.*;
+
 import java.sql.*;
+
+import javax.ws.rs.core.MediaType;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.representation.Form;
 
 public class AdminClient {
 		
@@ -64,6 +69,10 @@ public class AdminClient {
 	private static Administrator admin;
 	private static String password;
 	private static String server;
+	private static Bank[] b;
+	private static Customer[] c;
+	private static Administrator[] a; 
+	private static AccountType[] at;
 	
 	 public static void main(String[] args) {
 		 
@@ -119,6 +128,10 @@ public class AdminClient {
 		    
 		    buttonMenuCreateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
+		        	compositeCreateAccountPage = new Composite(compositeContent, SWT.NONE);
+				    compositeCreateAccountPage.setBackground(new Color(display,255,255,255));
+				    compositeCreateAccountPage.setLayout(layoutMainClient);
+				    fillCompositeCreateAccountPage();
 		        	stackLayoutContent.topControl = compositeCreateAccountPage;
 			        compositeContent.layout();
 			    }
@@ -151,16 +164,20 @@ public class AdminClient {
 		    
 		    buttonCreateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-		        	int bank = Convert.toInt(((Text)event.widget.getData("bank")).getText());
-		        	int customer = Convert.toInt(((Text)event.widget.getData("customer")).getText());
-		        	int responsible = Convert.toInt(((Text)event.widget.getData("responsible")).getText());
-		        	int accountType = Convert.toInt(((Text)event.widget.getData("accountType")).getText());
-		        	//String active = ((Text)event.widget.getData("active")).getText();
-		        	int accountId = AdminClient.createAccount(bank, customer, responsible, accountType);
+		        	try {
+		        	int bank = b[((Combo)event.widget.getData("bank")).getSelectionIndex()].getId();
+		        	int customer = c[((Combo)event.widget.getData("customer")).getSelectionIndex()].getId();
+		        	int administrator = a[((Combo)event.widget.getData("admin")).getSelectionIndex()].getId();
+		        	int accountType = at[((Combo)event.widget.getData("accountType")).getSelectionIndex()].getId();
+		        	int accountId = AdminClient.createAccount(admin.getId(), bank, customer, administrator, accountType);
 		        	if (accountId != 0) {
 		        		System.out.println("new AccountId = " + accountId);
 		        	} else {
 		        		System.out.println("no new AccountId available at this point");
+		        	}
+		        	}
+		        	catch (ArrayIndexOutOfBoundsException e) {
+		        		System.out.println("Please complete your selection!");
 		        	}
 		        }
 	        });
@@ -242,6 +259,9 @@ public class AdminClient {
 
 	private static void fillCompositeCreateAccountPage() {
 		
+		if (admin != null)
+			getData(admin.getId());
+		
 		 GridData CreateAccountCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
 		    
 		    CreateAccountCompositeData.horizontalSpan = 2;
@@ -257,32 +277,71 @@ public class AdminClient {
 		    Label BankLabel = new Label(compositeCreateAccountPage,SWT.NONE);
 		    BankLabel.setText("Bank:");
 		    BankLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeBank = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			CreateAccountTypeBank.setLayoutData(griddataText);
+		    Combo CreateAccountBank = new Combo(compositeCreateAccountPage, SWT.READ_ONLY);
+		    CreateAccountBank.setLayoutData(griddataText);
+		    if (b != null) {
+		    	String bank[] = new String[b.length];
+		    	for (int i=0; i<b.length; i++) {
+		    		bank[i] = b[i].getDescription();
+		    	}
+		    	CreateAccountBank.setItems(bank);
+		    }
+			//Text CreateAccountTypeBank = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
+			//CreateAccountTypeBank.setLayoutData(griddataText);
 			
 			Label CustomerLabel = new Label(compositeCreateAccountPage, SWT.NONE);
 			CustomerLabel.setText("Customer:");
 			CustomerLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeCustomer = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			CreateAccountTypeCustomer.setLayoutData(griddataText);
+		    Combo CreateAccountCustomer = new Combo(compositeCreateAccountPage, SWT.READ_ONLY);
+		    CreateAccountCustomer.setLayoutData(griddataText);
+		    if (c != null) {
+		    	String customer[] = new String[c.length];
+		    	for (int i=0; i<c.length; i++) {
+		    		customer[i] = c[i].getFirstName() + " " + c[i].getSecondName();
+		    	}
+		    	CreateAccountCustomer.setItems(customer);
+		    }
+			//Text CreateAccountTypeCustomer = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
+			//CreateAccountTypeCustomer.setLayoutData(griddataText);
 			
-			Label ResponsibleLabel = new Label(compositeCreateAccountPage, SWT.NONE);
-			ResponsibleLabel.setText("Responsible:");
-			ResponsibleLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeResponsible = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			CreateAccountTypeResponsible.setLayoutData(griddataText);
+			Label AdministratorLabel = new Label(compositeCreateAccountPage, SWT.NONE);
+			AdministratorLabel.setText("Administrator:");
+			AdministratorLabel.setLayoutData(griddataLabel);
+		    Combo CreateAccountAdministrator = new Combo(compositeCreateAccountPage, SWT.READ_ONLY);
+		    CreateAccountAdministrator.setLayoutData(griddataText);
+		    if (a != null) {
+		    	String admin[] = new String[a.length];
+		    	for (int i=0; i<a.length; i++) {
+		    		admin[i] = a[i].getFirstName() + " " + a[i].getSecondName();
+		    	}
+		    	CreateAccountAdministrator.setItems(admin);
+		    }
+			//Text CreateAccountTypeResponsible = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
+			//CreateAccountTypeResponsible.setLayoutData(griddataText);
 			
 			Label AccountTypeLabel = new Label(compositeCreateAccountPage, SWT.NONE);
 			AccountTypeLabel.setText("AccountType:");
 			AccountTypeLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeAccountType = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			CreateAccountTypeAccountType.setLayoutData(griddataText);
+		    Combo CreateAccountAccountType = new Combo(compositeCreateAccountPage, SWT.READ_ONLY);
+		    CreateAccountAccountType.setLayoutData(griddataText);
+		    if (at != null) {
+		    	String accountType[] = new String[at.length];
+		    	for (int i=0; i<at.length; i++) {
+		    		accountType[i] = at[i].getDescription();
+		    	}
+		    	CreateAccountAccountType.setItems(accountType);
+		    }
+			//Text CreateAccountTypeAccountType = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
+			//CreateAccountTypeAccountType.setLayoutData(griddataText);
 			
 			Label ActiveLabel = new Label(compositeCreateAccountPage, SWT.NONE);
 			ActiveLabel.setText("Active:");
 			ActiveLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeActive = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			CreateAccountTypeActive.setLayoutData(griddataText);
+			Button CreateAccountActive = new Button(compositeCreateAccountPage, SWT.CHECK);
+			CreateAccountActive.setText("active");
+			CreateAccountActive.setLayoutData(griddataText);
+			//Text CreateAccountTypeActive = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
+			//CreateAccountTypeActive.setLayoutData(griddataText);
 			
 		    CaptionCreateAccountPage.pack();
 		    
@@ -295,11 +354,32 @@ public class AdminClient {
 		    buttonCreateAccount.setText("Create Account");
 		    buttonCreateAccount.setBackground(new Color(display, 31, 78, 121));
 		    buttonCreateAccount.setLayoutData(griddataButton);
-		    buttonCreateAccount.setData("bank",CreateAccountTypeBank);
-		    buttonCreateAccount.setData("customer",CreateAccountTypeCustomer);
-		    buttonCreateAccount.setData("responsible",CreateAccountTypeResponsible);
-    		buttonCreateAccount.setData("accountType",CreateAccountTypeAccountType);
-    		buttonCreateAccount.setData("active",CreateAccountTypeActive);
+		    buttonCreateAccount.setData("bank",CreateAccountBank);
+		    buttonCreateAccount.setData("customer",CreateAccountCustomer);
+		    buttonCreateAccount.setData("admin",CreateAccountAdministrator);
+    		buttonCreateAccount.setData("accountType",CreateAccountAccountType);
+    		buttonCreateAccount.setData("active",CreateAccountActive);
+    		
+    		buttonCreateAccount.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	try {
+		        	int bank = b[((Combo)event.widget.getData("bank")).getSelectionIndex()].getId();
+		        	int customer = c[((Combo)event.widget.getData("customer")).getSelectionIndex()].getId();
+		        	int administrator = a[((Combo)event.widget.getData("admin")).getSelectionIndex()].getId();
+		        	int accountType = at[((Combo)event.widget.getData("accountType")).getSelectionIndex()].getId();
+		        	//String active = ((Text)event.widget.getData("active")).getText();
+		        	int accountId = createAccount(admin.getId(), bank, customer, administrator, accountType);
+		        	if (accountId != 0) {
+		        		System.out.println("new AccountId = " + accountId);
+		        	} else {
+		        		System.out.println("no new AccountId available at this point");
+		        	}
+		        	}
+		        	catch (ArrayIndexOutOfBoundsException e) {
+		        		System.out.println("Please complete your selection!");
+		        	}
+		        }
+	        });
 	}
 
 	private static void fillCompositeAccountPage() {
@@ -637,9 +717,9 @@ public class AdminClient {
 	public static Administrator getAdmin(int id) {
 		String GETString;
 		if (securityMode) {
-			GETString = server + "/rest/s/getAdmin" + "?account=" + id + "&passwortHash=" + password; 
+			GETString = server + "/rest/s/getAdmin" + "?adminID=" + id + "&passwortHash=" + password; 
 		} else {
-			GETString = server + "/rest/getAdmin" + "?account=" + id;
+			GETString = server + "/rest/getAdmin" + "?adminID=" + id;
 		}
 		
 		if (!GETString.isEmpty()) {
@@ -705,17 +785,78 @@ public class AdminClient {
 			return 0;
 	}
 	
-	public static int createAccount(int bank, int customerId, int adminId, int accountType) {
-		ClientResponse cr = Client.create().resource( "http://localhost:9998/rest/CreateAccount"
-                									+ "&bank=" + bank 
-                									+ "&customer=" + customerId
-                									+ "&adminId" + adminId
-                									+ "&accountType=" + accountType).get( ClientResponse.class );
+	public static int createAccount(int idLogin, int bankId, int customerId, int adminId, int accountTypeId) {
+
+		String GETString = server + "/rest/s/createAccount";
+		
+		Form f = new Form();
+		f.add("bankId", bankId);
+		f.add("customerId", customerId);
+		f.add("adminId", adminId);
+		f.add("accountTypeId", accountTypeId);
+		f.add("adminIdLogin", idLogin);
+		f.add("passwortHash", password);
+		
+		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
-			return jo.getInt("bankAccount");
+			return jo.getInt("id");
 		}
 		return 0;
 	}
+	
+	public static void getData(int id) {
+		
+		String GETString = server + "/rest/s/getData" + "?adminID=" + id + "&passwortHash=" + password; 
+		
+		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		
+		if (cr.getStatus() == 200) {
+			JSONObject jo = new JSONObject(cr.getEntity(String.class));
+			
+			JSONArray banks = jo.getJSONArray("banks");
+			JSONArray customers = jo.getJSONArray("customers");
+			JSONArray admins = jo.getJSONArray("admins");
+			JSONArray accountTypes = jo.getJSONArray("accountTypes");
+			
+			b = new Bank[banks.length()];
+			for (int i=0; i<banks.length(); i++) {
+				JSONObject job = banks.getJSONObject(i);
+				Bank bank = new Bank();
+				bank.setId(job.getInt("id"));
+				bank.setDescription(job.getString("description"));
+				b[i] = bank;
+			}
+			
+			c = new Customer[customers.length()];
+			for (int i=0; i<customers.length(); i++) {
+				JSONObject joc = customers.getJSONObject(i);
+				Customer customer = new Customer();
+				customer.setId(joc.getInt("id"));
+				customer.setFirstName(joc.getString("firstName"));
+				customer.setSecondName(joc.getString("secondName"));
+				c[i] = customer;
+			}
+			
+			a = new Administrator[admins.length()];
+			for (int i=0; i<admins.length(); i++) {
+				JSONObject joa = admins.getJSONObject(i);
+				Administrator admin = new Administrator();
+				admin.setId(joa.getInt("id"));
+				admin.setFirstName(joa.getString("firstName"));
+				admin.setSecondName(joa.getString("secondName"));
+				a[i] = admin;
+			}
+			
+			at = new AccountType[accountTypes.length()];
+			for (int i=0; i<accountTypes.length(); i++) {
+				JSONObject joat = accountTypes.getJSONObject(i);
+				AccountType accountType = new AccountType();
+				accountType.setId(joat.getInt("id"));
+				accountType.setDescription(joat.getString("description"));
+				at[i] = accountType;
+			}
+		}
 
+	}
 }

@@ -250,13 +250,15 @@ public class RestResource {
 	}
 		
 	@POST
-	@Path("/CreateAccount")
+	@Path("/s/createAccount")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
-	public Response createCustomer(@FormParam("bank")int bankId, 
-			                       @FormParam("customerId") int customerId, 
-			                       @FormParam("adminId") int adminId,
-			                       @FormParam("accountType") int accountTypeId,
-			                       @Context HttpServletRequest req) {
+	public Response createAccount(@FormParam("bankId")int bankId, 
+			                      @FormParam("customerId") int customerId, 
+			                      @FormParam("adminId") int adminId,
+			                      @FormParam("accountTypeId") int accountTypeId,
+			                      @FormParam("adminIdLogin")int adminIdLogin,
+					              @FormParam("passwortHash")String password,
+			                      @Context HttpServletRequest req) {
 		
 		// Declarations
 		Customer customer = new Customer();
@@ -274,12 +276,25 @@ public class RestResource {
 		logger.info(new java.util.Date() + ": Admin: " + adminId);
 		
 		try {
-			customer = new Customer(customerId);
-			admin = new Administrator(adminId);
-			bank = new Bank(bankId);
-			accountType = new AccountType(accountTypeId);
-			account = new Account(true, customer, admin, bank, accountType);
-		} catch(SQLException e) {
+			Administrator adminLogin = new Administrator(adminIdLogin);
+			if (adminLogin.getId() == 0)
+				return Response.status(404).build();			// Admin does not exist
+			if (adminLogin.getPassword().equals(password)) {
+				customer = new Customer(customerId);
+				admin = new Administrator(adminId);
+				bank = new Bank(bankId);
+				accountType = new AccountType(accountTypeId);
+				account = new Account(true, customer, admin, bank, accountType);
+				JSONObject jo = new JSONObject();
+				jo.put("id", account.getId());
+				return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+			}
+			else {
+				return Response.status(403).build();
+			}
+		} 
+		catch(SQLException e) 
+		{
 			if (customer.getId() <= 0) {
 				logger.info(new java.util.Date() + ": the customerId " + customerId + " does not exist.");
 				return Response.status(404).build();
@@ -305,9 +320,7 @@ public class RestResource {
 			}
 			
 			return Response.status(500).build();			
-		}
-		
-		return Response.ok().build();						
+		}				
 	}	
 	
 	@GET
@@ -521,18 +534,18 @@ public class RestResource {
 	@GET
 	@Path("/s/getAdmin")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
-	public Response getAdmin(@QueryParam("account")int account,
-								@QueryParam("passwortHash")String password,
-                                @Context HttpServletRequest req) {
+	public Response getAdmin(@QueryParam("adminID")int adminID,
+							 @QueryParam("passwortHash")String password,
+                             @Context HttpServletRequest req) {
         Logger logger = Logger.getRootLogger();
         logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
         logger.info(new java.util.Date() + ": Method: /s/getAdmin");
-        logger.info(new java.util.Date() + ": Account: " + account);
+        logger.info(new java.util.Date() + ": Admin: " + adminID);
                         		
         JSONObject jo = new JSONObject();
         
         try {
-			Administrator a = new Administrator(account);
+			Administrator a = new Administrator(adminID);
 			if (a.getId() == 0)
 				return Response.status(404).build();			// Admin does not exist
 			if (a.getPassword().equals(password)) {
@@ -560,13 +573,6 @@ public class RestResource {
 					customer.put("secondName", acc[i].getCustomer().getSecondName());
 					currentAccount.put("customer", customer);
 					
-					//!* eigentlich unnötig.... *!//
-					/*JSONObject administrator = new JSONObject();
-					administrator.put("id", a.getId());
-					administrator.put("firstName", a.getFirstName());
-					administrator.put("secondName", a.getSecondName());
-					currentAccount.put("administrator", administrator);*/
-					
 					JSONObject accountType = new JSONObject();
 					accountType.put("id", acc[i].getAccountType().getId());
 					accountType.put("description", acc[i].getAccountType().getDescription());
@@ -587,13 +593,110 @@ public class RestResource {
 			
 		}
 		catch(SQLException e) {
-			logger.info(new java.util.Date() + ": SQL-Exception during select for adminId: " + account);
+			logger.info(new java.util.Date() + ": SQL-Exception during select for adminID: " + adminID);
 			return Response.status(500).build();            // Internal Server Error
 		}
     }
 	
-	/*@GET
-	@Path("/s/getCustomers")
-	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })*/
+	@GET
+	@Path("/s/getData")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response getData(@QueryParam("adminID")int adminID,
+							@QueryParam("passwortHash")String password,
+							@Context HttpServletRequest req) {
 
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: /s/getData");
+		logger.info(new java.util.Date() + ": Account: " + adminID);
+		
+		JSONObject jo = new JSONObject();
+        
+        try {
+			Administrator a = new Administrator(adminID);
+			if (a.getId() == 0)
+				return Response.status(404).build();			// Admin does not exist
+			if (a.getPassword().equals(password)) {
+				
+				JSONArray banks = new JSONArray();
+				JSONArray customers = new JSONArray();
+				JSONArray admins = new JSONArray();
+				JSONArray accountTypes = new JSONArray();
+				
+				// Banks
+				String[] columnBank = {"idBank", "descriptionBank"};
+				String table = "Bank";
+				String[] condition = {};
+				String connector = "and";
+				
+				String[][] value = SQL.select(columnBank, table, condition, connector);
+				
+				for (int i=0; i<value.length; i++) {
+					JSONObject bank = new JSONObject();
+					bank.put("id", Convert.toInt(value[i][0]));
+					bank.put("description", value[i][1]);
+					banks.put(bank);
+				}
+				
+				jo.put("banks", banks);
+				
+				// Customers
+				String[] columnCustomer = {"idCustomer", "firstNameCustomer", "SecondNameCustomer"};
+				table = "Customer";
+				
+				value = SQL.select(columnCustomer, table, condition, connector);
+				
+				for (int i=0; i<value.length; i++) {
+					JSONObject customer = new JSONObject();
+					customer.put("id", Convert.toInt(value[i][0]));
+					customer.put("firstName", value[i][1]);
+					customer.put("secondName", value[i][2]);
+					customers.put(customer);
+				}
+				
+				jo.put("customers", customers);
+				
+				// Admins
+				String[] columnAdmin = {"idAdministrator", "firstNameAdministrator", "SecondNameAdministrator"};
+				table = "Administrator";
+				
+				value = SQL.select(columnAdmin, table, condition, connector);
+				
+				for (int i=0; i<value.length; i++) {
+					JSONObject admin = new JSONObject();
+					admin.put("id", Convert.toInt(value[i][0]));
+					admin.put("firstName", value[i][1]);
+					admin.put("secondName", value[i][2]);
+					admins.put(admin);
+				}
+				
+				jo.put("admins", admins);
+				
+				// AccountTypes
+				String[] columnAccountType = {"idAccountTyp", "descriptionAccountTyp"};
+				table = "AccountTyp";
+				
+				value = SQL.select(columnAccountType, table, condition, connector);
+				
+				for (int i=0; i<value.length; i++) {
+					JSONObject accountType = new JSONObject();
+					accountType.put("id", Convert.toInt(value[i][0]));
+					accountType.put("description", value[i][1]);
+					accountTypes.put(accountType);
+				}
+				
+				jo.put("accountTypes", accountTypes);
+				
+				return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+			}
+			else 
+			{
+				logger.info(new java.util.Date() + ": wrong password!");
+				return Response.status(404).build();
+			}
+        }
+        catch(SQLException e) {
+        	return Response.status(500).build();
+        }
+	}
 }

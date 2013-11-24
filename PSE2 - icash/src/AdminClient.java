@@ -152,14 +152,14 @@ public class AdminClient {
 		    
 		    buttonDeactivateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-
-			        }
+		        	// doSomething
+			    }
 			      });
 		    
 		    buttonActivateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-			          //do something here to activate selected account
-			        }
+		        	// doSomething
+		        }
 			      });
 		    
 		    buttonCreateAccount.addListener(SWT.Selection, new Listener() {
@@ -184,17 +184,19 @@ public class AdminClient {
 		    
 		    buttonCreateCustomer.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {		        		        	
-		        	String firstname = (((Text)event.widget.getData("firstname")).getText());
-		        	String lastname  = (((Text)event.widget.getData("lastname")).getText());
+		        	String firstName = (((Text)event.widget.getData("firstName")).getText());
+		        	String secondName  = (((Text)event.widget.getData("secondName")).getText());
 		        	String password  = (((Text)event.widget.getData("password")).getText());
-		        	if (!(firstname.isEmpty() && lastname.isEmpty())) {
-		        	int customerId = AdminClient.createCustomer(firstname, lastname, password);
+		        	if (!(firstName.isEmpty() || secondName.isEmpty() || password.isEmpty())) {
+		        	int customerId = AdminClient.createCustomer(admin.getId(), firstName, secondName, password);
 		        		if (customerId != 0) {
 		        			System.out.println("new CustomerId = " + customerId);
 		        		} else {
 		        			System.out.println("no new CustomerId available at this point");
 		        		}
 		        	}
+		        	else
+		        		System.out.println("Please fill in all required fields!");
         	  	}
 	        });
 		    
@@ -252,8 +254,8 @@ public class AdminClient {
 		    buttonCreateCustomer.setText("Create Customer");
 		    buttonCreateCustomer.setBackground(new Color(display, 31, 78, 121));
 		    buttonCreateCustomer.setLayoutData(griddataButton);
-			buttonCreateCustomer.setData("fistname",CreateCustomerTypeFirstname);
-		    buttonCreateCustomer.setData("lastname",CreateAccountTypeLastname);
+			buttonCreateCustomer.setData("firstName",CreateCustomerTypeFirstname);
+		    buttonCreateCustomer.setData("secondName",CreateAccountTypeLastname);
 		    buttonCreateCustomer.setData("password",CreateAccountTypeInitPassword);	    
 	}
 
@@ -456,12 +458,46 @@ public class AdminClient {
 		    buttonDeactivateAccount.setText("Deacitvate Account");
 		    buttonDeactivateAccount.setBackground(new Color(display, 31, 78, 121));
 		    buttonDeactivateAccount.setLayoutData(griddataButton);
+		    buttonDeactivateAccount.setData("customers", table);
 		    
 		    buttonActivateAccount = new Button(compositeAccountPage, SWT.PUSH);
 		    buttonActivateAccount.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
 		    buttonActivateAccount.setText("Acitvate Account");
 		    buttonActivateAccount.setBackground(new Color(display, 31, 78, 121));
 		    buttonActivateAccount.setLayoutData(griddataButton);
+		    buttonActivateAccount.setData("customers", table);
+		    
+		    buttonDeactivateAccount.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        		Table t = (Table)event.widget.getData("customers");
+		        		int[] index = t.getSelectionIndices();
+		        		if (index.length != 1)
+		        			System.out.println("Please mark exactly one row!");
+		        		else {
+		        			TableItem i = t.getItem(index[0]);
+		        			int idAccount = Convert.toInt(i.getText(0));
+		        			int status = setActive(admin.getId(), false, idAccount);
+		        			if (status == 200) 
+		        				i.setText(5, " ");
+		        		}
+			        }
+			      });
+		    
+		    buttonActivateAccount.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	Table t = (Table)event.widget.getData("customers");
+	        		int[] index = t.getSelectionIndices();
+	        		if (index.length != 1)
+	        			System.out.println("Please mark exactly one row!");
+	        		else {
+	        			TableItem i = t.getItem(index[0]);
+	        			int idAccount = Convert.toInt(i.getText(0));
+	        			int status = setActive(admin.getId(), true, idAccount);
+	        			if (status == 200) 
+	        				i.setText(5, "X");
+	        		}
+			        }
+			      });
 	}
 
 	private static void fillCompositeWelcomePage() {
@@ -771,15 +807,24 @@ public class AdminClient {
 		return null;
 	}
 	
-	public static int createCustomer(String firstName, String lastName, String password) {
-		ClientResponse cr = Client.create().resource( "http://localhost:9998/rest/CreateCustomer"
-            										+ "&firstName=" + firstName 
-            										+ "&lastName=" + lastName
-            										+ "&password=" + password).get( ClientResponse.class );
+	public static int createCustomer(int idLogin, String firstName, String secondName, String password) {
+		//ClientResponse cr = Client.create().resource( "http://localhost:9998/rest/CreateCustomer"
+        //    										+ "&firstName=" + firstName 
+        //    										+ "&lastName=" + lastName
+        //    										+ "&password=" + password).get( ClientResponse.class );
+		
+		String GETString = server + "/rest/s/createCustomer";
+		
+		Form f = new Form();
+		f.add("firstName", firstName);
+		f.add("secondName", secondName);
+		f.add("password", password);
+		
+		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
-			int customer = jo.getInt("customer");
-			return customer;
+			int id = jo.getInt("id");
+			return id;
 		}
 		else
 			return 0;
@@ -857,6 +902,19 @@ public class AdminClient {
 				at[i] = accountType;
 			}
 		}
-
+	}
+	
+	public static int setActive(int idLogin, boolean active, int idAccount) {
+		
+		String GETString = server + "/rest/s/setActive";
+		
+		Form f = new Form();
+		f.add("active", active);
+		f.add("idAccount", idAccount);
+		f.add("idLogin", idLogin);
+		f.add("passwortHash", password);
+		
+		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		return cr.getStatus();
 	}
 }

@@ -227,26 +227,30 @@ public class RestResource {
 	}
 	
 	@POST
-	@Path("/CreateCustomer")
+	@Path("/s/createCustomer")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
 	public Response createCustomer(@FormParam("firstName")String firstName, 
-			                       @FormParam("lastName") String secondName, 
+			                       @FormParam("secondName") String secondName, 
 			                       @FormParam("password") String password, 
 			                       @Context HttpServletRequest req) {
 		
 		// Logging
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
-		logger.info(new java.util.Date() + ": Method: Create Customer");
-		logger.info(new java.util.Date() + ": first name: " + firstName + "/ last name: " + secondName);
+		logger.info(new java.util.Date() + ": Method: /s/createCustomer");
+		logger.info(new java.util.Date() + ": first name: " + firstName + "/ second name: " + secondName);
 		
 		try {
 			Customer c = new Customer(firstName, secondName, password);
+			JSONObject jo = new JSONObject();
+			jo.put("id", c.getId());
+			// Customer was created successfully
+			return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
 		}
 		catch(SQLException e) {
 			return Response.status(500).build();			// Internal Server Error
 		}
-		return Response.ok().build();						// Transaction was created successfully
+								
 	}
 		
 	@POST
@@ -270,7 +274,7 @@ public class RestResource {
 		// Logging
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
-		logger.info(new java.util.Date() + ": Method: Create Account");
+		logger.info(new java.util.Date() + ": Method: /s/createAccount");
 		logger.info(new java.util.Date() + ": Account type: " + accountTypeId); 
 		logger.info(new java.util.Date() + ": Customer: " + customerId);
 		logger.info(new java.util.Date() + ": Admin: " + adminId);
@@ -608,7 +612,7 @@ public class RestResource {
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
 		logger.info(new java.util.Date() + ": Method: /s/getData");
-		logger.info(new java.util.Date() + ": Account: " + adminID);
+		logger.info(new java.util.Date() + ": Admin: " + adminID);
 		
 		JSONObject jo = new JSONObject();
         
@@ -698,5 +702,42 @@ public class RestResource {
         catch(SQLException e) {
         	return Response.status(500).build();
         }
+	}
+	
+	@POST
+	@Path("/s/setActive")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response setActive(@FormParam("active")boolean active,
+			                  @FormParam("idAccount")int idAccount,
+			                  @FormParam("idLogin")int idLogin,
+			                  @FormParam("passwortHash")String password,
+			                  @Context HttpServletRequest req) {
+
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: /s/setActive");
+		logger.info(new java.util.Date() + ": Admin: " + idLogin);
+        
+        try {
+			Administrator a = new Administrator(idLogin);
+			if (a.getId() == 0)
+				return Response.status(404).build();			// Admin does not exist
+			if (a.getPassword().equals(password)) {				
+				Account acc = new Account(idAccount);
+				if (acc != null) {
+					acc.setFlagActive(active);
+					acc.updateDB();
+					return Response.ok().build();
+				}
+				else
+					return Response.status(404).build();		// Account does not exist
+			}
+			else
+				return Response.status(403).build();			// Wrong password
+        }
+        catch(SQLException e) {
+        	return Response.status(500).build();				// Internal Server Error
+        }
+		
 	}
 }

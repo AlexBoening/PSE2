@@ -158,7 +158,7 @@ public class Transaction {
 			value[4] = "X";
 		else
 			value[4] = " ";
-		value[5] = "" + incomingAccount.getId();
-		value[6] = "" + outgoingAccount.getId();
+		value[5] = "" + getIncomingAccount().getId();
+		value[6] = "" + getOutgoingAccount().getId();
 	}
 }

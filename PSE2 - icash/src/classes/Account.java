@@ -209,10 +209,10 @@ public void updateDB() throws SQLException{
 		value[0] = "X";
 	else
 		value[0] = " ";
-	value[1] = "" + customer.getId();
-	value[2] = "" + administrator.getId();
-	value[3] = "" + bank.getId();
-	value[4] = "" + accountType.getId();
+	value[1] = "" + getCustomer().getId();
+	value[2] = "" + getAdministrator().getId();
+	value[3] = "" + getBank().getId();
+	value[4] = "" + getAccountType().getId();
 	
     SQL.update(column, value, "Account", condition, "and");
     }

@@ -219,6 +219,12 @@ public class CustomerClient {
 			    }
 			});
 		    
+		    buttonCommitPDF.addListener(SWT.Selection, new Listener() {
+		    	public void handleEvent(Event event) {
+		    		printTransactions();
+		    	}
+		    });
+		    
 		    //Events
 		    
 		    shell.pack();
@@ -309,12 +315,7 @@ public class CustomerClient {
 		    		
 		    		GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, true);
 		    		table.setLayoutData(ViewCompositeData);
-		    		
-				    buttonCommitPDF = new Button(compositeViewTransaction, SWT.PUSH);
-				    buttonCommitPDF.setText("Print Transactions");
-				    buttonCommitPDF.setBackground(new Color(display, 31, 78, 121));
-				    buttonCommitPDF.setLayoutData(griddataButton);
-				    
+		    						    		    
 		    		if (account != null) 
 		    			try {
 		    				// Get all transactions existing in the database
@@ -341,7 +342,12 @@ public class CustomerClient {
 		    			else {
 		    				LabelStatusLine.setText(getMessage(400));
 		    			}
-		    		compositeViewTransaction.pack();
+		    		buttonCommitPDF = new Button(compositeViewTransaction, SWT.PUSH);
+				    buttonCommitPDF.setText("Print Transactions");
+				    buttonCommitPDF.setBackground(new Color(display, 31, 78, 121));
+				    buttonCommitPDF.setLayoutData(griddataButton);
+				    
+				    compositeViewTransaction.pack();
 	}
 
 	private static void fillcompositePerformTransaction() {
@@ -921,6 +927,31 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 			case 412: return "PRECONDITION FAILED: Your balance is insufficient!";
 			case 500: return "INTERNAL SERVER ERROR: Please try again later!";
 			default:  return "Unknown Response!";
+		}
+	}
+	
+	public static void printTransactions() {
+		try {
+			// Get all transactions existing in the database
+		    account = getAccount(account.getId());
+			Transaction[] t = new Transaction[account.getTransactions().size()];
+			account.getTransactions().toArray(t);
+			
+			String[][] transactions = new String[4][account.getTransactions().size()]; 
+			for (int i=0; i<t.length; i++) {
+				
+				transactions[0][i]= classes.Convert.toEuro(t[i].getAmount());
+				transactions[1][i] = t[i].getOutgoingAccount().getCustomer().getFirstName() + " " +
+							t[i].getOutgoingAccount().getCustomer().getSecondName();
+				transactions[2][i] = t[i].getIncomingAccount().getCustomer().getFirstName() + " " +
+							t[i].getIncomingAccount().getCustomer().getSecondName();
+				transactions[3][i] = t[i].getDescription();
+				transactions[4][i] = t[i].getDate().toString();				
+			}
+			
+			PDF.print(transactions);
+		} catch (SQLException e) {
+			System.out.println("SQL-Exception");
 		}
 	}
 }

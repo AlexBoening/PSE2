@@ -243,6 +243,7 @@ public class CustomerClient {
 		 DepositCompositeData.horizontalSpan = 2;
 		    Label DepositCaptionLabel = new Label(compositeDepositPage, SWT.NONE);
 		    DepositCaptionLabel.setText("Deposit your Money");
+		    DepositCaptionLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
 		    DepositCaptionLabel.setLayoutData(DepositCompositeData);
 		    
 		    Label SepPerform3 = new Label(compositeDepositPage, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -283,6 +284,7 @@ public class CustomerClient {
 		    
 		    Label PerformTransactionCaptionLabel = new Label(compositeViewTransaction, SWT.NONE);
 		    PerformTransactionCaptionLabel.setText("View Your Transaction");
+		    PerformTransactionCaptionLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
 		    PerformTransactionCaptionLabel.setLayoutData(CreateAccountCompositeData);
 		    
 		    Label SepPerform1 = new Label(compositeViewTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -358,6 +360,7 @@ public class CustomerClient {
 		    ViewCompositeData.horizontalSpan = 2;
 		    Label PerformTransactionCaptionLabel = new Label(compositePerformTransaction, SWT.NONE);
 		    PerformTransactionCaptionLabel.setText("Perform your Transaction");
+		    PerformTransactionCaptionLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
 		    PerformTransactionCaptionLabel.setLayoutData(ViewCompositeData);
 		   
 		    PerformTransactionCaptionLabel.pack();
@@ -413,6 +416,7 @@ public class CustomerClient {
 		    CreateCustomerCompositeData.horizontalSpan = 2;
 		    Label WithdrawCaptionLabel = new Label(compositeWithdrawPage, SWT.NONE);
 		    WithdrawCaptionLabel.setText("Withdraw your Money");
+		    WithdrawCaptionLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
 		    WithdrawCaptionLabel.setLayoutData(CreateCustomerCompositeData);
 		    
 		    Label SepPerform3 = new Label(compositeWithdrawPage, SWT.SEPARATOR | SWT.HORIZONTAL);

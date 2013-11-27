@@ -1,5 +1,7 @@
 package classes;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
 
@@ -34,20 +36,21 @@ public class PDF {
 	  public static void main(String[] args) {
 		  String[][] transactions = new String[5][5];
 	      for (int i=0; i<transactions.length; i++) {
-	    	  transactions[0][i] = "Row1 Line"; //+ (i+1);
-	    	  transactions[1][i] = "Row2 Line"; //+ (i+1);
-	    	  transactions[2][i] = "Row3 Line"; //+ (i+1);
-	    	  transactions[3][i] = "Row4 Line"; //+ (i+1);
-	    	  transactions[4][i] = "Row5 Line"; //+ (i+1);
+	    	  transactions[0][i] = "Row 1 Line " + String.valueOf(i+1);
+	    	  transactions[1][i] = "Row 2 Line " + String.valueOf(i+1);
+	    	  transactions[2][i] = "Row 3 Line " + String.valueOf(i+1);
+	    	  transactions[3][i] = "Row 4 Line " + String.valueOf(i+1);
+	    	  transactions[4][i] = "Row 5 Line " + String.valueOf(i+1);
 	      }
 		  print(transactions);
 	  }
 	  
 	  public static void print(String[][] transactions) {
-	    try { String timeStamp = new SimpleDateFormat("yyyy.MM.dd_HH.mm.ss").format(Calendar.getInstance().getTime());
-	    	  FILE = "c:/temp/Kontoauszug_" + timeStamp + ".pdf";
-		      Document document = new Document();
-		      PdfWriter.getInstance(document, new FileOutputStream(FILE));
+	    try { 
+	    	  String timeStamp = new SimpleDateFormat("yyyy.MM.dd_HH.mm.ss").format(Calendar.getInstance().getTime());
+		      File file = new File("Kontoauszug_" + timeStamp + ".pdf"); 
+	    	  Document document = new Document();
+		      PdfWriter.getInstance(document, new FileOutputStream(file));
 		      document.open();
 		      addMetaData(document);
 		      // initializing data
@@ -66,6 +69,7 @@ public class PDF {
 		      addTitlePage(document, b, c, a, ac);
 		      addTable(document, transactions);
 		      document.close();
+		      Desktop.getDesktop().open(file);
 		    } catch (Exception e) {
 		    	e.printStackTrace();
 		    }

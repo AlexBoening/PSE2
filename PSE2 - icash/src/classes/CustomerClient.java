@@ -315,9 +315,9 @@ public class CustomerClient {
 		    					String[] column = new String[5];
 		    					column[0] = classes.Convert.toEuro(t[i].getAmount());
 		    					column[1] = t[i].getOutgoingAccount().getCustomer().getFirstName() + " " +
-		    								t[i].getOutgoingAccount().getCustomer().getSecondName();
+		    								t[i].getOutgoingAccount().getCustomer().getLastName();
 		    					column[2] = t[i].getIncomingAccount().getCustomer().getFirstName() + " " +
-		    								t[i].getIncomingAccount().getCustomer().getSecondName();
+		    								t[i].getIncomingAccount().getCustomer().getLastName();
 		    					column[3] = t[i].getDescription();
 		    					column[4] = t[i].getDate().toString();
 		    					item.setText(column);
@@ -769,7 +769,7 @@ public static Account getAccount(int number) {
     a.setId(jo.getInt("number"));
     Customer c = new Customer();
     c.setFirstName(jo.getString("owner").split(" ")[0]);
-    c.setSecondName(jo.getString("owner").split(" ")[1]);
+    c.setLastName(jo.getString("owner").split(" ")[1]);
     a.setCustomer(c);
     
     JSONArray ja = jo.getJSONArray("transactions");
@@ -786,7 +786,7 @@ public static Account getAccount(int number) {
     	incomingAccount.setId(receiver.getInt("number"));
     	Customer c_in = new Customer();
     	c_in.setFirstName(receiver.getString("owner").split(" ")[0]);
-    	c_in.setSecondName(receiver.getString("owner").split(" ")[1]);
+    	c_in.setLastName(receiver.getString("owner").split(" ")[1]);
     	incomingAccount.setCustomer(c_in);
     	t.setIncomingAccount(incomingAccount);
     	
@@ -795,7 +795,7 @@ public static Account getAccount(int number) {
     	outgoingAccount.setId(sender.getInt("number"));
     	Customer c_out = new Customer();
     	c_out.setFirstName(sender.getString("owner").split(" ")[0]);
-    	c_out.setSecondName(sender.getString("owner").split(" ")[1]);
+    	c_out.setLastName(sender.getString("owner").split(" ")[1]);
     	outgoingAccount.setCustomer(c_out);
     	t.setOutgoingAccount(outgoingAccount);
     	

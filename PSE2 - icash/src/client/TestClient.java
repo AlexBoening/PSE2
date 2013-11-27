@@ -22,7 +22,7 @@ public class TestClient {
 	    a.setId(jo.getInt("number"));
 	    Customer c = new Customer();
 	    c.setFirstName(jo.getString("owner").split(" ")[0]);
-	    c.setSecondName(jo.getString("owner").split(" ")[1]);
+	    c.setLastName(jo.getString("owner").split(" ")[1]);
 	    a.setCustomer(c);
 	    
 	    JSONArray ja = jo.getJSONArray("transactions");
@@ -39,7 +39,7 @@ public class TestClient {
 	    	incomingAccount.setId(receiver.getInt("number"));
 	    	Customer c_in = new Customer();
 	    	c_in.setFirstName(receiver.getString("owner").split(" ")[0]);
-	    	c_in.setSecondName(receiver.getString("owner").split(" ")[1]);
+	    	c_in.setLastName(receiver.getString("owner").split(" ")[1]);
 	    	incomingAccount.setCustomer(c_in);
 	    	t.setIncomingAccount(incomingAccount);
 	    	
@@ -48,7 +48,7 @@ public class TestClient {
 	    	outgoingAccount.setId(sender.getInt("number"));
 	    	Customer c_out = new Customer();
 	    	c_out.setFirstName(sender.getString("owner").split(" ")[0]);
-	    	c_out.setSecondName(sender.getString("owner").split(" ")[1]);
+	    	c_out.setLastName(sender.getString("owner").split(" ")[1]);
 	    	outgoingAccount.setCustomer(c_out);
 	    	t.setOutgoingAccount(outgoingAccount);
 	    	

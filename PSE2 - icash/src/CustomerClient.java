@@ -1,6 +1,3 @@
-
-
-
 import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
@@ -41,6 +38,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import classes.Account;
+import classes.AccountType;
+import classes.Bank;
 import classes.Customer;
 import classes.Transaction;
 
@@ -330,9 +329,9 @@ public class CustomerClient {
 		    					String[] column = new String[5];
 		    					column[0] = classes.Convert.toEuro(t[i].getAmount());
 		    					column[1] = t[i].getOutgoingAccount().getCustomer().getFirstName() + " " +
-		    								t[i].getOutgoingAccount().getCustomer().getSecondName();
+		    								t[i].getOutgoingAccount().getCustomer().getLastName();
 		    					column[2] = t[i].getIncomingAccount().getCustomer().getFirstName() + " " +
-		    								t[i].getIncomingAccount().getCustomer().getSecondName();
+		    								t[i].getIncomingAccount().getCustomer().getLastName();
 		    					column[3] = t[i].getDescription();
 		    					column[4] = t[i].getDate().toString();
 		    					item.setText(column);
@@ -806,7 +805,7 @@ public static Account getAccount(int number) {
     name = jo.getString("owner").split(" ");
     c.setFirstName(name[0]);
     if (name.length > 1)
-        c.setSecondName(name[1]);
+        c.setLastName(name[1]);
     a.setCustomer(c);
     
     JSONArray ja = jo.getJSONArray("transactions");
@@ -825,7 +824,7 @@ public static Account getAccount(int number) {
     	name = receiver.getString("owner").split(" ");
     	c_in.setFirstName(name[0]);
     	if (name.length > 1)
-    	    c_in.setSecondName(name[1]);
+    	    c_in.setLastName(name[1]);
     	incomingAccount.setCustomer(c_in);
     	t.setIncomingAccount(incomingAccount);
     	
@@ -836,7 +835,7 @@ public static Account getAccount(int number) {
     	name = sender.getString("owner").split(" ");
     	c_out.setFirstName(name[0]);
     	if (name.length > 1)
-    	    c_out.setSecondName(name[1]);
+    	    c_out.setLastName(name[1]);
     	outgoingAccount.setCustomer(c_out);
     	t.setOutgoingAccount(outgoingAccount);
     	
@@ -942,15 +941,14 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 			account.getTransactions().toArray(t);
 			
 			String[][] transactions = new String[4][account.getTransactions().size()]; 
-			for (int i=0; i<t.length; i++) {
-				
-				transactions[0][i]= classes.Convert.toEuro(t[i].getAmount());
-				transactions[1][i] = t[i].getOutgoingAccount().getCustomer().getFirstName() + " " +
-							t[i].getOutgoingAccount().getCustomer().getSecondName();
-				transactions[2][i] = t[i].getIncomingAccount().getCustomer().getFirstName() + " " +
-							t[i].getIncomingAccount().getCustomer().getSecondName();
-				transactions[3][i] = t[i].getDescription();
-				transactions[4][i] = t[i].getDate().toString();				
+			for (int i=0; i<t.length; i++) {				
+				transactions[0][i] = t[i].getDate().toString();
+				transactions[1][i] = t[i].getDescription();
+				transactions[2][i] = t[i].getOutgoingAccount().getCustomer().getFirstName() + " " +
+						t[i].getOutgoingAccount().getCustomer().getLastName();
+				transactions[3][i] = t[i].getIncomingAccount().getCustomer().getFirstName() + " " +
+						t[i].getIncomingAccount().getCustomer().getLastName();
+				transactions[4][i]= classes.Convert.toEuro(t[i].getAmount());
 			}
 			
 			PDF.print(transactions);

@@ -6,12 +6,12 @@ import java.util.ArrayList;
 public abstract class Person {
     protected int id;
     protected String firstName;
-    protected String secondName;
+    protected String lastName;
     protected String password;
     protected boolean loggedIn;
     protected ArrayList<Account> accounts;
     
-    public Person(String firstName, String secondName, String password, boolean admin) throws SQLException {
+    public Person(String firstName, String lastName, String password, boolean admin) throws SQLException {
     	if (admin) {
     	    this.id = SQL.getID("idAdministrator", "Administrator");
     	}
@@ -19,14 +19,14 @@ public abstract class Person {
     		this.id = SQL.getID("idCustomer", "Customer");
     	}
     	this.firstName = firstName;
-    	this.secondName = secondName;
+    	this.lastName = lastName;
     	this.password = password;
     	this.loggedIn = false;
     	
     	String[] value = new String[4];
     	value[0] = "" + id;
     	value[1] = firstName;
-    	value[2] = secondName;
+    	value[2] = lastName;
     	value[3] = password;  // ToDo: Verschlüsseln
     	if (admin)
     	    SQL.insert(value, "Administrator");
@@ -37,7 +37,7 @@ public abstract class Person {
     public Person(int id, boolean admin) throws SQLException {
     	
     	if (admin) {
-    	    String[] column = {"firstNameAdministrator", "secondNameAdministrator", "passwordAdministrator" };
+    	    String[] column = {"firstNameAdministrator", "lastNameAdministrator", "passwordAdministrator" };
             String[] condition = {"idAdministrator = " + id};
             String[][] value = SQL.select(column, "Administrator", condition, "and");
             
@@ -45,18 +45,18 @@ public abstract class Person {
             	return;
             this.id = id;
     		this.firstName = value[0][0];
-    		this.secondName = value[0][1];
+    		this.lastName = value[0][1];
     		this.password = value[0][2];
         	this.loggedIn = false;
     	}
     	else {
-        	String[] column = {"firstNameCustomer", "secondNameCustomer", "passwordCustomer" };
+        	String[] column = {"firstNameCustomer", "lastNameCustomer", "passwordCustomer" };
             String[] condition = {"idCustomer = " + id};
             String[][] value = SQL.select(column, "Customer", condition, "and");
 
         	this.id = id;
         	this.firstName = value[0][0];
-        	this.secondName = value[0][1];
+        	this.lastName = value[0][1];
         	this.password = value[0][2];
         	this.loggedIn = false;   		
     	}

@@ -185,10 +185,10 @@ public class AdminClient {
 		    buttonCreateCustomer.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {		        		        	
 		        	String firstName = (((Text)event.widget.getData("firstName")).getText());
-		        	String secondName  = (((Text)event.widget.getData("secondName")).getText());
+		        	String lastName  = (((Text)event.widget.getData("lastName")).getText());
 		        	String password  = (((Text)event.widget.getData("password")).getText());
-		        	if (!(firstName.isEmpty() || secondName.isEmpty() || password.isEmpty())) {
-		        	int customerId = AdminClient.createCustomer(admin.getId(), firstName, secondName, password);
+		        	if (!(firstName.isEmpty() || lastName.isEmpty() || password.isEmpty())) {
+		        	int customerId = AdminClient.createCustomer(admin.getId(), firstName, lastName, password);
 		        		if (customerId != 0) {
 		        			System.out.println("new CustomerId = " + customerId);
 		        		} else {
@@ -255,7 +255,7 @@ public class AdminClient {
 		    buttonCreateCustomer.setBackground(new Color(display, 31, 78, 121));
 		    buttonCreateCustomer.setLayoutData(griddataButton);
 			buttonCreateCustomer.setData("firstName",CreateCustomerTypeFirstname);
-		    buttonCreateCustomer.setData("secondName",CreateAccountTypeLastname);
+		    buttonCreateCustomer.setData("lastName",CreateAccountTypeLastname);
 		    buttonCreateCustomer.setData("password",CreateAccountTypeInitPassword);	    
 	}
 
@@ -299,7 +299,7 @@ public class AdminClient {
 		    if (c != null) {
 		    	String customer[] = new String[c.length];
 		    	for (int i=0; i<c.length; i++) {
-		    		customer[i] = c[i].getFirstName() + " " + c[i].getSecondName();
+		    		customer[i] = c[i].getFirstName() + " " + c[i].getLastName();
 		    	}
 		    	CreateAccountCustomer.setItems(customer);
 		    }
@@ -314,7 +314,7 @@ public class AdminClient {
 		    if (a != null) {
 		    	String admin[] = new String[a.length];
 		    	for (int i=0; i<a.length; i++) {
-		    		admin[i] = a[i].getFirstName() + " " + a[i].getSecondName();
+		    		admin[i] = a[i].getFirstName() + " " + a[i].getLastName();
 		    	}
 		    	CreateAccountAdministrator.setItems(admin);
 		    }
@@ -436,9 +436,9 @@ public class AdminClient {
     					column[0] = "" + acc[i].getId();
     					column[1] = acc[i].getBank().getDescription();
     					column[2] = acc[i].getCustomer().getFirstName() + " " +
-    								acc[i].getCustomer().getSecondName();
+    								acc[i].getCustomer().getLastName();
     					column[3] = acc[i].getAdministrator().getFirstName() + " " +
-    								acc[i].getAdministrator().getSecondName();
+    								acc[i].getAdministrator().getLastName();
     					column[4] = acc[i].getAccountType().getDescription();
     					if (acc[i].isFlagActive())
     						column[5] = "X";
@@ -766,7 +766,7 @@ public class AdminClient {
 				Administrator admin = new Administrator();
 				admin.setId(jo.getInt("id"));
 				admin.setFirstName(jo.getString("firstName"));
-				admin.setSecondName(jo.getString("secondName"));
+				admin.setLastName(jo.getString("lastName"));
 				
 				JSONArray ja = jo.getJSONArray("accounts");
 				
@@ -787,7 +787,7 @@ public class AdminClient {
 					acc.setCustomer(c);
 					c.setId(customer.getInt("id"));
 					c.setFirstName(customer.getString("firstName"));
-					c.setSecondName(customer.getString("secondName"));
+					c.setLastName(customer.getString("lastName"));
 					
 					acc.setAdministrator(admin);
 					
@@ -807,7 +807,7 @@ public class AdminClient {
 		return null;
 	}
 	
-	public static int createCustomer(int idLogin, String firstName, String secondName, String password) {
+	public static int createCustomer(int idLogin, String firstName, String lastName, String password) {
 		//ClientResponse cr = Client.create().resource( "http://localhost:9998/rest/CreateCustomer"
         //    										+ "&firstName=" + firstName 
         //    										+ "&lastName=" + lastName
@@ -817,7 +817,7 @@ public class AdminClient {
 		
 		Form f = new Form();
 		f.add("firstName", firstName);
-		f.add("secondName", secondName);
+		f.add("lastName", lastName);
 		f.add("password", password);
 		
 		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
@@ -879,7 +879,7 @@ public class AdminClient {
 				Customer customer = new Customer();
 				customer.setId(joc.getInt("id"));
 				customer.setFirstName(joc.getString("firstName"));
-				customer.setSecondName(joc.getString("secondName"));
+				customer.setLastName(joc.getString("lastName"));
 				c[i] = customer;
 			}
 			
@@ -889,7 +889,7 @@ public class AdminClient {
 				Administrator admin = new Administrator();
 				admin.setId(joa.getInt("id"));
 				admin.setFirstName(joa.getString("firstName"));
-				admin.setSecondName(joa.getString("secondName"));
+				admin.setLastName(joa.getString("lastName"));
 				a[i] = admin;
 			}
 			
@@ -917,4 +917,5 @@ public class AdminClient {
 		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		return cr.getStatus();
 	}
+	
 }

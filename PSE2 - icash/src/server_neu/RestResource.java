@@ -92,7 +92,7 @@ public class RestResource {
 		// Build up header data
 		jo.put("id", a.getBank().getId());
 		jo.put("number", a.getId());
-		jo.put("owner", a.getCustomer().getFirstName() + " " + a.getCustomer().getSecondName());
+		jo.put("owner", a.getCustomer().getFirstName() + " " + a.getCustomer().getLastName());
         
 		JSONArray ja = new JSONArray();
 		Transaction[] t = new Transaction[a.getTransactions().size()];
@@ -109,7 +109,7 @@ public class RestResource {
 			receiver.put("id", t[i].getIncomingAccount().getBank().getId());
 			receiver.put("number", t[i].getIncomingAccount().getId());
 			receiver.put("owner", t[i].getIncomingAccount().getCustomer().getFirstName() + " " 
-			                    + t[i].getIncomingAccount().getCustomer().getSecondName());
+			                    + t[i].getIncomingAccount().getCustomer().getLastName());
 			transaction.put("receiver", receiver);
 			transaction.put("reference", t[i].getDescription());
 			
@@ -118,7 +118,7 @@ public class RestResource {
 			sender.put("id", t[i].getOutgoingAccount().getBank().getId());
 			sender.put("number", t[i].getOutgoingAccount().getId());
 			sender.put("owner", t[i].getOutgoingAccount().getCustomer().getFirstName() + " " 
-			                    + t[i].getOutgoingAccount().getCustomer().getSecondName());
+			                    + t[i].getOutgoingAccount().getCustomer().getLastName());
 			transaction.put("sender", sender);
 			transaction.put("transactionDate", t[i].getDate());
 			
@@ -230,7 +230,7 @@ public class RestResource {
 	@Path("/s/createCustomer")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
 	public Response createCustomer(@FormParam("firstName")String firstName, 
-			                       @FormParam("secondName") String secondName, 
+			                       @FormParam("lastName") String lastName, 
 			                       @FormParam("password") String password, 
 			                       @Context HttpServletRequest req) {
 		
@@ -238,10 +238,10 @@ public class RestResource {
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
 		logger.info(new java.util.Date() + ": Method: /s/createCustomer");
-		logger.info(new java.util.Date() + ": first name: " + firstName + "/ second name: " + secondName);
+		logger.info(new java.util.Date() + ": first name: " + firstName + "/ last name: " + lastName);
 		
 		try {
-			Customer c = new Customer(firstName, secondName, password);
+			Customer c = new Customer(firstName, lastName, password);
 			JSONObject jo = new JSONObject();
 			jo.put("id", c.getId());
 			// Customer was created successfully
@@ -556,7 +556,7 @@ public class RestResource {
 
 				jo.put("id", a.getId());
 				jo.put("firstName", a.getFirstName());
-				jo.put("secondName", a.getSecondName());
+				jo.put("lastName", a.getLastName());
 				
 				JSONArray ja = new JSONArray();
 				Account[] acc = new Account[a.getAccounts().size()];
@@ -574,7 +574,7 @@ public class RestResource {
 					JSONObject customer = new JSONObject();
 					customer.put("id", acc[i].getCustomer().getId());
 					customer.put("firstName", acc[i].getCustomer().getFirstName());
-					customer.put("secondName", acc[i].getCustomer().getSecondName());
+					customer.put("lastName", acc[i].getCustomer().getLastName());
 					currentAccount.put("customer", customer);
 					
 					JSONObject accountType = new JSONObject();
@@ -645,7 +645,7 @@ public class RestResource {
 				jo.put("banks", banks);
 				
 				// Customers
-				String[] columnCustomer = {"idCustomer", "firstNameCustomer", "SecondNameCustomer"};
+				String[] columnCustomer = {"idCustomer", "firstNameCustomer", "lastNameCustomer"};
 				table = "Customer";
 				
 				value = SQL.select(columnCustomer, table, condition, connector);
@@ -654,14 +654,14 @@ public class RestResource {
 					JSONObject customer = new JSONObject();
 					customer.put("id", Convert.toInt(value[i][0]));
 					customer.put("firstName", value[i][1]);
-					customer.put("secondName", value[i][2]);
+					customer.put("lastName", value[i][2]);
 					customers.put(customer);
 				}
 				
 				jo.put("customers", customers);
 				
 				// Admins
-				String[] columnAdmin = {"idAdministrator", "firstNameAdministrator", "SecondNameAdministrator"};
+				String[] columnAdmin = {"idAdministrator", "firstNameAdministrator", "lastNameAdministrator"};
 				table = "Administrator";
 				
 				value = SQL.select(columnAdmin, table, condition, connector);
@@ -670,7 +670,7 @@ public class RestResource {
 					JSONObject admin = new JSONObject();
 					admin.put("id", Convert.toInt(value[i][0]));
 					admin.put("firstName", value[i][1]);
-					admin.put("secondName", value[i][2]);
+					admin.put("lastName", value[i][2]);
 					admins.put(admin);
 				}
 				

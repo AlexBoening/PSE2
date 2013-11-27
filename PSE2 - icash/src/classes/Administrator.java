@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Administrator extends Person {
 
-	public Administrator(String firstName, String secondName, String password) throws SQLException {
-	    super(firstName, secondName, password, true); 
+	public Administrator(String firstName, String lastName, String password) throws SQLException {
+	    super(firstName, lastName, password, true); 
 	}
 	
 	public Administrator(int id) throws SQLException {
@@ -28,8 +28,8 @@ public class Administrator extends Person {
 		}
 	}
 	
-	public void createCustomer(String firstName, String secondName, String password) throws SQLException {
-		Customer c = new Customer(firstName, secondName, password);
+	public void createCustomer(String firstName, String lastName, String password) throws SQLException {
+		Customer c = new Customer(firstName, lastName, password);
 	}
 	
 	public void createAccount(boolean flagActive, Customer customer, Bank bank, AccountType accountType) throws SQLException {
@@ -40,12 +40,12 @@ public class Administrator extends Person {
 		this.firstName = firstName;
 	}
 	
-	public String getSecondName() {
-		return secondName;
+	public String getLastName() {
+		return lastName;
 	}
 	
-	public void setSecondName(String secondName) {
-		this.secondName = secondName;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 	
 	public String getPassword() {
@@ -88,11 +88,11 @@ public class Administrator extends Person {
 		String[] value = new String[3];
 		
 		column[0] = "firstNameAdministrator";
-		column[1] = "secondNameAdministrator";
+		column[1] = "lastNameAdministrator";
      	column[2] = "passwordAdministrator";
      	
      	value[0] = firstName;
-     	value[1] = secondName;
+     	value[1] = lastName;
      	value[2] = password;
      	
      	SQL.update(column, value, "Administrator", condition, "and");

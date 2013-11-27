@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
+import java.sql.*;
 
 
 import com.itextpdf.text.Anchor;
@@ -22,6 +23,7 @@ import com.itextpdf.text.Section;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -34,18 +36,17 @@ public class PDF {
 	  private static Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
 	  
 	  public static void main(String[] args) {
-		  String[][] transactions = new String[5][5];
+		  /*String[][] transactions = new String[5][5];
 	      for (int i=0; i<transactions.length; i++) {
 	    	  transactions[0][i] = "Row 1 Line " + String.valueOf(i+1);
 	    	  transactions[1][i] = "Row 2 Line " + String.valueOf(i+1);
 	    	  transactions[2][i] = "Row 3 Line " + String.valueOf(i+1);
 	    	  transactions[3][i] = "Row 4 Line " + String.valueOf(i+1);
 	    	  transactions[4][i] = "Row 5 Line " + String.valueOf(i+1);
-	      }
-		  print(transactions);
+	      }*/
 	  }
 	  
-	  public static void print(String[][] transactions) {
+	  public static void print(Account a, Bank b, Customer c, AccountType at) {
 	    try { 
 	    	  String timeStamp = new SimpleDateFormat("yyyy.MM.dd_HH.mm.ss").format(Calendar.getInstance().getTime());
 		      File file = new File("Kontoauszug_" + timeStamp + ".pdf"); 
@@ -53,21 +54,12 @@ public class PDF {
 		      PdfWriter.getInstance(document, new FileOutputStream(file));
 		      document.open();
 		      addMetaData(document);
-		      // initializing data
-		      Bank b = new Bank();
-		      Customer c = new Customer();
-		      Account a = new Account();
-		      AccountType ac = new AccountType();
 		      
-		      b.setDescription("Icash");
-		      b.setBlz(5242345);
-		      c.setFirstName("Hans");
-		      c.setLastName("Wurst");
-		      a.setId(1);
-		      ac.setDescription("Tagesgeld");
+		      Transaction[] t = new Transaction[a.getTransactions().size()];
+		      a.getTransactions().toArray(t);
 		      
-		      addTitlePage(document, b, c, a, ac);
-		      addTable(document, transactions);
+		      addTitlePage(document, b, c, a, at);
+		      addTable(document, t, a);
 		      document.close();
 		      Desktop.getDesktop().open(file);
 		    } catch (Exception e) {
@@ -103,13 +95,13 @@ public class PDF {
 	    // document.newPage();
 	  }
 	  
-	  private static void addTable(Document document, String[][] transactions) {
+	  private static void addTable(Document document, Transaction[] t, Account a) {
 		  PdfPTable table = new PdfPTable(5); // 5 columns
 		  PdfPCell header5 = new PdfPCell(new Paragraph("date", smallBold));
           PdfPCell header4 = new PdfPCell(new Paragraph("description", smallBold));
           PdfPCell header2 = new PdfPCell(new Paragraph("outgoing Account", smallBold));
           PdfPCell header3 = new PdfPCell(new Paragraph("incoming Account", smallBold));
-		  PdfPCell header1 = new PdfPCell(new Paragraph("Ammount", smallBold));
+		  PdfPCell header1 = new PdfPCell(new Paragraph("Amount", smallBold));
 		  
           table.addCell(header1);
           table.addCell(header2);
@@ -118,12 +110,44 @@ public class PDF {
           table.addCell(header5);
           table.setHeaderRows(1);
 
-		  for (int i=0; i<transactions.length; i++) {
-			PdfPCell cell1 = new PdfPCell(new Paragraph(transactions[0][i]));
-          	PdfPCell cell2 = new PdfPCell(new Paragraph(transactions[1][i]));
-          	PdfPCell cell3 = new PdfPCell(new Paragraph(transactions[2][i]));
-          	PdfPCell cell4 = new PdfPCell(new Paragraph(transactions[3][i]));
-          	PdfPCell cell5 = new PdfPCell(new Paragraph(transactions[4][i]));
+		  for (int i=0; i<t.length; i++) {
+			// Has the transaction already been printed?
+			  /*try {
+			  if (t[i].getIncomingAccount().getId() == a.getId() && !t[i].isSentIncoming()) {
+		    		t[i].setSentIncoming(true);
+		    		if (t[i].getIncomingAccount().getId() == t[i].getOutgoingAccount().getId())
+		    			t[i].setSentOutgoing(true);
+		    		t[i].updateDB();
+		    	}
+		    	else if (t[i].getOutgoingAccount().getId() == a.getId() && !t[i].isSentOutgoing()) {
+		    		t[i].setSentOutgoing(true);
+		    		if (t[i].getIncomingAccount().getId() == t[i].getOutgoingAccount().getId())
+		    			t[i].setSentIncoming(true);
+		    		t[i].updateDB();
+		    	}
+		    	else
+		    		continue;
+			  }
+			  catch(SQLException e) {
+				  continue;
+			  }*/
+			  
+			PdfPCell cell1, cell2, cell3, cell4, cell5;
+			cell5 = new PdfPCell(new Paragraph(t[i].getDate().toString()));
+          	cell4 = new PdfPCell(new Paragraph(t[i].getDescription()));
+          	try {
+          		cell3 = new PdfPCell(new Paragraph("" + t[i].getOutgoingAccount().getId()));
+          	}
+          	catch (SQLException e) {
+          		cell3 = new PdfPCell(new Paragraph("<?>"));
+          	}
+          	try {
+          		cell2 = new PdfPCell(new Paragraph("" + t[i].getIncomingAccount().getId()));
+          	}
+          	catch (SQLException e) {
+          		cell2 = new PdfPCell(new Paragraph("<?>"));
+          	}
+          	cell1 = new PdfPCell(new Paragraph(Convert.toEuro(t[i].getAmount())));
 
           	table.addCell(cell1);
           	table.addCell(cell2);

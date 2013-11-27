@@ -917,5 +917,4 @@ public class AdminClient {
 		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		return cr.getStatus();
 	}
-	
 }

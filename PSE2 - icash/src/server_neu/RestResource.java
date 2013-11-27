@@ -505,10 +505,73 @@ public class RestResource {
 			if (a.getId() == 0)
 				return Response.status(404).build();			// Account does not exist
 		    
-			int customer = a.getCustomer().getId();
 			if (!a.getCustomer().getPassword().equals(password))
 				return Response.status(403).build();
-			jo.put("customer", customer);
+			jo.put("id", a.getCustomer().getId());
+			jo.put("firstName", a.getCustomer().getFirstName());
+			jo.put("lastName", a.getCustomer().getLastName());
+			return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+		}
+		catch(SQLException e) {
+			return Response.status(500).build();            // Internal Server Error
+		}
+    }
+	
+	@GET
+	@Path("/s/getBank")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response getBank(@QueryParam("account")int account,
+							@QueryParam("passwortHash")String password,
+                            @Context HttpServletRequest req) {
+        Logger logger = Logger.getRootLogger();
+        logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+        logger.info(new java.util.Date() + ": Method: /s/getBank");
+        logger.info(new java.util.Date() + ": Account: " + account);
+                        		
+        JSONObject jo = new JSONObject();
+        
+        try {
+			Account a = new Account(account);
+			if (a.getId() == 0)
+				return Response.status(404).build();			// Account does not exist
+		    
+			if (!a.getCustomer().getPassword().equals(password))
+				return Response.status(403).build();
+			
+			jo.put("id", a.getBank().getId());
+			jo.put("blz", a.getBank().getBlz());
+			jo.put("description", a.getBank().getDescription());
+			return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+		}
+		catch(SQLException e) {
+			return Response.status(500).build();            // Internal Server Error
+		}
+    }
+	
+	@GET
+	@Path("/s/getAccountType")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response getAccountType(@QueryParam("account")int account,
+								   @QueryParam("passwortHash")String password,
+								   @Context HttpServletRequest req) {
+        Logger logger = Logger.getRootLogger();
+        logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+        logger.info(new java.util.Date() + ": Method: /s/getAccountType");
+        logger.info(new java.util.Date() + ": Account: " + account);
+                        		
+        JSONObject jo = new JSONObject();
+        
+        try {
+			Account a = new Account(account);
+			if (a.getId() == 0)
+				return Response.status(404).build();			// Account does not exist
+		    
+			if (!a.getCustomer().getPassword().equals(password))
+				return Response.status(403).build();
+			
+			jo.put("id", a.getAccountType().getId());
+			jo.put("interestRate", a.getAccountType().getInterestRate());
+			jo.put("description", a.getAccountType().getDescription());
 			return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
 		}
 		catch(SQLException e) {
@@ -751,6 +814,6 @@ public class RestResource {
         catch(SQLException e) {
         	return Response.status(500).build();				// Internal Server Error
         }
-		
 	}
+	
 }

@@ -71,7 +71,7 @@ public class CustomerClient {
 	static Image imageLogo, imageTablePull;
 	
 	private static boolean securityMode = false;
-	private static int customerId;
+	private static Customer customer;
 	private static Account account;
 	private static String password;
 	private static String server;
@@ -134,8 +134,8 @@ public class CustomerClient {
 		        	  securityMode = ((Button)event.widget.getData("securityMode")).getSelection();
 		        	  int accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
 		        	  if (securityMode)
-		        		  customerId = getCustomer(accountId);
-		        	  if (customerId != 0 || !securityMode)
+		        		  customer = getCustomer(accountId);
+		        	  if (customer != null || !securityMode)
 		        		  account = getAccount(accountId);
 		        	      
 		        	  if (account != null) {
@@ -348,6 +348,12 @@ public class CustomerClient {
 				    buttonCommitPDF.setText("Print Transactions");
 				    buttonCommitPDF.setBackground(new Color(display, 31, 78, 121));
 				    buttonCommitPDF.setLayoutData(griddataButton);
+				    
+				    buttonCommitPDF.addListener(SWT.Selection, new Listener() {
+				    	public void handleEvent(Event event) {
+				    		printTransactions();
+				    	}
+				    });
 				    
 				    compositeViewTransaction.pack();
 	}
@@ -791,7 +797,7 @@ public static Account getAccount(int number) {
 	
 	String GETString = server + "/rest/getAccount?number=" + number;
 	if (securityMode) 
-		GETString = server + "/rest/s/getAccount?number=" + number + "&kundenID=" + customerId + "&passwortHash=" + password; 
+		GETString = server + "/rest/s/getAccount?number=" + number + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
 	ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
 	int status = cr.getStatus();
 	LabelStatusLine.setText(getMessage(status));
@@ -856,7 +862,7 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 	f.add("amount", amount);
 	f.add("reference", reference);
 	if (securityMode) {
-		f.add("kundenID", customerId);
+		f.add("kundenID", customer.getId());
 		f.add("passwortHash", password);
 		GETString = server + "/rest/s/transferMoney";
 	}
@@ -868,7 +874,7 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 	public static int getBankAccount(int id) {
 		String GETString = server + "/rest/getBankAccount" + "?account=" + id;
 		if (securityMode) {
-			GETString = server + "/rest/s/getBankAccount" + "?account=" + id + "&kundenID=" + customerId + "&passwortHash=" + password; 
+			GETString = server + "/rest/s/getBankAccount" + "?account=" + id + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
 		}
 		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
 		int status = cr.getStatus();
@@ -884,7 +890,7 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		
 		String GETString = server + "/rest/getBalance" + "?account=" + id;
 		if (securityMode) {
-			GETString = server + "/rest/s/getBalance" + "?account=" + id + "&kundenID=" + customerId + "&passwortHash=" + password; 
+			GETString = server + "/rest/s/getBalance" + "?account=" + id + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
 		}
 		
 		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
@@ -901,7 +907,7 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		return "";
 	}
 	
-	public static int getCustomer(int id) {
+	public static Customer getCustomer(int id) {
 		
 		String GETString = server + "/rest/getCustomer" + "?account=" + id;
 		if (securityMode) {
@@ -914,12 +920,15 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		if (status == 200) {
 			LabelStatusLine.setText(getMessage(200));
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
-			int customer = jo.getInt("customer");
-			return customer;
+			Customer c = new Customer();
+			c.setId(jo.getInt("id"));
+			c.setFirstName(jo.getString("firstName"));
+			c.setLastName(jo.getString("lastName"));
+			return c;
 		}
 		else
 			LabelStatusLineLogin.setText(getMessage(status));
-		return 0;
+		return null;
 	}
 	
 	public static String getMessage(int statusCode) {
@@ -933,28 +942,42 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 			default:  return "Unknown Response!";
 		}
 	}
-	
+
 	public static void printTransactions() {
-		try {
-			// Get all transactions existing in the database
-		    account = getAccount(account.getId());
-			Transaction[] t = new Transaction[account.getTransactions().size()];
-			account.getTransactions().toArray(t);
-			
-			String[][] transactions = new String[4][account.getTransactions().size()]; 
-			for (int i=0; i<t.length; i++) {				
-				transactions[0][i] = t[i].getDate().toString();
-				transactions[1][i] = t[i].getDescription();
-				transactions[2][i] = t[i].getOutgoingAccount().getCustomer().getFirstName() + " " +
-						t[i].getOutgoingAccount().getCustomer().getLastName();
-				transactions[3][i] = t[i].getIncomingAccount().getCustomer().getFirstName() + " " +
-						t[i].getIncomingAccount().getCustomer().getLastName();
-				transactions[4][i]= classes.Convert.toEuro(t[i].getAmount());
-			}
-			
-			PDF.print(transactions);
-		} catch (SQLException e) {
-			System.out.println("SQL-Exception");
+		
+		Account a = account;
+		Customer c = getCustomer(a.getId());
+		
+		Bank b = new Bank();
+		String GETString = server + "/rest/s/getBank" + "?account=" + a.getId() + "&passwortHash=" + password; 
+		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		int status = cr.getStatus();
+		LabelStatusLineLogin.setText(getMessage(status));
+		
+		if (status == 200) {
+			JSONObject jo = new JSONObject(cr.getEntity(String.class));
+			b.setId(jo.getInt("id"));
+			b.setBlz(jo.getInt("blz"));
+			b.setDescription(jo.getString("description"));
 		}
+		else
+			return;
+		
+		AccountType at = new AccountType();
+		GETString = server + "/rest/s/getAccountType" + "?account=" + a.getId() + "&passwortHash=" + password; 
+		cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		status = cr.getStatus();
+		LabelStatusLineLogin.setText(getMessage(status));
+		
+		if (status == 200) {
+			JSONObject jo = new JSONObject(cr.getEntity(String.class));
+			at.setId(jo.getInt("id"));
+			at.setInterestRate(jo.getDouble("interestRate"));
+			at.setDescription(jo.getString("description"));
+		}
+		else
+			return;
+		
+		PDF.print(a,b,c,at);
 	}
 }

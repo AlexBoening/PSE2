@@ -800,7 +800,7 @@ public static Account getAccount(int number) {
 	if (status == 200) {
 	JSONObject jo = new JSONObject(cr.getEntity(String.class));
     Account a = new Account();
-    a.setId(jo.getInt("number"));
+    a.setId(Convert.toInt(jo.getString("number")));
     Customer c = new Customer();
     name = jo.getString("owner").split(" ");
     c.setFirstName(name[0]);
@@ -819,7 +819,7 @@ public static Account getAccount(int number) {
     	
     	Account incomingAccount = new Account();
     	JSONObject receiver = transaction.getJSONObject("receiver");
-    	incomingAccount.setId(receiver.getInt("number"));
+    	incomingAccount.setId(Convert.toInt(receiver.getString("number")));
     	Customer c_in = new Customer();
     	name = receiver.getString("owner").split(" ");
     	c_in.setFirstName(name[0]);
@@ -830,7 +830,7 @@ public static Account getAccount(int number) {
     	
     	Account outgoingAccount = new Account();
     	JSONObject sender = transaction.getJSONObject("sender");
-    	outgoingAccount.setId(sender.getInt("number"));
+    	outgoingAccount.setId(Convert.toInt(sender.getString("number")));
     	Customer c_out = new Customer();
     	name = sender.getString("owner").split(" ");
     	c_out.setFirstName(name[0]);
@@ -852,7 +852,7 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 	Form f = new Form();
 	f.add("senderNumber", senderNumber);
 	f.add("receiverNumber", receiverNumber);
-	f.add("amount", Convert.toCent(amount));
+	f.add("amount", amount);
 	f.add("reference", reference);
 	if (securityMode) {
 		f.add("kundenID", customerId);

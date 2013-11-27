@@ -27,7 +27,7 @@ public class Bank {
     
     public Bank(int id) throws SQLException {
     	
-    	String[] column = {"idBank", "blzBank", "descriptionBank" };//, "Account_idAccount" };
+    	String[] column = {"idBank", "blzBank", "descriptionBank", "Account_idAccount" };
         String[] condition = {"idBank = " + id};
         String[][] value = SQL.select(column, "Bank", condition, "and");
         

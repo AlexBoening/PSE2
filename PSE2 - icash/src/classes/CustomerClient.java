@@ -1,6 +1,5 @@
 package classes;
-
-
+import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -40,12 +39,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import classes.Account;
+import classes.AccountType;
+import classes.Bank;
 import classes.Customer;
 import classes.Transaction;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.representation.Form;
+
 import classes.*;
 
 public class CustomerClient {
@@ -64,17 +66,18 @@ public class CustomerClient {
 					,compositePerformTransaction, compositeDepositPage,compositeWithdrawPage;
 	
 	static Button buttonLogin, buttonLogout, buttonMenuViewTransaction, buttonCommitViewTransaction, buttonMenuPerformPage, buttonMenuDepositPage
-					, buttonMenuWithdrawPage, buttonCommitWithdraw, buttonCommitDeposit, buttonCommitPerformTransaction;
+					, buttonMenuWithdrawPage, buttonCommitWithdraw, buttonCommitDeposit, buttonCommitPerformTransaction, buttonCommitPDF;
 	
 	static Image imageLogo, imageTablePull;
 	
-	private static boolean securityMode = true;
+	private static boolean securityMode = false;
 	private static int customerId;
-	private static int accountId;
+	private static Account account;
 	private static String password;
 	private static String server;
 	private static Label CurrentBalance;
 	private static Label LabelStatusLine;
+	private static Label LabelStatusLineLogin;
 		   
 	
 /*    GridData Captiondata = new GridData(GridData.FILL, GridData.FILL,true, false);
@@ -128,14 +131,19 @@ public class CustomerClient {
 		        public void handleEvent(Event event) {
 		        	  server = ((Text)event.widget.getData("server")).getText();
 		        	  password = ((Text)event.widget.getData("password")).getText();
-		        	  accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
-		        	  customerId = getCustomer(accountId);
-		        	  if (customerId != 0) {
-		        		  CurrentBalance.setText(getBalance(accountId));
+		        	  securityMode = ((Button)event.widget.getData("securityMode")).getSelection();
+		        	  int accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
+		        	  if (securityMode)
+		        		  customerId = getCustomer(accountId);
+		        	  if (customerId != 0 || !securityMode)
+		        		  account = getAccount(accountId);
+		        	      
+		        	  if (account != null) {
+		        		  if (securityMode) 
+		        			  CurrentBalance.setText(getBalance(account.getId()));
 		        		  stackLayoutMain.topControl = compositeMainClient;
 			          	shell.layout();
 		        	  }
-			          //compositeNavigation.layout();
 			        }
 			      });
 		    
@@ -188,8 +196,8 @@ public class CustomerClient {
 		        	  int toAccount = Convert.toInt(((Text)event.widget.getData("toAccount")).getText());
 		        	  String amount = ((Text)event.widget.getData("amount")).getText();
 		        	  String description = ((Text)event.widget.getData("description")).getText();
-		        	  transferMoney(accountId, toAccount, amount, description);
-		        	  CurrentBalance.setText(getBalance(accountId));
+		        	  transferMoney(account.getId(), toAccount, amount, description);
+		        	  CurrentBalance.setText(getBalance(account.getId()));
 		        }
 			});
 		    
@@ -197,8 +205,8 @@ public class CustomerClient {
 		        public void handleEvent(Event event) {
 		        	  String amount = ((Text)event.widget.getData("amount")).getText();
 		        	  String description = ((Text)event.widget.getData("description")).getText();
-		        	  transferMoney(getBankAccount(accountId), accountId, amount, description);
-		        	  CurrentBalance.setText(getBalance(accountId));
+		        	  transferMoney(getBankAccount(account.getId()), account.getId(), amount, description);
+		        	  CurrentBalance.setText(getBalance(account.getId()));
 			        }
 			});
 		    
@@ -206,10 +214,16 @@ public class CustomerClient {
 		        public void handleEvent(Event event) {
 		        	  String amount = ((Text)event.widget.getData("amount")).getText();
 		        	  String description = ((Text)event.widget.getData("description")).getText();
-		        	  transferMoney(accountId, getBankAccount(accountId), amount, description);
-		        	  CurrentBalance.setText(getBalance(accountId));
+		        	  transferMoney(account.getId(), getBankAccount(account.getId()), amount, description);
+		        	  CurrentBalance.setText(getBalance(account.getId()));
 			    }
 			});
+		    
+		    buttonCommitPDF.addListener(SWT.Selection, new Listener() {
+		    	public void handleEvent(Event event) {
+		    		printTransactions();
+		    	}
+		    });
 		    
 		    //Events
 		    
@@ -229,6 +243,7 @@ public class CustomerClient {
 		 DepositCompositeData.horizontalSpan = 2;
 		    Label DepositCaptionLabel = new Label(compositeDepositPage, SWT.NONE);
 		    DepositCaptionLabel.setText("Deposit your Money");
+		    DepositCaptionLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
 		    DepositCaptionLabel.setLayoutData(DepositCompositeData);
 		    
 		    Label SepPerform3 = new Label(compositeDepositPage, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -269,6 +284,7 @@ public class CustomerClient {
 		    
 		    Label PerformTransactionCaptionLabel = new Label(compositeViewTransaction, SWT.NONE);
 		    PerformTransactionCaptionLabel.setText("View Your Transaction");
+		    PerformTransactionCaptionLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
 		    PerformTransactionCaptionLabel.setLayoutData(CreateAccountCompositeData);
 		    
 		    Label SepPerform1 = new Label(compositeViewTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -301,14 +317,13 @@ public class CustomerClient {
 		    		
 		    		GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, true);
 		    		table.setLayoutData(ViewCompositeData);
-		    		
-		    		if (accountId == 0)
-		    			return;
-		    		Account a = getAccount(accountId);
-		    		if (a != null) 
+		    						    		    
+		    		if (account != null) 
 		    			try {
-		    				Transaction[] t = new Transaction[a.getTransactions().size()];
-		    				a.getTransactions().toArray(t);
+		    				// Get all transactions existing in the database
+						    account = getAccount(account.getId());
+		    				Transaction[] t = new Transaction[account.getTransactions().size()];
+		    				account.getTransactions().toArray(t);
 		    		
 		    				for (int i=0; i<t.length; i++) {
 		    					TableItem item = new TableItem(table, SWT.NONE);
@@ -324,12 +339,17 @@ public class CustomerClient {
 		    				}
 		    			}
 		    			catch (SQLException e) {
-		    				// ToDo: Fehlerbehandlung!
+		    				LabelStatusLine.setText(getMessage(500));
 		    			}
 		    			else {
-		    				// Fehlermeldung: Account nicht gefunden!
+		    				LabelStatusLine.setText(getMessage(400));
 		    			}
-		    		compositeViewTransaction.pack();
+		    		buttonCommitPDF = new Button(compositeViewTransaction, SWT.PUSH);
+				    buttonCommitPDF.setText("Print Transactions");
+				    buttonCommitPDF.setBackground(new Color(display, 31, 78, 121));
+				    buttonCommitPDF.setLayoutData(griddataButton);
+				    
+				    compositeViewTransaction.pack();
 	}
 
 	private static void fillcompositePerformTransaction() {
@@ -340,6 +360,7 @@ public class CustomerClient {
 		    ViewCompositeData.horizontalSpan = 2;
 		    Label PerformTransactionCaptionLabel = new Label(compositePerformTransaction, SWT.NONE);
 		    PerformTransactionCaptionLabel.setText("Perform your Transaction");
+		    PerformTransactionCaptionLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
 		    PerformTransactionCaptionLabel.setLayoutData(ViewCompositeData);
 		   
 		    PerformTransactionCaptionLabel.pack();
@@ -395,6 +416,7 @@ public class CustomerClient {
 		    CreateCustomerCompositeData.horizontalSpan = 2;
 		    Label WithdrawCaptionLabel = new Label(compositeWithdrawPage, SWT.NONE);
 		    WithdrawCaptionLabel.setText("Withdraw your Money");
+		    WithdrawCaptionLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
 		    WithdrawCaptionLabel.setLayoutData(CreateCustomerCompositeData);
 		    
 		    Label SepPerform3 = new Label(compositeWithdrawPage, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -538,8 +560,8 @@ public class CustomerClient {
 		    CurrentBalance.setBackground(new Color(display, 70,200,230));
 		    CurrentBalance.setAlignment(SWT.HORIZONTAL);
 		    griddataMenuContent.verticalAlignment = GridData.FILL;
-		    if (accountId != 0)
-		        CurrentBalance.setText(getBalance(accountId));
+		    if (account != null)
+		        CurrentBalance.setText(getBalance(account.getId()));
 		    CurrentBalance.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 	}
 
@@ -573,8 +595,8 @@ public class CustomerClient {
 			    //LoginCaption.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
 			    LoginCaption.setLayoutData(griddataCaption);
 		    
-			LabelStatusLine = new Label(compositeLogin,SWT.NONE);
-			LabelStatusLine.setLayoutData(griddataStatusLine);
+			LabelStatusLineLogin = new Label(compositeLogin,SWT.NONE);
+			LabelStatusLineLogin.setLayoutData(griddataStatusLine);
 			//LabelStatusLine.setText("Here could be the status code");
 			
 		    Label ServerLabel = new Label(compositeLogin, SWT.NONE);
@@ -618,9 +640,15 @@ public class CustomerClient {
 		    buttonLogin = new Button(compositeLogin,SWT.PUSH);
 			buttonLogin.setText("Login NOW!");
 			buttonLogin.setLayoutData(griddataLoginButton);
+			
+			Button ButtonSecurityMode = new Button(compositeLogin, SWT.CHECK);
+			ButtonSecurityMode.setText("SecurityMode");
+			ButtonSecurityMode.setLayoutData(griddataLoginButton);
+			
 		    buttonLogin.setData("server", ServerText);
 		    buttonLogin.setData("user", UserText);
 		    buttonLogin.setData("password", PasswordText);
+		    buttonLogin.setData("securityMode", ButtonSecurityMode);
 		    compositeLogin.pack();
 	 }
 	
@@ -715,8 +743,10 @@ public class CustomerClient {
 	    stackLayoutMain = new StackLayout();
 	    stackLayoutContent = new StackLayout();
 	    layoutOneColumn = new GridLayout(1,false);
-	    imageLogo = new Image(display, ".\\src\\iCash - Logo.png");
-	    imageTablePull = new Image(display, ".\\src\\TablePull.png");  
+	    final  InputStream stream1 = CustomerClient.class.getResourceAsStream("iCash - Logo.png");
+	    imageLogo = new Image(Display.getDefault(), stream1);
+	    final  InputStream stream2 = CustomerClient.class.getResourceAsStream("TablePull.png");
+	    imageTablePull = new Image(Display.getDefault(), stream2); 
     	shell.setLayout(stackLayoutMain);
 	}
 
@@ -763,13 +793,20 @@ public static Account getAccount(int number) {
 	if (securityMode) 
 		GETString = server + "/rest/s/getAccount?number=" + number + "&kundenID=" + customerId + "&passwortHash=" + password; 
 	ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
-    if (cr.hasEntity() && cr.getStatus() == 200) {
+	int status = cr.getStatus();
+	LabelStatusLine.setText(getMessage(status));
+	LabelStatusLineLogin.setText(getMessage(status));
+	
+	String[] name;
+	if (status == 200) {
 	JSONObject jo = new JSONObject(cr.getEntity(String.class));
     Account a = new Account();
-    a.setId(jo.getInt("number"));
+    a.setId(Convert.toInt(jo.getString("number")));
     Customer c = new Customer();
-    c.setFirstName(jo.getString("owner").split(" ")[0]);
-    c.setLastName(jo.getString("owner").split(" ")[1]);
+    name = jo.getString("owner").split(" ");
+    c.setFirstName(name[0]);
+    if (name.length > 1)
+        c.setLastName(name[1]);
     a.setCustomer(c);
     
     JSONArray ja = jo.getJSONArray("transactions");
@@ -777,37 +814,36 @@ public static Account getAccount(int number) {
     for (int i=0; i<ja.length(); i++) {
     	Transaction t = new Transaction();
     	JSONObject transaction = ja.getJSONObject(i);
-    	t.setAmount(classes.Convert.toCent((transaction.getString("amount"))));
+    	t.setAmount(transaction.getInt("amount"));
     	t.setDate(Date.valueOf(transaction.getString("transactionDate").substring(0, 10)));
     	t.setDescription(transaction.getString("reference"));
     	
     	Account incomingAccount = new Account();
     	JSONObject receiver = transaction.getJSONObject("receiver");
-    	incomingAccount.setId(receiver.getInt("number"));
+    	incomingAccount.setId(Convert.toInt(receiver.getString("number")));
     	Customer c_in = new Customer();
-    	c_in.setFirstName(receiver.getString("owner").split(" ")[0]);
-    	c_in.setLastName(receiver.getString("owner").split(" ")[1]);
+    	name = receiver.getString("owner").split(" ");
+    	c_in.setFirstName(name[0]);
+    	if (name.length > 1)
+    	    c_in.setLastName(name[1]);
     	incomingAccount.setCustomer(c_in);
     	t.setIncomingAccount(incomingAccount);
     	
     	Account outgoingAccount = new Account();
     	JSONObject sender = transaction.getJSONObject("sender");
-    	outgoingAccount.setId(sender.getInt("number"));
+    	outgoingAccount.setId(Convert.toInt(sender.getString("number")));
     	Customer c_out = new Customer();
-    	c_out.setFirstName(sender.getString("owner").split(" ")[0]);
-    	c_out.setLastName(sender.getString("owner").split(" ")[1]);
+    	name = sender.getString("owner").split(" ");
+    	c_out.setFirstName(name[0]);
+    	if (name.length > 1)
+    	    c_out.setLastName(name[1]);
     	outgoingAccount.setCustomer(c_out);
     	t.setOutgoingAccount(outgoingAccount);
     	
     	a.add(t);
     }
-    LabelStatusLine.setText(getMessage(200));
     return a;
     }
-    else if (cr.hasEntity())
-		LabelStatusLine.setText(getMessage(cr.getStatus()));
-	else
-		LabelStatusLine.setText(getMessage(500));
     return null;
 }
 
@@ -835,15 +871,12 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 			GETString = server + "/rest/s/getBankAccount" + "?account=" + id + "&kundenID=" + customerId + "&passwortHash=" + password; 
 		}
 		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
-		if (cr.hasEntity() && cr.getStatus() == 200) {
+		int status = cr.getStatus();
+		LabelStatusLine.setText(getMessage(status));
+		if (status == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
-			LabelStatusLine.setText(getMessage(200));
 			return jo.getInt("bankAccount");
 		}
-		else if (cr.hasEntity())
-			LabelStatusLine.setText(getMessage(cr.getStatus()));
-		else
-			LabelStatusLine.setText(getMessage(500));
 		return 0;
 	}
 	
@@ -855,16 +888,16 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		}
 		
 		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
-		if (cr.hasEntity() && cr.getStatus() == 200) {
+		int status = cr.getStatus();
+		
+		if (status == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			String balance = jo.getString("balance");
 			//LabelStatusLine.setText(getMessage(200));
 			return balance;
 		}
-			else if (cr.hasEntity())
-				LabelStatusLine.setText(getMessage(cr.getStatus()));
 			else
-				LabelStatusLine.setText(getMessage(500));
+				LabelStatusLine.setText(getMessage(status));
 		return "";
 	}
 	
@@ -876,17 +909,16 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		}
 		
 		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		int status = cr.getStatus();
 		
-		if (cr.hasEntity() && cr.getStatus() == 200) {
+		if (status == 200) {
+			LabelStatusLine.setText(getMessage(200));
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			int customer = jo.getInt("customer");
-			LabelStatusLine.setText(getMessage(200));
 			return customer;
 		}
-		else if (cr.hasEntity())
-			LabelStatusLine.setText(getMessage(cr.getStatus()));
 		else
-			LabelStatusLine.setText(getMessage(500));
+			LabelStatusLineLogin.setText(getMessage(status));
 		return 0;
 	}
 	
@@ -899,6 +931,30 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 			case 412: return "PRECONDITION FAILED: Your balance is insufficient!";
 			case 500: return "INTERNAL SERVER ERROR: Please try again later!";
 			default:  return "Unknown Response!";
+		}
+	}
+	
+	public static void printTransactions() {
+		try {
+			// Get all transactions existing in the database
+		    account = getAccount(account.getId());
+			Transaction[] t = new Transaction[account.getTransactions().size()];
+			account.getTransactions().toArray(t);
+			
+			String[][] transactions = new String[4][account.getTransactions().size()]; 
+			for (int i=0; i<t.length; i++) {				
+				transactions[0][i] = t[i].getDate().toString();
+				transactions[1][i] = t[i].getDescription();
+				transactions[2][i] = t[i].getOutgoingAccount().getCustomer().getFirstName() + " " +
+						t[i].getOutgoingAccount().getCustomer().getLastName();
+				transactions[3][i] = t[i].getIncomingAccount().getCustomer().getFirstName() + " " +
+						t[i].getIncomingAccount().getCustomer().getLastName();
+				transactions[4][i]= classes.Convert.toEuro(t[i].getAmount());
+			}
+			
+			PDF.print(transactions);
+		} catch (SQLException e) {
+			System.out.println("SQL-Exception");
 		}
 	}
 }

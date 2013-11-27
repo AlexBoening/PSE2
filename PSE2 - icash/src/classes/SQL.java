@@ -3,30 +3,32 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class SQL {
-
-	private static Connection conn;
-	private static Statement stmt;
-	private static ResultSet rs;
 	
-	public static void getConnection() throws SQLException {
+	public static Statement getConnection() throws SQLException, ClassNotFoundException {
 		
-		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost/icash", "root", "");
-			stmt = conn.createStatement();
-		}
-		catch (ClassNotFoundException err) {
-			System.out.println("DB-Driver not found!");
-			System.out.println(err);
-		}
-		/*catch (SQLException err) {
-			System.out.println("Connect not possible");
-			System.out.println(err);
-		}*/
+			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/icash", "root", "");
+			Statement stmt = conn.createStatement();
+
+		return stmt;
+	}
+	
+	public static void closeConnection(Statement stmt) throws SQLException{
+		Connection conn = stmt.getConnection();
+		conn.close();
 	}
 	
 	public static String[][] select(String[] column, String table, String[] condition, String connector) 
 			                 throws SQLException {
+		
+		ResultSet rs;
+		Statement stmt;
+		try {
+			stmt = getConnection();
+		}
+		catch (ClassNotFoundException e) {
+			throw new SQLException();
+		}
 		
 		ArrayList<String[]> list = new ArrayList<String[]>();
 		String[][] result;
@@ -44,7 +46,6 @@ public class SQL {
 				sql += "where " + condition[i] + " ";
 			else
 				sql += connector + " " + condition[i] + " ";
-		//try {
 		    rs = stmt.executeQuery(sql);
 		    rs.beforeFirst();
 		    int j=0;
@@ -55,17 +56,22 @@ public class SQL {
 		    		line[i] = rs.getString(i+1);
 		    	list.add(line);
 		    }
+		    closeConnection(stmt);
 		    result = new String[j][column.length];
 		    result = list.toArray(result);
-		/*}
-		catch (SQLException err) {
-			System.out.println("Error when selecting from table " + table);
-			result = new String[0][0];
-		}*/
 		return result;
 	}
 	
 	public static void insert(String[] value, String table) throws SQLException {
+		
+		ResultSet rs;
+		Statement stmt;
+		try {
+			stmt = getConnection();
+		}
+		catch (ClassNotFoundException e) {
+			throw new SQLException();
+		}
 		
 		String sql = "insert into " + table + " values ('";
 		for (int i=0; i<value.length; i++) {
@@ -74,38 +80,24 @@ public class SQL {
 			sql += value[i];
 		}
 		sql += "')";
-		//try {
 		    int lines = stmt.executeUpdate(sql);
+		    closeConnection(stmt);
 		    if (lines < 1)
 		    	throw new SQLException();
-		/*}
-		catch (SQLException err) {
-			System.out.println("Error when inserting into table " + table);
-		}*/
 	}
-	
-	/*public static void update(String column, String value, String table, String[] condition, String connector) 
-			           throws SQLException {
-		
-		String sql = "update " + table + " set " + column + " = '" + value + "' ";
-		for (int i=0 ; i<condition.length; i++) {
-			if (i==0) 
-				sql += "where " + condition[i] + " ";
-			else
-				sql += connector + " " + condition[i] + " ";
-		}
-		//try {
-		    int lines = stmt.executeUpdate(sql);
-		    if (lines < 1)
-		    	throw new SQLException();
-		/*}
-		catch (SQLException err) {
-			System.out.println("Error when updating table " + table);
-		}
-	}*/
 	
 	public static void update(String[] column, String[] value, String table, String[] condition, String connector)
 	                   throws SQLException {
+		
+		ResultSet rs;
+		Statement stmt;
+		try {
+			stmt = getConnection();
+		}
+		catch (ClassNotFoundException e) {
+			throw new SQLException();
+		}
+		
 		String sql = "update " + table + " set " + column[0] + " = '" + value[0] + "' ";
 		for (int i=1; i<value.length; i++)
 			sql += ", " + column[i] + " = '" + value[i] + "' ";
@@ -115,25 +107,32 @@ public class SQL {
 		    else
 		    	sql += connector + " " + condition[i] + " ";
 		int lines = stmt.executeUpdate(sql);
+		closeConnection(stmt);
 		if (lines < 1)
 	    	throw new SQLException();
 	}
 	
 	public static int getID(String column, String table) throws SQLException {
 		
-		String sql = "select max( " + column + " ) from " + table;
+		ResultSet rs;
+		Statement stmt;
+		try {
+			stmt = getConnection();
+		}
+		catch (ClassNotFoundException e) {
+			throw new SQLException();
+		}
 		
-		//try {
+		String sql = "select max( " + column + " ) from " + table;
+		int id;
+		
 		    rs = stmt.executeQuery(sql);
 		    rs.beforeFirst();
 		    if (rs.next()) 
-		    	return rs.getInt(1) + 1;
+		    	id = rs.getInt(1) + 1;
 		    else
-		    	return 1;
-		/*}
-		catch (SQLException err) {
-			System.out.println("Error when selecting from table " + table);
-			return 0;
-		}*/
+		    	id = 1;
+		    closeConnection(stmt);
+		    return id;
 	}
 }

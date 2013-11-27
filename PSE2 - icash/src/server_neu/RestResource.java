@@ -29,13 +29,15 @@ public class RestResource {
 	@GET
 	@Path("/getAccount")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
-	public Response getAccount(@QueryParam("number")int number,
+	public Response getAccount(@QueryParam("number")String numberString,
 			                   @Context HttpServletRequest req) {
 		
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
 		logger.info(new java.util.Date() + ": Method: getAccount");
-		logger.info(new java.util.Date() + ": Account: " + number);
+		logger.info(new java.util.Date() + ": Account: " + numberString);
+		
+		int number = Convert.toInt(numberString);
 		
 		if (number == 0) 
 			return Response.status(400).build();
@@ -53,8 +55,8 @@ public class RestResource {
 	@GET
 	@Path("/s/getAccount")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
-	public Response getAccount(@QueryParam("number")int number,
-			                   @QueryParam("kundenID")int customer,
+	public Response getAccount(@QueryParam("number")String numberString,
+			                   @QueryParam("kundenID")String customerString,
 			                   @QueryParam("passwortHash")String password,
 			                   @Context HttpServletRequest req) {
 		
@@ -62,7 +64,10 @@ public class RestResource {
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
 		logger.info(new java.util.Date() + ": Method: getAccount");
-		logger.info(new java.util.Date() + ": Account: " + number);
+		logger.info(new java.util.Date() + ": Account: " + numberString);
+		
+		int number = Convert.toInt(numberString);
+		int customer = Convert.toInt(customerString);
 		
 		if (number == 0 || customer == 0 || password == null) 
 			return Response.status(400).build();
@@ -90,8 +95,8 @@ public class RestResource {
 		try {
 		
 		// Build up header data
-		jo.put("id", a.getBank().getId());
-		jo.put("number", a.getId());
+		//jo.put("id", a.getBank().getId());
+		jo.put("number", "" + a.getId());
 		jo.put("owner", a.getCustomer().getFirstName() + " " + a.getCustomer().getLastName());
         
 		JSONArray ja = new JSONArray();
@@ -102,12 +107,12 @@ public class RestResource {
 		for (int i=0; i<t.length; i++) {
 			JSONObject transaction = new JSONObject();
 			transaction.put("amount", t[i].getAmount());
-			transaction.put("id", t[i].getId());
+			//transaction.put("id", t[i].getId());
 			
 			// Receiver Data
 			JSONObject receiver = new JSONObject();
-			receiver.put("id", t[i].getIncomingAccount().getBank().getId());
-			receiver.put("number", t[i].getIncomingAccount().getId());
+			//receiver.put("id", t[i].getIncomingAccount().getBank().getId());
+			receiver.put("number", "" + t[i].getIncomingAccount().getId());
 			receiver.put("owner", t[i].getIncomingAccount().getCustomer().getFirstName() + " " 
 			                    + t[i].getIncomingAccount().getCustomer().getLastName());
 			transaction.put("receiver", receiver);
@@ -115,8 +120,8 @@ public class RestResource {
 			
 			// Sender Data
 			JSONObject sender = new JSONObject();
-			sender.put("id", t[i].getOutgoingAccount().getBank().getId());
-			sender.put("number", t[i].getOutgoingAccount().getId());
+			//sender.put("id", t[i].getOutgoingAccount().getBank().getId());
+			sender.put("number", "" + t[i].getOutgoingAccount().getId());
 			sender.put("owner", t[i].getOutgoingAccount().getCustomer().getFirstName() + " " 
 			                    + t[i].getOutgoingAccount().getCustomer().getLastName());
 			transaction.put("sender", sender);
@@ -137,12 +142,16 @@ public class RestResource {
 	@Path("/transferMoney")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response transferMoney(@FormParam("senderNumber")int sender, 
-			                      @FormParam("receiverNumber")int receiver, 
-			                      @FormParam("amount")int amount, 
+	public Response transferMoney(@FormParam("senderNumber")String senderString, 
+			                      @FormParam("receiverNumber")String receiverString, 
+			                      @FormParam("amount")String amountString, 
 			                      @FormParam("reference")String reference,
 			                      @Context HttpServletRequest req) {
-    		
+    	
+		int sender = Convert.toInt(senderString);
+		int receiver = Convert.toInt(receiverString);
+		int amount = Convert.toCent(amountString);
+		
 		// Logging
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
@@ -167,22 +176,26 @@ public class RestResource {
 	@Path("/s/transferMoney")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response transferMoney(@FormParam("senderNumber")int sender, 
-			                      @FormParam("receiverNumber")int receiver, 
-			                      @FormParam("amount")String amountEuro, 
+	public Response transferMoney(@FormParam("senderNumber")String senderString, 
+			                      @FormParam("receiverNumber")String receiverString, 
+			                      @FormParam("amount")String amountString, 
 			                      @FormParam("reference")String reference,
-			                      @FormParam("kundenID")int customer,
+			                      @FormParam("kundenID")String customerString,
 				                  @FormParam("passwortHash")String password,
 				                  @Context HttpServletRequest req) {
-    		
+    	
+		int sender = Convert.toInt(senderString);
+		int receiver = Convert.toInt(receiverString);
+		int amount = Convert.toCent(amountString);
+		int customer = Convert.toInt(customerString);
+		
 		// Logging
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
 		logger.info(new java.util.Date() + ": Method: transferMoney");
 		logger.info(new java.util.Date() + ": Sender: " + sender + "/ Receiver: " + receiver
-				                         + "/ Amount: " + amountEuro + "/ Reference: " + reference);
+				                         + "/ Amount: " + Convert.toEuro(amount) + "/ Reference: " + reference);
 		
-		int amount = Convert.toCent(amountEuro);
 		try {
 		    Customer c = new Customer(customer);                     
 		    c.login(password);								
@@ -230,7 +243,7 @@ public class RestResource {
 	@Path("/s/createCustomer")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
 	public Response createCustomer(@FormParam("firstName")String firstName, 
-			                       @FormParam("lastName") String lastName, 
+			                       @FormParam("secondName") String secondName, 
 			                       @FormParam("password") String password, 
 			                       @Context HttpServletRequest req) {
 		
@@ -238,10 +251,10 @@ public class RestResource {
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
 		logger.info(new java.util.Date() + ": Method: /s/createCustomer");
-		logger.info(new java.util.Date() + ": first name: " + firstName + "/ last name: " + lastName);
+		logger.info(new java.util.Date() + ": first name: " + firstName + "/ second name: " + secondName);
 		
 		try {
-			Customer c = new Customer(firstName, lastName, password);
+			Customer c = new Customer(firstName, secondName, password);
 			JSONObject jo = new JSONObject();
 			jo.put("id", c.getId());
 			// Customer was created successfully
@@ -556,7 +569,7 @@ public class RestResource {
 
 				jo.put("id", a.getId());
 				jo.put("firstName", a.getFirstName());
-				jo.put("lastName", a.getLastName());
+				jo.put("secondName", a.getLastName());
 				
 				JSONArray ja = new JSONArray();
 				Account[] acc = new Account[a.getAccounts().size()];
@@ -574,7 +587,7 @@ public class RestResource {
 					JSONObject customer = new JSONObject();
 					customer.put("id", acc[i].getCustomer().getId());
 					customer.put("firstName", acc[i].getCustomer().getFirstName());
-					customer.put("lastName", acc[i].getCustomer().getLastName());
+					customer.put("secondName", acc[i].getCustomer().getLastName());
 					currentAccount.put("customer", customer);
 					
 					JSONObject accountType = new JSONObject();
@@ -645,7 +658,7 @@ public class RestResource {
 				jo.put("banks", banks);
 				
 				// Customers
-				String[] columnCustomer = {"idCustomer", "firstNameCustomer", "lastNameCustomer"};
+				String[] columnCustomer = {"idCustomer", "firstNameCustomer", "SecondNameCustomer"};
 				table = "Customer";
 				
 				value = SQL.select(columnCustomer, table, condition, connector);
@@ -654,14 +667,14 @@ public class RestResource {
 					JSONObject customer = new JSONObject();
 					customer.put("id", Convert.toInt(value[i][0]));
 					customer.put("firstName", value[i][1]);
-					customer.put("lastName", value[i][2]);
+					customer.put("secondName", value[i][2]);
 					customers.put(customer);
 				}
 				
 				jo.put("customers", customers);
 				
 				// Admins
-				String[] columnAdmin = {"idAdministrator", "firstNameAdministrator", "lastNameAdministrator"};
+				String[] columnAdmin = {"idAdministrator", "firstNameAdministrator", "SecondNameAdministrator"};
 				table = "Administrator";
 				
 				value = SQL.select(columnAdmin, table, condition, connector);
@@ -670,7 +683,7 @@ public class RestResource {
 					JSONObject admin = new JSONObject();
 					admin.put("id", Convert.toInt(value[i][0]));
 					admin.put("firstName", value[i][1]);
-					admin.put("lastName", value[i][2]);
+					admin.put("secondName", value[i][2]);
 					admins.put(admin);
 				}
 				

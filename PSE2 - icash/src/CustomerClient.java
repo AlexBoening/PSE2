@@ -651,7 +651,7 @@ public class CustomerClient {
 		    final GridData griddataTexts = new GridData(GridData.FILL, GridData.FILL,false, false);
 		    	griddataTexts.horizontalSpan=3;
 		    
-		    final GridData griddataLoginButton = new GridData(GridData.FILL, GridData.CENTER,false, false);
+		    final GridData griddataLoginButton = new GridData(GridData.END, GridData.CENTER,false, false);
 			    griddataLoginButton.horizontalSpan=1;
 			    griddataLoginButton.heightHint = 35;
 		    
@@ -715,6 +715,7 @@ public class CustomerClient {
 			Button ButtonSecurityMode = new Button(compositeLogin, SWT.CHECK);
 			ButtonSecurityMode.setText("SecurityMode");
 			ButtonSecurityMode.setBackground(new Color(display,200,200,200));
+			//griddataLoginButton.horizontalSpan = 4;
 			ButtonSecurityMode.setLayoutData(griddataLoginButton);
 			
 		    buttonLogin.setData("server", ServerText);

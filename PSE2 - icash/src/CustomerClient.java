@@ -714,6 +714,7 @@ public class CustomerClient {
 			
 			Button ButtonSecurityMode = new Button(compositeLogin, SWT.CHECK);
 			ButtonSecurityMode.setText("SecurityMode");
+			ButtonSecurityMode.setBackground(new Color(display,200,200,200));
 			ButtonSecurityMode.setLayoutData(griddataLoginButton);
 			
 		    buttonLogin.setData("server", ServerText);

@@ -62,10 +62,10 @@ public class CustomerClient {
 					, griddataLabel, griddataText;
 	
 	static Composite compositeLogin, compositeMainClient, compositeHeader, compositeNavigation, compositeContent, compositeWelcomePage, compositeViewTransaction
-					,compositePerformTransaction, compositeDepositPage,compositeWithdrawPage;
+					,compositePerformTransaction, compositeDepositPage,compositeWithdrawPage, compositeChangeAccPage;
 	
-	static Button buttonLogin, buttonLogout, buttonMenuViewTransaction, buttonCommitViewTransaction, buttonMenuPerformPage, buttonMenuDepositPage
-					, buttonMenuWithdrawPage, buttonCommitWithdraw, buttonCommitDeposit, buttonCommitPerformTransaction, buttonCommitPDF;
+	static Button buttonLogin, buttonLogout, buttonMenuViewTransaction, buttonCommitViewTransaction, buttonMenuPerformPage, buttonMenuDepositPage, buttonMenuChangeAcc,
+					 buttonMenuWithdrawPage, buttonCommitWithdraw, buttonCommitDeposit, buttonCommitPerformTransaction, buttonCommitPDF, buttonCommitChangeAcc;
 	
 	static Image imageLogo, imageTablePull;
 	
@@ -117,6 +117,8 @@ public class CustomerClient {
 		 	fillcompositeDepositPage();
 		 	
 		 	fillcompositeWithdrawPage();
+		 	
+		 	fillcompositeChangeAcc();
 		 	
 		 	//set WelcomePage to be the first thing to see
 		 	stackLayoutMain.topControl=compositeLogin;
@@ -184,11 +186,12 @@ public class CustomerClient {
 		    	}
 		    });
 		    
-		   // buttonDeactivateAccount.addListener(SWT.Selection, new Listener() {
-		       // public void handleEvent(Event event) {
-			          //do something here to deactivate selected account
-			     //   }
-			    //  });
+		    buttonMenuChangeAcc.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositeChangeAccPage;
+			          compositeContent.layout();
+		        }
+			});
 		    
 		    buttonCommitPerformTransaction.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
@@ -236,6 +239,47 @@ public class CustomerClient {
 		    display.dispose();
 }
 
+	 private static void fillcompositeChangeAcc(){
+		 
+		 GridData ChangeAccCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);		    
+		 ChangeAccCompositeData.horizontalSpan = 2;
+		    Label ChangeAccLabel = new Label(compositeChangeAccPage, SWT.NONE);
+		    ChangeAccLabel.setText("Change your accountdata");
+		    ChangeAccLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
+		    ChangeAccLabel.setLayoutData(ChangeAccCompositeData);
+		    
+		    Label SepPerformChangeAcc1 = new Label(compositeChangeAccPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformChangeAcc1.setBackground(new Color(display,255,255,255));
+		    SepPerformChangeAcc1.setLayoutData(ChangeAccCompositeData);
+		    
+		    Label ChangeAccFirstNameLabel = new Label(compositeChangeAccPage,SWT.NONE);
+		    ChangeAccFirstNameLabel.setText("First Name:");
+		    ChangeAccFirstNameLabel.setLayoutData(griddataLabel);
+			Text ChangeAccFirstNameText = new Text(compositeChangeAccPage, SWT.SINGLE | SWT.BORDER);
+			ChangeAccFirstNameText.setLayoutData(griddataText);
+			
+			Label ChangeAccLastNameLabel = new Label(compositeChangeAccPage, SWT.NONE);
+			ChangeAccLastNameLabel.setText("Last Name:");
+			ChangeAccLastNameLabel.setLayoutData(griddataLabel);
+			Text ChangeAccLastNameText = new Text(compositeChangeAccPage, SWT.SINGLE | SWT.BORDER);
+			ChangeAccLastNameText.setLayoutData(griddataText);			
+			
+			Label ChangeAccPWLabel = new Label(compositeChangeAccPage, SWT.NONE);
+			ChangeAccPWLabel.setText("Password:");
+			ChangeAccPWLabel.setLayoutData(griddataLabel);
+			Text ChangeAccPWText = new Text(compositeChangeAccPage, SWT.SINGLE | SWT.BORDER);
+			ChangeAccPWText.setLayoutData(griddataText);
+			
+		    Label SepPerformChangeAcc2 = new Label(compositeChangeAccPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformChangeAcc2.setBackground(new Color(display,255,255,255));
+		    SepPerformChangeAcc2.setLayoutData(ChangeAccCompositeData);
+			
+		    buttonCommitChangeAcc = new Button(compositeChangeAccPage, SWT.PUSH);
+		    buttonCommitChangeAcc.setText("Commit");
+		    buttonCommitChangeAcc.setBackground(new Color(display, 31, 78, 121));
+		    buttonCommitChangeAcc.setLayoutData(griddataButton);
+	 }
+
 	 private static void fillcompositeDepositPage() {
 		
 		 GridData DepositCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);		    
@@ -245,9 +289,9 @@ public class CustomerClient {
 		    DepositCaptionLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
 		    DepositCaptionLabel.setLayoutData(DepositCompositeData);
 		    
-		    Label SepPerform3 = new Label(compositeDepositPage, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform3.setBackground(new Color(display,255,255,255));
-		    SepPerform3.setLayoutData(DepositCompositeData);
+		    Label SepPerformDeposit1 = new Label(compositeDepositPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformDeposit1.setBackground(new Color(display,255,255,255));
+		    SepPerformDeposit1.setLayoutData(DepositCompositeData);
 		    
 		    Label DepositAmountLabel = new Label(compositeDepositPage,SWT.NONE);
 		    DepositAmountLabel.setText("Amount:");
@@ -263,9 +307,9 @@ public class CustomerClient {
 		    
 			DepositCaptionLabel.pack();
 		    
-		    Label SepPerform4 = new Label(compositeDepositPage, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform4.setBackground(new Color(display,255,255,255));
-		    SepPerform4.setLayoutData(DepositCompositeData);
+		    Label SepPerformDeposit2 = new Label(compositeDepositPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformDeposit2.setBackground(new Color(display,255,255,255));
+		    SepPerformDeposit2.setLayoutData(DepositCompositeData);
 		    
 		    buttonCommitDeposit = new Button(compositeDepositPage, SWT.PUSH);
 		    buttonCommitDeposit.setText("Commit");
@@ -286,9 +330,9 @@ public class CustomerClient {
 		    PerformTransactionCaptionLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
 		    PerformTransactionCaptionLabel.setLayoutData(CreateAccountCompositeData);
 		    
-		    Label SepPerform1 = new Label(compositeViewTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform1.setBackground(new Color(display,255,255,255));
-		    SepPerform1.setLayoutData(CreateAccountCompositeData);
+		    Label SepPerformViewTransaction1 = new Label(compositeViewTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformViewTransaction1.setBackground(new Color(display,255,255,255));
+		    SepPerformViewTransaction1.setLayoutData(CreateAccountCompositeData);
 		    
 		    final Table table = new Table(compositeViewTransaction,
 		    		SWT.SINGLE | SWT.H_SCROLL |
@@ -370,9 +414,9 @@ public class CustomerClient {
 		   
 		    PerformTransactionCaptionLabel.pack();
 		    	    
-		    Label SepPerform3 = new Label(compositePerformTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform3.setBackground(new Color(display,255,255,255));
-		    SepPerform3.setLayoutData(ViewCompositeData);
+		    Label SepPerformPerformTransaction1 = new Label(compositePerformTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformPerformTransaction1.setBackground(new Color(display,255,255,255));
+		    SepPerformPerformTransaction1.setLayoutData(ViewCompositeData);
 		    
 		    Label PerformTransactionToAccountLabel = new Label(compositePerformTransaction,SWT.NONE);
 		    PerformTransactionToAccountLabel.setText("To Acc.:");
@@ -400,9 +444,9 @@ public class CustomerClient {
 		    
 			PerformTransactionCaptionLabel.pack();
 		    
-		    Label SepPerform4 = new Label(compositePerformTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform4.setBackground(new Color(display,255,255,255));
-		    SepPerform4.setLayoutData(ViewCompositeData);
+		    Label SepPerformPerformTransaction2 = new Label(compositePerformTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformPerformTransaction2.setBackground(new Color(display,255,255,255));
+		    SepPerformPerformTransaction2.setLayoutData(ViewCompositeData);
 		    
 		    buttonCommitPerformTransaction = new Button(compositePerformTransaction, SWT.PUSH);
 		    buttonCommitPerformTransaction.setText("Commit");
@@ -424,9 +468,9 @@ public class CustomerClient {
 		    WithdrawCaptionLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
 		    WithdrawCaptionLabel.setLayoutData(CreateCustomerCompositeData);
 		    
-		    Label SepPerform3 = new Label(compositeWithdrawPage, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform3.setBackground(new Color(display,255,255,255));
-		    SepPerform3.setLayoutData(CreateCustomerCompositeData);
+		    Label SepPerformWithdraw1 = new Label(compositeWithdrawPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformWithdraw1.setBackground(new Color(display,255,255,255));
+		    SepPerformWithdraw1.setLayoutData(CreateCustomerCompositeData);
 		    
 		    Label WithdrawAmountLabel = new Label(compositeWithdrawPage,SWT.NONE);
 		    WithdrawAmountLabel.setText("Amount:");
@@ -442,9 +486,9 @@ public class CustomerClient {
 		    
 			WithdrawCaptionLabel.pack();
 		    
-		    Label SepPerform4 = new Label(compositeWithdrawPage, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform4.setBackground(new Color(display,255,255,255));
-		    SepPerform4.setLayoutData(CreateCustomerCompositeData);
+		    Label SepPerformWithdraw2 = new Label(compositeWithdrawPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformWithdraw2.setBackground(new Color(display,255,255,255));
+		    SepPerformWithdraw2.setLayoutData(CreateCustomerCompositeData);
 		    
 		    buttonCommitWithdraw = new Button(compositeWithdrawPage, SWT.PUSH);
 		    buttonCommitWithdraw.setText("Commit");
@@ -551,9 +595,15 @@ public class CustomerClient {
 		    buttonMenuWithdrawPage.setBackground(new Color(display, 31, 78, 121));
 		    buttonMenuWithdrawPage.setLayoutData(griddataMenuContent);
 	    
-	    Label placeholder7 = new Label(compositeNavigation, SWT.NONE | SWT.HORIZONTAL);
+	    Label placeholder7 = new Label(compositeNavigation, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    placeholder7.setBackground(new Color(display, 200,200,200));
 		    placeholder7.setLayoutData(griddataMenuContent);
+		    
+		    buttonMenuChangeAcc = new Button(compositeNavigation, SWT.PUSH);
+		    buttonMenuChangeAcc.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		    buttonMenuChangeAcc.setText("Change Accountdata");
+		    buttonMenuChangeAcc.setBackground(new Color(display, 31, 78, 121));
+		    buttonMenuChangeAcc.setLayoutData(griddataMenuContent);
 	    
 	    Label placeholder8 = new Label(compositeNavigation, SWT.NONE | SWT.HORIZONTAL);
 		    placeholder8.setBackground(new Color(display, 200,200,200));
@@ -669,7 +719,7 @@ public class CustomerClient {
 		    compositeLogin.setBackground(new Color(display,200,200,200));
 		    compositeLogin.setLayoutData(griddataWindow);
 		    compositeLogin.setLayout(layoutLogin);
-		 
+		    
 		 compositeMainClient = new Composite(shell, 0);
 		    compositeMainClient.setBackground(new Color(display,255,255,255));
 		    compositeMainClient.setLayoutData(griddataWindow);
@@ -699,6 +749,10 @@ public class CustomerClient {
 	    compositeViewTransaction = new Composite(compositeContent, SWT.NONE);
 		    compositeViewTransaction.setBackground(new Color(display,255,255,255));
 		    compositeViewTransaction.setLayout(layoutMainClient);
+		    
+		compositeChangeAccPage = new Composite(compositeContent, SWT.NONE);
+		    compositeChangeAccPage.setBackground(new Color(display,255,255,255));
+		    compositeChangeAccPage.setLayout(layoutMainClient);
 		    
 	    compositePerformTransaction = new Composite(compositeContent, SWT.NONE);
 		    compositePerformTransaction.setBackground(new Color(display,255,255,255));

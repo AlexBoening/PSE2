@@ -16,7 +16,7 @@ public class Bank {
     	this.blz = blz;
     	this.description = description;
     	this.accounts = new ArrayList<Account>();
-    	this.setBank_account(new Account(true, new Customer(1), new Administrator(1), this, new AccountType(1)));
+    	//this.setBank_account(new Account(true, new Customer(1), new Administrator(1), this, new AccountType(1)));
     	
     	String[] value = new String[3];
     	value[0] = "" + id;
@@ -37,15 +37,6 @@ public class Bank {
     	this.blz = Convert.toInt(value[0][1]);
     	this.description = value[0][2];
     	this.bank_account = new Account(Convert.toInt(value[0][3]));
-    	
-    	// get Bank account
-    	/*column = new String[1];
-    	column[0] = "idAccount";
-    	condition = new String[2];
-    	condition[0] = "Bank_idBank = " + id;
-    	condition[1] = "AccountTyp_idAccountTyp = 1";
-    	value = SQL.select(column, "Account", condition, "and");
-    	this.bank_account = new Account(Convert.toInt(value[0][0]));*/
     }
     
     public Bank() {

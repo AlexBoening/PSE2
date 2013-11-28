@@ -139,10 +139,9 @@ public class CustomerClient {
 		        		  account = getAccount(accountId);
 		        	      
 		        	  if (account != null) {
-		        		  if (securityMode) 
-		        			  CurrentBalance.setText(getBalance(account.getId()));
+		        		  CurrentBalance.setText(getBalance(account.getId()));
 		        		  stackLayoutMain.topControl = compositeMainClient;
-			          	shell.layout();
+			          shell.layout();
 		        	  }
 			        }
 			      });
@@ -821,7 +820,7 @@ public static Account getAccount(int number) {
         c.setLastName(name[1]);
     a.setCustomer(c);
     
-    LabelStatusLineName.setText("Hallo " + customer.getFirstName() + " " + customer.getLastName() + "!");
+    LabelStatusLineName.setText("Hallo " + c.getFirstName() + " " + c.getLastName() + "!");
     
     JSONArray ja = jo.getJSONArray("transactions");
     
@@ -899,20 +898,29 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		String GETString = server + "/rest/getBalance" + "?account=" + id;
 		if (securityMode) {
 			GETString = server + "/rest/s/getBalance" + "?account=" + id + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
-		}
+
+			ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+			int status = cr.getStatus();
 		
-		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
-		int status = cr.getStatus();
-		
-		if (status == 200) {
-			JSONObject jo = new JSONObject(cr.getEntity(String.class));
-			String balance = jo.getString("balance");
-			//LabelStatusLine.setText(getMessage(200));
-			return balance;
-		}
+			if (status == 200) {
+				JSONObject jo = new JSONObject(cr.getEntity(String.class));
+				String balance = jo.getString("balance");
+				return balance;
+			}
 			else
 				LabelStatusLine.setText(getMessage(status));
-		return "";
+			return "";
+		}
+		else {
+			int amount = 0;
+			try {
+				amount = account.getBalance();
+				return Convert.toEuro(amount);
+			}
+			catch (SQLException e) {
+				return "";
+			}
+		}
 	}
 	
 	public static Customer getCustomer(int id) {

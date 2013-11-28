@@ -748,7 +748,7 @@ public class AdminClient {
 	}
 	
 
-// Methoden zur Datenübertragung an die Rest-ressource
+// Methoden zur Datenübertragung an die RestResource
 	
 	public static Administrator getAdmin(int id) {
 		String GETString;
@@ -808,17 +808,15 @@ public class AdminClient {
 	}
 	
 	public static int createCustomer(int idLogin, String firstName, String lastName, String password) {
-		//ClientResponse cr = Client.create().resource( "http://localhost:9998/rest/CreateCustomer"
-        //    										+ "&firstName=" + firstName 
-        //    										+ "&lastName=" + lastName
-        //    										+ "&password=" + password).get( ClientResponse.class );
-		
+	
 		String GETString = server + "/rest/s/createCustomer";
 		
 		Form f = new Form();
 		f.add("firstName", firstName);
 		f.add("lastName", lastName);
 		f.add("password", password);
+		f.add("adminIdLogin", idLogin);
+		f.add("passwortHash", password);
 		
 		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		if (cr.getStatus() == 200) {
@@ -840,6 +838,42 @@ public class AdminClient {
 		f.add("adminId", adminId);
 		f.add("accountTypeId", accountTypeId);
 		f.add("adminIdLogin", idLogin);
+		f.add("passwortHash", password);
+		
+		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		if (cr.getStatus() == 200) {
+			JSONObject jo = new JSONObject(cr.getEntity(String.class));
+			return jo.getInt("id");
+		}
+		return 0;
+	}
+	
+	public static int createAccountType(int idLogin, String interestRate, String description) {
+		
+		String GETString = server + "/rest/s/createAccountType";
+		
+		Form f = new Form();
+		f.add("interestRate", Convert.toDouble(interestRate));
+		f.add("description", description);
+		f.add("adminIdLogin", idLogin);
+		f.add("passwortHash", password);
+		
+		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		if (cr.getStatus() == 200) {
+			JSONObject jo = new JSONObject(cr.getEntity(String.class));
+			return jo.getInt("id");
+		}
+		return 0;
+	}
+	
+	public static int createBank(int idLogin, String description, int blz) {
+		
+		String GETString = server + "/rest/s/createBank";
+		
+		Form f = new Form();
+		f.add("description", description);
+		f.add("blz", blz);
+		f.add("idLogin", idLogin);
 		f.add("passwortHash", password);
 		
 		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
@@ -911,6 +945,18 @@ public class AdminClient {
 		Form f = new Form();
 		f.add("active", active);
 		f.add("idAccount", idAccount);
+		f.add("idLogin", idLogin);
+		f.add("passwortHash", password);
+		
+		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		return cr.getStatus();
+	}
+	
+	public static int payInterests(int idLogin, Bank b) {
+		String GETString = server + "rest/s/payInterests";
+		
+		Form f = new Form();
+		f.add("idBank", b.getId());
 		f.add("idLogin", idLogin);
 		f.add("passwortHash", password);
 		

@@ -237,107 +237,6 @@ public class RestResource {
 				return Response.status(500).build();			// Internal Server Error
 			}
 			return Response.ok().build();						// Transaction was created successfully
-	}
-	
-	@POST
-	@Path("/s/createCustomer")
-	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
-	public Response createCustomer(@FormParam("firstName")String firstName, 
-			                       @FormParam("lastName") String lastName, 
-			                       @FormParam("password") String password, 
-			                       @Context HttpServletRequest req) {
-		
-		// Logging
-		Logger logger = Logger.getRootLogger();
-		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
-		logger.info(new java.util.Date() + ": Method: /s/createCustomer");
-		logger.info(new java.util.Date() + ": first name: " + firstName + "/  name: " + lastName);
-		
-		try {
-			Customer c = new Customer(firstName, lastName, password);
-			JSONObject jo = new JSONObject();
-			jo.put("id", c.getId());
-			// Customer was created successfully
-			return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
-		}
-		catch(SQLException e) {
-			return Response.status(500).build();			// Internal Server Error
-		}
-								
-	}
-		
-	@POST
-	@Path("/s/createAccount")
-	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
-	public Response createAccount(@FormParam("bankId")int bankId, 
-			                      @FormParam("customerId") int customerId, 
-			                      @FormParam("adminId") int adminId,
-			                      @FormParam("accountTypeId") int accountTypeId,
-			                      @FormParam("adminIdLogin")int adminIdLogin,
-					              @FormParam("passwortHash")String password,
-			                      @Context HttpServletRequest req) {
-		
-		// Declarations
-		Customer customer = new Customer();
-		Administrator admin = new Administrator();
-		Bank bank = new Bank();
-		AccountType accountType = new AccountType();
-		Account account = new Account();
-		
-		// Logging
-		Logger logger = Logger.getRootLogger();
-		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
-		logger.info(new java.util.Date() + ": Method: /s/createAccount");
-		logger.info(new java.util.Date() + ": Account type: " + accountTypeId); 
-		logger.info(new java.util.Date() + ": Customer: " + customerId);
-		logger.info(new java.util.Date() + ": Admin: " + adminId);
-		
-		try {
-			Administrator adminLogin = new Administrator(adminIdLogin);
-			if (adminLogin.getId() == 0)
-				return Response.status(404).build();			// Admin does not exist
-			if (adminLogin.getPassword().equals(password)) {
-				customer = new Customer(customerId);
-				admin = new Administrator(adminId);
-				bank = new Bank(bankId);
-				accountType = new AccountType(accountTypeId);
-				account = new Account(true, customer, admin, bank, accountType);
-				JSONObject jo = new JSONObject();
-				jo.put("id", account.getId());
-				return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
-			}
-			else {
-				return Response.status(403).build();
-			}
-		} 
-		catch(SQLException e) 
-		{
-			if (customer.getId() <= 0) {
-				logger.info(new java.util.Date() + ": the customerId " + customerId + " does not exist.");
-				return Response.status(404).build();
-			}
-			
-			if (admin.getId() <= 0) {
-				logger.info(new java.util.Date() + ": the adminId " + adminId + " does not exist.");
-				return Response.status(404).build();
-			}
-			
-			if (bank.getId() <= 0) {
-				logger.info(new java.util.Date() + ": the bankId " + bankId + " does not exist.");
-				return Response.status(404).build();
-			}
-			
-			if (accountType.getId() <= 0) {
-				logger.info(new java.util.Date() + ": the accountType " + accountTypeId + " does not exist.");
-				return Response.status(404).build();
-			}
-			
-			if (account.getId() <= 0) {
-				logger.info(new java.util.Date() + ": the account creation failed.");
-			}
-			
-			return Response.status(500).build();			
-		}				
 	}	
 	
 	@GET
@@ -816,4 +715,218 @@ public class RestResource {
         }
 	}
 	
+	@POST
+	@Path("/s/payInterests")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response payInterests(@FormParam("bankId")int bankId,
+			                     @FormParam("idLogin")int idLogin,
+			                     @FormParam("passwortHash")String password,
+			                     @Context HttpServletRequest req) {
+
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: /s/payInterests");
+		logger.info(new java.util.Date() + ": Admin: " + idLogin);
+        
+        try {
+			Administrator a = new Administrator(idLogin);
+			if (a.getId() == 0)
+				return Response.status(404).build();			// Admin does not exist
+			if (a.getPassword().equals(password)) {		
+				Bank b = new Bank(bankId);
+				if (b != null) 
+					b.payInterests();
+				return Response.ok().build();					// Interests paid successfully
+			}
+			else
+				return Response.status(403).build();			// Wrong password
+        }
+		catch (SQLException e) {
+			return Response.status(500).build();				// Internal Server Error
+		}
+	}
+	
+	@POST
+	@Path("/s/createCustomer")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response createCustomer(@FormParam("firstName")String firstName, 
+			                       @FormParam("lastName") String lastName, 
+			                       @FormParam("password") String password,
+			                       @FormParam("adminIdLogin")int adminIdLogin,
+						           @FormParam("passwortHash")String passwordLogin,
+			                       @Context HttpServletRequest req) {
+		
+		// Logging
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: /s/createCustomer");
+		logger.info(new java.util.Date() + ": first name: " + firstName + "/ last name: " + lastName);
+		
+		try {
+			Administrator adminLogin = new Administrator(adminIdLogin);
+			if (adminLogin.getId() == 0)
+				return Response.status(404).build();			// Admin does not exist
+			if (adminLogin.getPassword().equals(password)) {
+				Customer c = new Customer(firstName, lastName, password);
+				JSONObject jo = new JSONObject();
+				jo.put("id", c.getId());
+				// Customer was created successfully
+				return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+			}
+			else {
+				return Response.status(403).build();			// Wrong Password
+			}
+		}
+		catch(SQLException e) {
+			return Response.status(500).build();			// Internal Server Error
+		}
+								
+	}
+		
+	@POST
+	@Path("/s/createAccount")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response createAccount(@FormParam("bankId")int bankId, 
+			                      @FormParam("customerId") int customerId, 
+			                      @FormParam("adminId") int adminId,
+			                      @FormParam("accountTypeId") int accountTypeId,
+			                      @FormParam("adminIdLogin")int adminIdLogin,
+					              @FormParam("passwortHash")String password,
+			                      @Context HttpServletRequest req) {
+		
+		// Declarations
+		Customer customer = new Customer();
+		Administrator admin = new Administrator();
+		Bank bank = new Bank();
+		AccountType accountType = new AccountType();
+		Account account = new Account();
+		
+		// Logging
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: /s/createAccount");
+		logger.info(new java.util.Date() + ": Account type: " + accountTypeId); 
+		logger.info(new java.util.Date() + ": Customer: " + customerId);
+		logger.info(new java.util.Date() + ": Admin: " + adminId);
+		
+		try {
+			Administrator adminLogin = new Administrator(adminIdLogin);
+			if (adminLogin.getId() == 0)
+				return Response.status(404).build();			// Admin does not exist
+			if (adminLogin.getPassword().equals(password)) {
+				customer = new Customer(customerId);
+				admin = new Administrator(adminId);
+				bank = new Bank(bankId);
+				accountType = new AccountType(accountTypeId);
+				account = new Account(true, customer, admin, bank, accountType);
+				JSONObject jo = new JSONObject();
+				jo.put("id", account.getId());
+				return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+			}
+			else {
+				return Response.status(403).build();			// Wrong Password
+			}
+		} 
+		catch(SQLException e) 
+		{
+			if (customer.getId() <= 0) {
+				logger.info(new java.util.Date() + ": the customerId " + customerId + " does not exist.");
+				return Response.status(404).build();
+			}
+			
+			if (admin.getId() <= 0) {
+				logger.info(new java.util.Date() + ": the adminId " + adminId + " does not exist.");
+				return Response.status(404).build();
+			}
+			
+			if (bank.getId() <= 0) {
+				logger.info(new java.util.Date() + ": the bankId " + bankId + " does not exist.");
+				return Response.status(404).build();
+			}
+			
+			if (accountType.getId() <= 0) {
+				logger.info(new java.util.Date() + ": the accountType " + accountTypeId + " does not exist.");
+				return Response.status(404).build();
+			}
+			
+			if (account.getId() <= 0) {
+				logger.info(new java.util.Date() + ": the account creation failed.");
+			}
+			
+			return Response.status(500).build();			
+		}				
+	}
+	
+	@POST
+	@Path("/s/createAccountType")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response createAccountType(@FormParam("interestRate")double interestRate, 
+			                       	  @FormParam("description")String description, 
+			                       	  @FormParam("AdminIdLogin")int adminIdLogin,
+						              @FormParam("passwortHash")String password,
+			                       	  @Context HttpServletRequest req) {
+		
+		// Logging
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: /s/createAccountType");
+		logger.info(new java.util.Date() + ": Admin: " + adminIdLogin);
+		
+		try {
+			Administrator adminLogin = new Administrator(adminIdLogin);
+			if (adminLogin.getId() == 0)
+				return Response.status(404).build();			// Admin does not exist
+			if (adminLogin.getPassword().equals(password)) {
+				AccountType at = new AccountType(description, interestRate);
+				JSONObject jo = new JSONObject();
+				jo.put("id", at.getId());
+				// Account Type was created successfully
+				return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+			}
+			else
+				return Response.status(403).build();			// Wrong Password
+		}
+		catch(SQLException e) {
+			return Response.status(500).build();			// Internal Server Error
+		}							
+	}
+	
+	@POST
+	@Path("/s/createBank")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response createBank(@FormParam("blz")int blz, 
+			                   @FormParam("description")String description, 
+			                   @FormParam("adminIdLogin")int adminIdLogin,
+						       @FormParam("passwortHash")String password,
+			                   @Context HttpServletRequest req) {
+		
+		// Logging
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: /s/createAccountType");
+		logger.info(new java.util.Date() + ": Admin: " + adminIdLogin);
+		
+		try {
+			Administrator adminLogin = new Administrator(adminIdLogin);
+			if (adminLogin.getId() == 0)
+				return Response.status(404).build();			// Admin does not exist
+			if (adminLogin.getPassword().equals(password)) {
+				Bank b = new Bank(blz, description);
+				Customer c = new Customer("Customer", description, description);
+				Administrator a = new Administrator(adminIdLogin);
+				Account acc = new Account(true, c, a, b, new AccountType(1));
+				b.setBank_account(acc);
+				b.updateDB();
+				JSONObject jo = new JSONObject();
+				jo.put("id", b.getId());
+				// Bank was created successfully
+				return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+			}
+			else
+				return Response.status(403).build();			// Wrong Password
+		}
+		catch(SQLException e) {
+			return Response.status(500).build();			// Internal Server Error
+		}							
+	}
 }

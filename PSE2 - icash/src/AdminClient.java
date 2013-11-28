@@ -793,6 +793,8 @@ public class AdminClient {
 				admin.setFirstName(jo.getString("firstName"));
 				admin.setLastName(jo.getString("lastName"));
 				
+				LabelStatusLineName.setText("Hallo " + admin.getFirstName() + " " + admin.getLastName() + "!");
+				
 				JSONArray ja = jo.getJSONArray("accounts");
 				
 				for (int i=0; i<ja.length(); i++) {
@@ -813,8 +815,6 @@ public class AdminClient {
 					c.setId(customer.getInt("id"));
 					c.setFirstName(customer.getString("firstName"));
 					c.setLastName(customer.getString("lastName"));
-					
-					LabelStatusLineName.setText("Hallo " + c.getFirstName() + " " + c.getLastName() + "!");
 					
 					acc.setAdministrator(admin);
 					

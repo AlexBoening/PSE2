@@ -44,7 +44,7 @@ public class JettyServer {
         logger.setLevel(Level.ALL);
         
 		// JERSEY
-		ResourceConfig rc = new PackagesResourceConfig("server");
+		ResourceConfig rc = new PackagesResourceConfig("server_neu");
 		ServletContextHandler sh = new ServletContextHandler();
 		sh.setContextPath("/rest");
 		sh.addServlet(new ServletHolder(new ServletContainer(rc)), "/*");

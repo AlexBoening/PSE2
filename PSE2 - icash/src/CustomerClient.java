@@ -186,6 +186,16 @@ public class CustomerClient {
 		    	}
 		    });
 		    
+		    buttonCommitChangeAcc.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+
+		        	  String FirstName = ((Text)event.widget.getData("First Name")).getText();
+		        	  String LastName = ((Text)event.widget.getData("Last Name")).getText();
+		        	  String Password = ((Text)event.widget.getData("Password")).getText();
+		        	  // hier die Methode
+		        }
+			});
+		    
 		    buttonMenuChangeAcc.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
 		        	stackLayoutContent.topControl = compositeChangeAccPage;

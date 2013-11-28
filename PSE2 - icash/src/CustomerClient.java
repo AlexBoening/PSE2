@@ -77,6 +77,7 @@ public class CustomerClient {
 	private static Label CurrentBalance;
 	private static Label LabelStatusLine;
 	private static Label LabelStatusLineLogin;
+	private static Label LabelStatusLineName;
 		   
 	
 /*    GridData Captiondata = new GridData(GridData.FILL, GridData.FILL,true, false);
@@ -504,6 +505,12 @@ public class CustomerClient {
 	    LabelStatusLine.setBackground(new Color(display, 200,200,200));
 	    //LabelStatusLine.setText("Here could be the status code");
 	    LabelStatusLine.setLayoutData(griddataStatusLine);
+	    
+	    griddataStatusLine.horizontalSpan = 2;
+	    LabelStatusLineName = new Label(compositeHeader, SWT.HORIZONTAL);
+	    LabelStatusLineName.setBackground(new Color(display, 200,200,200));
+	    //LabelStatusLine.setText("Here could be the status code");
+	    LabelStatusLineName.setLayoutData(griddataStatusLine);
 
 	    //Navigation
 	    final GridData griddataMenuContent = new GridData(GridData.FILL, GridData.CENTER,true, false);
@@ -813,6 +820,8 @@ public static Account getAccount(int number) {
     if (name.length > 1)
         c.setLastName(name[1]);
     a.setCustomer(c);
+    
+    LabelStatusLineName.setText("Hallo " + customer.getFirstName() + " " + customer.getLastName() + "!");
     
     JSONArray ja = jo.getJSONArray("transactions");
     

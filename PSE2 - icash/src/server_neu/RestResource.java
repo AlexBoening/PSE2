@@ -72,13 +72,13 @@ public class RestResource {
 		if (number == 0 || customer == 0 || password == null) 
 			return Response.status(400).build();
 		try {
-		    Customer c = new Customer(customer);                     
-		    c.login(password);								
-		    if (!c.isLoggedIn())
-		    	return Response.status(403).build();		// Wrong Customer Number or Password
-		    Account a = new Account(number);
+			Account a = new Account(number);
 			if (a.getId() == 0)
 				return Response.status(404).build();		// Account does not exist
+		    Customer c = new Customer(customer);                     
+		    c.login(password, a);								
+		    if (!c.isLoggedIn())
+		    	return Response.status(403).build();		// Wrong Customer Number or Password
 		    if (a.getCustomer().getId() != c.getId())
 		    	return Response.status(400).build();		// Customer Number and Account Number do not match
 		    return getAccount(number, a);
@@ -197,13 +197,13 @@ public class RestResource {
 				                         + "/ Amount: " + Convert.toEuro(amount) + "/ Reference: " + reference);
 		
 		try {
-		    Customer c = new Customer(customer);                     
-		    c.login(password);								
-		    if (!c.isLoggedIn())
-		    	return Response.status(403).build();		// Wrong Customer Number or Password
 		    Account outgoingAccount = new Account(sender);
 			if (outgoingAccount.getId() == 0)
 				return Response.status(404).build();		// Account does not exist
+			Customer c = new Customer(customer);                     
+		    c.login(password, outgoingAccount);								
+		    if (!c.isLoggedIn())
+		    	return Response.status(403).build();		// Wrong Customer Number or Password
 		    if (outgoingAccount.getCustomer().getId() != c.getId()
 		    &&  outgoingAccount.getAccountType().getId() != 1)
 		    	return Response.status(400).build();		// Customer Number and Account Number do not match
@@ -308,13 +308,13 @@ public class RestResource {
 		JSONObject jo = new JSONObject();
 		
 		try {
-			Customer c = new Customer(customer);                     
-		    c.login(password);								
-		    if (!c.isLoggedIn())
-		    	return Response.status(403).build();		// Wrong Customer Number or Password
-		    Account a = new Account(account);
+			Account a = new Account(account);
 			if (a.getId() == 0)
 				return Response.status(404).build();		// Account does not exist
+			Customer c = new Customer(customer);                     
+		    c.login(password, a);								
+		    if (!c.isLoggedIn())
+		    	return Response.status(403).build();		// Wrong Customer Number or Password
 		    if (a.getCustomer().getId() != c.getId())
 		    	return Response.status(400).build();		// Customer Number and Account Number do not match
 		
@@ -342,13 +342,13 @@ public class RestResource {
 		JSONObject jo = new JSONObject();
 		
 		try {
-			Customer c = new Customer(customer);                     
-		    c.login(password);								
-		    if (!c.isLoggedIn())
-		    	return Response.status(403).build();		// Wrong Customer Number or Password
-		    Account a = new Account(account);
+			Account a = new Account(account);
 			if (a.getId() == 0)
 				return Response.status(404).build();		// Account does not exist
+			Customer c = new Customer(customer);                     
+		    c.login(password, a);								
+		    if (!c.isLoggedIn())
+		    	return Response.status(403).build();		// Wrong Customer Number or Password
 		    if (a.getCustomer().getId() != c.getId())
 		    	return Response.status(400).build();		// Customer Number and Account Number do not match
 			String balance = Convert.toEuro(a.getBalance());
@@ -403,8 +403,9 @@ public class RestResource {
 			Account a = new Account(account);
 			if (a.getId() == 0)
 				return Response.status(404).build();			// Account does not exist
-		    
-			if (!a.getCustomer().getPassword().equals(password))
+		    Customer c = a.getCustomer();
+		    c.login(password, a);								
+		    if (!c.isLoggedIn())
 				return Response.status(403).build();
 			jo.put("id", a.getCustomer().getId());
 			jo.put("firstName", a.getCustomer().getFirstName());
@@ -433,8 +434,9 @@ public class RestResource {
 			Account a = new Account(account);
 			if (a.getId() == 0)
 				return Response.status(404).build();			// Account does not exist
-		    
-			if (!a.getCustomer().getPassword().equals(password))
+		    Customer c = a.getCustomer();
+		    c.login(password, a);								
+		    if (!c.isLoggedIn())
 				return Response.status(403).build();
 			
 			jo.put("id", a.getBank().getId());
@@ -465,7 +467,9 @@ public class RestResource {
 			if (a.getId() == 0)
 				return Response.status(404).build();			// Account does not exist
 		    
-			if (!a.getCustomer().getPassword().equals(password))
+			Customer c = a.getCustomer();
+		    c.login(password, a);								
+		    if (!c.isLoggedIn())
 				return Response.status(403).build();
 			
 			jo.put("id", a.getAccountType().getId());
@@ -527,8 +531,10 @@ public class RestResource {
 			Administrator a = new Administrator(adminID);
 			if (a.getId() == 0)
 				return Response.status(404).build();			// Admin does not exist
-			if (a.getPassword().equals(password)) {
-
+		    a.login(password);								
+		    if (!a.isLoggedIn())
+		    	return Response.status(403).build();			// Wrong password
+		    else {
 				jo.put("id", a.getId());
 				jo.put("firstName", a.getFirstName());
 				jo.put("lastName", a.getLastName());
@@ -564,11 +570,7 @@ public class RestResource {
 				jo.put("accounts", ja);
 				return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
 			} 
-			else 
-			{
-				logger.info(new java.util.Date() + ": wrong password!");
-				return Response.status(404).build();
-			}
+        
 			
 		}
 		catch(SQLException e) {

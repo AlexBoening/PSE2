@@ -81,7 +81,11 @@ public class Customer extends Person {
 		return accounts;
 	}
 	
-    public void login(String password) throws SQLException{
+    public void login(String password, Account a) throws SQLException{
+    	if (!a.isFlagActive()) {
+    		setLoggedIn(false);
+    		return;
+    	}
     	String[] column = {"passwordCustomer"};
     	String table = "Customer";
     	String[] condition = {"idCustomer = " + id};

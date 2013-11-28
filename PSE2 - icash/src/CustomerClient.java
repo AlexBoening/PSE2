@@ -434,11 +434,11 @@ public class CustomerClient {
 			Text PerformTransactionToAccountText = new Text(compositePerformTransaction, SWT.SINGLE | SWT.BORDER);
 			PerformTransactionToAccountText.setLayoutData(griddataText);
 			
-			Label PerformTransactionBlzLabel = new Label(compositePerformTransaction, SWT.NONE);
+			/*Label PerformTransactionBlzLabel = new Label(compositePerformTransaction, SWT.NONE);
 			PerformTransactionBlzLabel.setText("BLZ:");
 			PerformTransactionBlzLabel.setLayoutData(griddataLabel);
 			Text PerformTransactionBlzText = new Text(compositePerformTransaction, SWT.SINGLE | SWT.BORDER);
-			PerformTransactionBlzText.setLayoutData(griddataText);		
+			PerformTransactionBlzText.setLayoutData(griddataText);	*/	
 			
 			Label PerformTransactionAmountLabel = new Label(compositePerformTransaction, SWT.NONE);
 			PerformTransactionAmountLabel.setText("Amount:");
@@ -463,7 +463,7 @@ public class CustomerClient {
 		    buttonCommitPerformTransaction.setBackground(new Color(display, 31, 78, 121));
 		    buttonCommitPerformTransaction.setLayoutData(griddataButton);	
 		    buttonCommitPerformTransaction.setData("toAccount", PerformTransactionToAccountText);
-		    buttonCommitPerformTransaction.setData("blz", PerformTransactionBlzText);
+		    //buttonCommitPerformTransaction.setData("blz", PerformTransactionBlzText);
 		    buttonCommitPerformTransaction.setData("amount", PerformTransactionAmountText);
 		    buttonCommitPerformTransaction.setData("description", PerformTransactionDescriptionText);
 		    

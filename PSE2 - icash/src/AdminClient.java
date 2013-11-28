@@ -73,6 +73,9 @@ public class AdminClient {
 	private static Customer[] c;
 	private static Administrator[] a; 
 	private static AccountType[] at;
+	private static Label LabelStatusLine;
+	private static Label LabelStatusLineLogin;
+	private static Label LabelStatusLineName;
 	
 	 public static void main(String[] args) {
 		 
@@ -518,8 +521,6 @@ public class AdminClient {
 		    labelForImage.setLayoutData(griddataCaption);
 	}
 
-	
-
 	private static void fillCompositeMainClient() {
 
 		//Header
@@ -537,6 +538,22 @@ public class AdminClient {
 	    buttonLogout.setLayoutData(griddataLogoutButton);
 	    buttonLogout.setBackground(new Color(display, 31, 78, 121));
 	    buttonLogout.setText("Log out!");
+	    
+	  //Status Line
+	    final GridData griddataStatusLine = new GridData(GridData.FILL, GridData.FILL,false, false);
+	    griddataCaption.heightHint=58;
+	    griddataCaption.widthHint=625;
+	    
+	    LabelStatusLine = new Label(compositeHeader, SWT.HORIZONTAL);
+	    LabelStatusLine.setBackground(new Color(display, 200,200,200));
+	    //LabelStatusLine.setText("Here could be the status code");
+	    LabelStatusLine.setLayoutData(griddataStatusLine);
+	    
+	    griddataStatusLine.horizontalSpan = 2;
+	    LabelStatusLineName = new Label(compositeHeader, SWT.HORIZONTAL);
+	    LabelStatusLineName.setBackground(new Color(display, 200,200,200));
+	    //LabelStatusLine.setText("Here could be the status code");
+	    LabelStatusLineName.setLayoutData(griddataStatusLine);
 	    
 	    //Navigation
 	    final GridData griddataMenuContent = new GridData(GridData.FILL, GridData.CENTER,true, false);
@@ -581,8 +598,6 @@ public class AdminClient {
 	    
 	}
 
-	
-
 	private static void fillCompositeLogin()
 	 {
 		 
@@ -602,6 +617,10 @@ public class AdminClient {
 			    griddataLoginButton.horizontalSpan=1;
 			    griddataLoginButton.heightHint = 35;
 		    
+			    final GridData griddataStatusLine = new GridData(GridData.FILL, GridData.FILL, false, false);
+				griddataStatusLine.heightHint = 30;
+				griddataStatusLine.widthHint = 625;
+				griddataStatusLine.horizontalSpan = 5;
 			
 			//compositeLogin.setBackgroundImage(imageLogo);    
 		    Label LoginCaption = new Label(compositeLogin,SWT.NONE);
@@ -610,6 +629,9 @@ public class AdminClient {
 			    LoginCaption.setBackgroundImage(imageLogo);
 			    LoginCaption.setLayoutData(griddataCaption);
 		    
+			LabelStatusLineLogin = new Label(compositeLogin,SWT.NONE);
+				LabelStatusLineLogin.setLayoutData(griddataStatusLine);
+			    
 		    Label ServerLabel = new Label(compositeLogin, SWT.NONE);
 			    ServerLabel.setText("Server:");
 			    ServerLabel.setLayoutData(griddataDescription);
@@ -761,6 +783,8 @@ public class AdminClient {
 		if (!GETString.isEmpty()) {
 			ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );	
 			if (cr.getStatus() == 200) {
+				LabelStatusLine.setText(getMessage(200));
+				
 				JSONObject jo = new JSONObject(cr.getEntity(String.class));
 				
 				Administrator admin = new Administrator();
@@ -789,6 +813,8 @@ public class AdminClient {
 					c.setFirstName(customer.getString("firstName"));
 					c.setLastName(customer.getString("lastName"));
 					
+					LabelStatusLineName.setText("Hallo " + c.getFirstName() + " " + c.getLastName() + "!");
+					
 					acc.setAdministrator(admin);
 					
 					JSONObject accountType = currentAccount.getJSONObject("accountType");
@@ -803,7 +829,11 @@ public class AdminClient {
 				}
 				return admin;
 			}
+			else {
+				LabelStatusLineLogin.setText(getMessage(cr.getStatus()));
+			}
 		}
+		
 		return null;
 	}
 	
@@ -824,8 +854,10 @@ public class AdminClient {
 			int id = jo.getInt("id");
 			return id;
 		}
-		else
+		else{
+			LabelStatusLine.setText(getMessage(cr.getStatus()));
 			return 0;
+		}
 	}
 	
 	public static int createAccount(int idLogin, int bankId, int customerId, int adminId, int accountTypeId) {
@@ -845,6 +877,9 @@ public class AdminClient {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			return jo.getInt("id");
 		}
+		else{
+			LabelStatusLine.setText(getMessage(cr.getStatus()));
+		}
 		return 0;
 	}
 	
@@ -863,6 +898,9 @@ public class AdminClient {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			return jo.getInt("id");
 		}
+		else{
+			LabelStatusLine.setText(getMessage(cr.getStatus()));
+		}
 		return 0;
 	}
 	
@@ -880,6 +918,9 @@ public class AdminClient {
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			return jo.getInt("id");
+		}
+		else{
+			LabelStatusLine.setText(getMessage(cr.getStatus()));
 		}
 		return 0;
 	}
@@ -936,6 +977,9 @@ public class AdminClient {
 				at[i] = accountType;
 			}
 		}
+		else{
+			LabelStatusLine.setText(getMessage(cr.getStatus()));
+		}
 	}
 	
 	public static int setActive(int idLogin, boolean active, int idAccount) {
@@ -949,6 +993,7 @@ public class AdminClient {
 		f.add("passwortHash", password);
 		
 		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		LabelStatusLine.setText(getMessage(cr.getStatus()));
 		return cr.getStatus();
 	}
 	
@@ -961,6 +1006,19 @@ public class AdminClient {
 		f.add("passwortHash", password);
 		
 		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		LabelStatusLine.setText(getMessage(cr.getStatus()));
 		return cr.getStatus();
+	}
+
+	public static String getMessage(int statusCode) {
+		switch (statusCode) {
+			case 200: return "OK: Your request was processed successfully!";
+			case 400: return "BAD REQUEST: The data format might be incorrect!";
+			case 403: return "FORBIDDEN: Your login data might be incorrect!";
+			case 404: return "NOT FOUND: The requested account was not found!";
+			case 412: return "PRECONDITION FAILED: Your balance is insufficient!";
+			case 500: return "INTERNAL SERVER ERROR: Please try again later!";
+			default:  return "Unknown Response!";
+		}
 	}
 }

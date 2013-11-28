@@ -781,9 +781,10 @@ public class AdminClient {
 		}
 		
 		if (!GETString.isEmpty()) {
-			ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );	
+			ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+			int status = cr.getStatus();
+			LabelStatusLine.setText(getMessage(status));
 			if (cr.getStatus() == 200) {
-				LabelStatusLine.setText(getMessage(200));
 				
 				JSONObject jo = new JSONObject(cr.getEntity(String.class));
 				
@@ -829,9 +830,6 @@ public class AdminClient {
 				}
 				return admin;
 			}
-			else {
-				LabelStatusLineLogin.setText(getMessage(cr.getStatus()));
-			}
 		}
 		
 		return null;
@@ -849,15 +847,16 @@ public class AdminClient {
 		f.add("passwortHash", password);
 		
 		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		int status = cr.getStatus();
+		LabelStatusLine.setText(getMessage(status));
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			int id = jo.getInt("id");
 			return id;
 		}
-		else{
-			LabelStatusLine.setText(getMessage(cr.getStatus()));
+		
 			return 0;
-		}
+		
 	}
 	
 	public static int createAccount(int idLogin, int bankId, int customerId, int adminId, int accountTypeId) {
@@ -873,12 +872,11 @@ public class AdminClient {
 		f.add("passwortHash", password);
 		
 		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		int status = cr.getStatus();
+		LabelStatusLine.setText(getMessage(status));
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			return jo.getInt("id");
-		}
-		else{
-			LabelStatusLine.setText(getMessage(cr.getStatus()));
 		}
 		return 0;
 	}
@@ -894,12 +892,11 @@ public class AdminClient {
 		f.add("passwortHash", password);
 		
 		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		int status = cr.getStatus();
+		LabelStatusLine.setText(getMessage(status));
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			return jo.getInt("id");
-		}
-		else{
-			LabelStatusLine.setText(getMessage(cr.getStatus()));
 		}
 		return 0;
 	}
@@ -915,12 +912,11 @@ public class AdminClient {
 		f.add("passwortHash", password);
 		
 		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		int status = cr.getStatus();
+		LabelStatusLine.setText(getMessage(status));
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			return jo.getInt("id");
-		}
-		else{
-			LabelStatusLine.setText(getMessage(cr.getStatus()));
 		}
 		return 0;
 	}
@@ -930,6 +926,8 @@ public class AdminClient {
 		String GETString = server + "/rest/s/getData" + "?adminID=" + id + "&passwortHash=" + password; 
 		
 		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		int status = cr.getStatus();
+		LabelStatusLine.setText(getMessage(status));
 		
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
@@ -977,9 +975,6 @@ public class AdminClient {
 				at[i] = accountType;
 			}
 		}
-		else{
-			LabelStatusLine.setText(getMessage(cr.getStatus()));
-		}
 	}
 	
 	public static int setActive(int idLogin, boolean active, int idAccount) {
@@ -993,7 +988,8 @@ public class AdminClient {
 		f.add("passwortHash", password);
 		
 		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
-		LabelStatusLine.setText(getMessage(cr.getStatus()));
+		int status = cr.getStatus();
+		LabelStatusLine.setText(getMessage(status));
 		return cr.getStatus();
 	}
 	
@@ -1006,7 +1002,8 @@ public class AdminClient {
 		f.add("passwortHash", password);
 		
 		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
-		LabelStatusLine.setText(getMessage(cr.getStatus()));
+		int status = cr.getStatus();
+		LabelStatusLine.setText(getMessage(status));
 		return cr.getStatus();
 	}
 

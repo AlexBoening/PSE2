@@ -58,10 +58,10 @@ public class AdminClient {
 					, griddataLabel, griddataText;
 	
 	static Composite compositeLogin, compositeMainClient, compositeHeader, compositeNavigation, compositeContent, compositeWelcomePage, compositeAccountPage
-					,compositeCreateAccountPage, compositeCreateCustomerPage;
+					,compositeCreateAccountPage, compositeCreateCustomerPage, compositePayInterestsPage;
 	
 	static Button buttonLogin, buttonLogout, buttonMenuDeactivateAccount, buttonMenuCreateAccount, buttonMenuCreateCustomer, buttonDeactivateAccount
-					, buttonActivateAccount, buttonCreateAccount, buttonCreateCustomer;
+					, buttonActivateAccount, buttonCreateAccount, buttonCreateCustomer, buttonMenuPayInterests, buttonPayInterests;
 	
 	static Image imageLogo, imageTablePull;
 	
@@ -92,6 +92,8 @@ public class AdminClient {
 		 	fillCompositeWelcomePage();
 		 	
 		 	fillCompositeAccountPage();
+		 	
+		 	fillCompositePayInterestPage();
 		 	
 		 	fillCompositeCreateAccountPage();
 		 	
@@ -128,6 +130,13 @@ public class AdminClient {
 		            compositeContent.layout();
 		        }
 		      });
+		    
+		    buttonMenuPayInterests.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositePayInterestsPage;
+			        compositeContent.layout();
+			    }
+			});
 		    
 		    buttonMenuCreateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
@@ -387,6 +396,33 @@ public class AdminClient {
 	        });
 	}
 
+	private static void fillCompositePayInterestPage() {
+		 
+		 GridData griddataPayInterests = new GridData(GridData.BEGINNING, GridData.FILL,true, false);
+		 griddataPayInterests.horizontalSpan = 1;
+		    Label labelCaption = new Label(compositePayInterestsPage, SWT.NONE);
+		    labelCaption.setText("Bank:");
+		    labelCaption.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
+		    labelCaption.setLayoutData(griddataPayInterests);
+		
+		    final GridData griddataTexts = new GridData(GridData.FILL, GridData.FILL,false, false);
+	    	griddataTexts.horizontalSpan=2;
+		    Text textBank = new Text(compositePayInterestsPage,SWT.BORDER);
+		    textBank.setLayoutData(griddataTexts);
+		    
+		    buttonPayInterests = new Button(compositePayInterestsPage, SWT.PUSH);
+		    buttonPayInterests.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
+		    buttonPayInterests.setText("Pay Interests");
+		    buttonPayInterests.setBackground(new Color(display, 31, 78, 121));
+		    buttonPayInterests.setLayoutData(griddataButton);
+		    
+		    buttonPayInterests.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	//Pay here
+		        }
+		      });
+	}
+	
 	private static void fillCompositeAccountPage() {
 		 
 		 GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
@@ -568,6 +604,16 @@ public class AdminClient {
 		    placeholder4.setBackground(new Color(display, 200,200,200));
 		    placeholder4.setLayoutData(griddataMenuContent);
 	    
+	    buttonMenuPayInterests = new Button(compositeNavigation, SWT.PUSH);
+		    buttonMenuPayInterests.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		    buttonMenuPayInterests.setText("Pay Interests");
+		    buttonMenuPayInterests.setBackground(new Color(display, 31, 78, 121));
+		    buttonMenuPayInterests.setLayoutData(griddataMenuContent);
+		    
+	    Label placeholder9 = new Label(compositeNavigation, SWT.NONE | SWT.HORIZONTAL);
+		    placeholder9.setBackground(new Color(display, 200,200,200));
+		    placeholder9.setLayoutData(griddataMenuContent);
+		    
 	    buttonMenuCreateAccount = new Button(compositeNavigation, SWT.PUSH);
 		    buttonMenuCreateAccount.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		    buttonMenuCreateAccount.setText("Create Account");
@@ -714,6 +760,10 @@ public class AdminClient {
 	    compositeAccountPage = new Composite(compositeContent, SWT.NONE);
 		    compositeAccountPage.setBackground(new Color(display,255,255,255));
 		    compositeAccountPage.setLayout(layoutMainClient);
+		
+		compositePayInterestsPage = new Composite(compositeContent, SWT.NONE);
+			compositePayInterestsPage.setBackground(new Color(display,255,255,255));
+			compositePayInterestsPage.setLayout(layoutMainClient);
 		    
 	    compositeCreateAccountPage = new Composite(compositeContent, SWT.NONE);
 		    compositeCreateAccountPage.setBackground(new Color(display,255,255,255));

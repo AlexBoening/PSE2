@@ -69,7 +69,7 @@ public class CustomerClient {
 	static Button buttonLogin, buttonLogout, buttonMenuViewTransaction, buttonCommitViewTransaction, buttonMenuPerformPage, buttonMenuDepositPage, buttonMenuChangeAcc,
 					 buttonMenuWithdrawPage, buttonCommitWithdraw, buttonCommitDeposit, buttonCommitPerformTransaction, buttonCommitPDF, buttonCommitChangeAcc;
 	
-	static Image imageLogo, imageTablePull;
+	static Image imageLogo, imageSafeHouse;//imageTablePull;
 	
 	private static boolean securityMode = false;
 	private static Customer customer;
@@ -515,16 +515,17 @@ public class CustomerClient {
 		 GridData WelcomeCompositeData = new GridData(GridData.BEGINNING, GridData.FILL,true, false);
 		    WelcomeCompositeData.horizontalSpan = 2;
 		    Label CaptionWelcomePage = new Label(compositeWelcomePage, SWT.NONE);
-		    CaptionWelcomePage.setText("Welcome to ICash!");
+		    CaptionWelcomePage.setText("Welcome to ICash! - Your SafeHouse");
 		    CaptionWelcomePage.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
 		    CaptionWelcomePage.setLayoutData(WelcomeCompositeData);
 		
 		    Label labelForImage = new Label(compositeWelcomePage, SWT.None);
 		    final GridData griddataCaption = new GridData(GridData.FILL, GridData.FILL,false, false);
-		    griddataCaption.heightHint=236;
-		    griddataCaption.widthHint=310;
+		    griddataCaption.heightHint=400;
+		    griddataCaption.widthHint=760;
 		    
-		    labelForImage.setBackgroundImage(imageTablePull);
+		    //labelForImage.setBackgroundImage(imageTablePull);
+		    labelForImage.setBackgroundImage(imageSafeHouse);
 		    labelForImage.setLayoutData(griddataCaption);
 		    
 	}
@@ -824,8 +825,9 @@ public class CustomerClient {
 	    layoutOneColumn = new GridLayout(1,false);
 	    final  InputStream stream1 = CustomerClient.class.getResourceAsStream("iCash - Logo.png");
 	    imageLogo = new Image(Display.getDefault(), stream1);
-	    final  InputStream stream2 = CustomerClient.class.getResourceAsStream("TablePull.png");
-	    imageTablePull = new Image(Display.getDefault(), stream2); 
+	    final  InputStream stream2 = CustomerClient.class.getResourceAsStream("SafeHouse.png"); //("TablePull.png");
+	    //imageTablePull = new Image(Display.getDefault(), stream2); 
+	    imageSafeHouse = new Image(Display.getDefault(), stream2);
     	shell.setLayout(stackLayoutMain);
 	}
 

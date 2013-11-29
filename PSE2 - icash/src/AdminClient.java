@@ -612,7 +612,7 @@ public class AdminClient {
 		    buttonMenuPayInterests.setBackground(new Color(display, 31, 78, 121));
 		    buttonMenuPayInterests.setLayoutData(griddataMenuContent);
 		    
-	    Label placeholder9 = new Label(compositeNavigation, SWT.NONE | SWT.HORIZONTAL);
+	    Label placeholder9 = new Label(compositeNavigation, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    placeholder9.setBackground(new Color(display, 200,200,200));
 		    placeholder9.setLayoutData(griddataMenuContent);
 		    

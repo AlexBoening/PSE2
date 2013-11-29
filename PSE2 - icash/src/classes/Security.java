@@ -4,12 +4,17 @@ package classes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.apache.log4j.Logger;
+
 public class Security {
 
-	// Die Klasse Security muss teil der Desktop Software sein, damit wir das Passwort nicht im Klartext übermitteln
-	// Man könnte überlegen die Klassen zu trennen und eine Klasse SecurityAdmin und eine Klasse SecurityCustomer draus zu machen
+	public static void main(String[] args) {
+		String password = "myPassword";
+		createPasswordHash(password);
+		System.out.println(password);
+	}
 	
-    public static String createPasswordHash(String password) {
+	public static String createPasswordHash(String password) {
         try {
         	  MessageDigest md5 = MessageDigest.getInstance("MD5");
         	  String hash = new String (md5.digest(password.getBytes()));
@@ -18,31 +23,9 @@ public class Security {
         	  password = hash;
         	 
         	} catch (NoSuchAlgorithmException ex) {
-        		// Fehlerhandling hängt davon ab, ob wir mit einem HTTP Request arbeiten, oder mit etwas anderem
+        		Logger logger = Logger.getRootLogger();
+        		logger.info(new java.util.Date() + "An error occured during the creation of the password-hash");
         	}
     	return password;
-    }
-    
-    public static boolean sendAdminLoginRequest(String login, String password) {
-    	
-    	String pw = createPasswordHash(password);
-    	// GET Session/User...
-    	// Fehlerhandling
-    	return true;
-    
-    }
-    
-    public static boolean sendCustomerLoginRequest(String login, String password) {
-    
-    	String pw = createPasswordHash(password);
-    	// Get Session/User...
-    	// Fehlerhandling
-    	return true;
-    
-    }
-    
-    public static boolean logout() {
-    	// Kill Session/Userobject.....
-    	return true;
     }
 }

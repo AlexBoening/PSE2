@@ -41,6 +41,7 @@ import classes.Account;
 import classes.AccountType;
 import classes.Bank;
 import classes.Customer;
+import classes.Security;
 import classes.Transaction;
 
 import com.sun.jersey.api.client.Client;
@@ -132,7 +133,7 @@ public class CustomerClient {
 		    buttonLogin.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
 		        	  server = ((Text)event.widget.getData("server")).getText();
-		        	  password = ((Text)event.widget.getData("password")).getText();
+		        	  password = Security.createPasswordHash(((Text)event.widget.getData("password")).getText());
 		        	  securityMode = ((Button)event.widget.getData("securityMode")).getSelection();
 		        	  int accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
 		        	  if (securityMode)
@@ -191,7 +192,7 @@ public class CustomerClient {
 
 		        	  String FirstName = ((Text)event.widget.getData("First Name")).getText();
 		        	  String LastName = ((Text)event.widget.getData("Last Name")).getText();
-		        	  String Password = ((Text)event.widget.getData("Password")).getText();
+		        	  String Password = Security.createPasswordHash(((Text)event.widget.getData("Password")).getText());
 		        	  // hier die Methode
 		        }
 			});

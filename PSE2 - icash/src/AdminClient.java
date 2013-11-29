@@ -110,7 +110,7 @@ public class AdminClient {
 		        public void handleEvent(Event event) {
 
 	        	  server = ((Text)event.widget.getData("server")).getText();
-	        	  password = ((Text)event.widget.getData("password")).getText();
+	        	  password = Security.createPasswordHash(((Text)event.widget.getData("password")).getText());
 	        	  int adminId = Convert.toInt(((Text)event.widget.getData("user")).getText());
 	        	  admin  = getAdmin(adminId);
 	        	  if (admin != null) {
@@ -198,7 +198,7 @@ public class AdminClient {
 		        public void handleEvent(Event event) {		        		        	
 		        	String firstName = (((Text)event.widget.getData("firstName")).getText());
 		        	String lastName  = (((Text)event.widget.getData("lastName")).getText());
-		        	String password  = (((Text)event.widget.getData("password")).getText());
+		        	String password  = Security.createPasswordHash((((Text)event.widget.getData("password")).getText()));
 		        	if (!(firstName.isEmpty() || lastName.isEmpty() || password.isEmpty())) {
 		        	int customerId = AdminClient.createCustomer(admin.getId(), firstName, lastName, password);
 		        		if (customerId != 0) {

@@ -823,15 +823,15 @@ public class AdminClient {
 // Methoden zur Datenübertragung an die RestResource
 	
 	public static Administrator getAdmin(int id) {
-		String GETString;
+		String POSTString;
 		if (securityMode) {
-			GETString = server + "/rest/s/getAdmin" + "?adminID=" + id + "&passwortHash=" + password; 
+			POSTString = server + "/rest/s/getAdmin" + "?adminID=" + id + "&passwortHash=" + password; 
 		} else {
-			GETString = server + "/rest/getAdmin" + "?adminID=" + id;
+			POSTString = server + "/rest/getAdmin" + "?adminID=" + id;
 		}
 		
-		if (!GETString.isEmpty()) {
-			ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		if (!POSTString.isEmpty()) {
+			ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
 			int status = cr.getStatus();
 			LabelStatusLine.setText(getMessage(status));
 			if (cr.getStatus() == 200) {
@@ -887,7 +887,7 @@ public class AdminClient {
 	
 	public static int createCustomer(int idLogin, String firstName, String lastName, String password) {
 	
-		String GETString = server + "/rest/s/createCustomer";
+		String POSTString = server + "/rest/s/createCustomer";
 		
 		Form f = new Form();
 		f.add("firstName", firstName);
@@ -896,7 +896,7 @@ public class AdminClient {
 		f.add("adminIdLogin", idLogin);
 		f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		int status = cr.getStatus();
 		LabelStatusLine.setText(getMessage(status));
 		if (cr.getStatus() == 200) {
@@ -911,7 +911,7 @@ public class AdminClient {
 	
 	public static int createAccount(int idLogin, int bankId, int customerId, int adminId, int accountTypeId) {
 
-		String GETString = server + "/rest/s/createAccount";
+		String POSTString = server + "/rest/s/createAccount";
 		
 		Form f = new Form();
 		f.add("bankId", bankId);
@@ -921,7 +921,7 @@ public class AdminClient {
 		f.add("adminIdLogin", idLogin);
 		f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		int status = cr.getStatus();
 		LabelStatusLine.setText(getMessage(status));
 		if (cr.getStatus() == 200) {
@@ -933,7 +933,7 @@ public class AdminClient {
 	
 	public static int createAccountType(int idLogin, String interestRate, String description) {
 		
-		String GETString = server + "/rest/s/createAccountType";
+		String POSTString = server + "/rest/s/createAccountType";
 		
 		Form f = new Form();
 		f.add("interestRate", Convert.toDouble(interestRate));
@@ -941,7 +941,7 @@ public class AdminClient {
 		f.add("adminIdLogin", idLogin);
 		f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		int status = cr.getStatus();
 		LabelStatusLine.setText(getMessage(status));
 		if (cr.getStatus() == 200) {
@@ -953,7 +953,7 @@ public class AdminClient {
 	
 	public static int createBank(int idLogin, String description, int blz) {
 		
-		String GETString = server + "/rest/s/createBank";
+		String POSTString = server + "/rest/s/createBank";
 		
 		Form f = new Form();
 		f.add("description", description);
@@ -961,7 +961,7 @@ public class AdminClient {
 		f.add("idLogin", idLogin);
 		f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		int status = cr.getStatus();
 		LabelStatusLine.setText(getMessage(status));
 		if (cr.getStatus() == 200) {
@@ -973,9 +973,9 @@ public class AdminClient {
 	
 	public static void getData(int id) {
 		
-		String GETString = server + "/rest/s/getData" + "?adminID=" + id + "&passwortHash=" + password; 
+		String POSTString = server + "/rest/s/getData" + "?adminID=" + id + "&passwortHash=" + password; 
 		
-		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
 		int status = cr.getStatus();
 		LabelStatusLine.setText(getMessage(status));
 		
@@ -1029,7 +1029,7 @@ public class AdminClient {
 	
 	public static int setActive(int idLogin, boolean active, int idAccount) {
 		
-		String GETString = server + "/rest/s/setActive";
+		String POSTString = server + "/rest/s/setActive";
 		
 		Form f = new Form();
 		f.add("active", active);
@@ -1037,21 +1037,21 @@ public class AdminClient {
 		f.add("idLogin", idLogin);
 		f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		int status = cr.getStatus();
 		LabelStatusLine.setText(getMessage(status));
 		return cr.getStatus();
 	}
 	
 	public static int payInterests(int idLogin, Bank b) {
-		String GETString = server + "rest/s/payInterests";
+		String POSTString = server + "rest/s/payInterests";
 		
 		Form f = new Form();
 		f.add("idBank", b.getId());
 		f.add("idLogin", idLogin);
 		f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		int status = cr.getStatus();
 		LabelStatusLine.setText(getMessage(status));
 		return cr.getStatus();

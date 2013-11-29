@@ -867,10 +867,10 @@ private static void kalkuliereSpaltenbreite(Table tabelle, int minBreite)
 
 public static Account getAccount(int number) {
 	
-	String GETString = server + "/rest/getAccount?number=" + number;
+	String POSTString = server + "/rest/getAccount?number=" + number;
 	if (securityMode) 
-		GETString = server + "/rest/s/getAccount?number=" + number + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
-	ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		POSTString = server + "/rest/s/getAccount?number=" + number + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
+	ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
 	int status = cr.getStatus();
 	LabelStatusLine.setText(getMessage(status));
 	LabelStatusLineLogin.setText(getMessage(status));
@@ -929,7 +929,7 @@ public static Account getAccount(int number) {
 
 public static void transferMoney(int senderNumber, int receiverNumber, String amount, String reference) {
 	
-	String GETString = server + "/rest/transferMoney";
+	String POSTString = server + "/rest/transferMoney";
 	Form f = new Form();
 	f.add("senderNumber", senderNumber);
 	f.add("receiverNumber", receiverNumber);
@@ -938,19 +938,19 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 	if (securityMode) {
 		f.add("kundenID", customer.getId());
 		f.add("passwortHash", password);
-		GETString = server + "/rest/s/transferMoney";
+		POSTString = server + "/rest/s/transferMoney";
 	}
 	
-	ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+	ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 	LabelStatusLine.setText(getMessage(cr.getStatus()));
 }
 
 	public static int getBankAccount(int id) {
-		String GETString = server + "/rest/getBankAccount" + "?account=" + id;
+		String POSTString = server + "/rest/getBankAccount" + "?account=" + id;
 		if (securityMode) {
-			GETString = server + "/rest/s/getBankAccount" + "?account=" + id + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
+			POSTString = server + "/rest/s/getBankAccount" + "?account=" + id + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
 		}
-		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
 		int status = cr.getStatus();
 		LabelStatusLine.setText(getMessage(status));
 		if (status == 200) {
@@ -962,11 +962,11 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 	
 	public static String getBalance(int id) {
 		
-		String GETString = server + "/rest/getBalance" + "?account=" + id;
+		String POSTString = server + "/rest/getBalance" + "?account=" + id;
 		if (securityMode) {
-			GETString = server + "/rest/s/getBalance" + "?account=" + id + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
+			POSTString = server + "/rest/s/getBalance" + "?account=" + id + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
 
-			ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+			ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
 			int status = cr.getStatus();
 		
 			if (status == 200) {
@@ -992,12 +992,12 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 	
 	public static Customer getCustomer(int id) {
 		
-		String GETString = server + "/rest/getCustomer" + "?account=" + id;
+		String POSTString = server + "/rest/getCustomer" + "?account=" + id;
 		if (securityMode) {
-			GETString = server + "/rest/s/getCustomer" + "?account=" + id + "&passwortHash=" + password; 
+			POSTString = server + "/rest/s/getCustomer" + "?account=" + id + "&passwortHash=" + password; 
 		}
 		
-		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
 		int status = cr.getStatus();
 		
 		if (status == 200) {
@@ -1032,8 +1032,8 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		Customer c = getCustomer(a.getId());
 		
 		Bank b = new Bank();
-		String GETString = server + "/rest/s/getBank" + "?account=" + a.getId() + "&passwortHash=" + password; 
-		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		String POSTString = server + "/rest/s/getBank" + "?account=" + a.getId() + "&passwortHash=" + password; 
+		ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
 		int status = cr.getStatus();
 		LabelStatusLineLogin.setText(getMessage(status));
 		
@@ -1047,8 +1047,8 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 			return;
 		
 		AccountType at = new AccountType();
-		GETString = server + "/rest/s/getAccountType" + "?account=" + a.getId() + "&passwortHash=" + password; 
-		cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		POSTString = server + "/rest/s/getAccountType" + "?account=" + a.getId() + "&passwortHash=" + password; 
+		cr = Client.create().resource( POSTString ).get( ClientResponse.class );
 		status = cr.getStatus();
 		LabelStatusLineLogin.setText(getMessage(status));
 		

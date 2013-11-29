@@ -2,6 +2,7 @@
 
 import java.io.InputStream;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -76,6 +77,7 @@ public class AdminClient {
 	private static Label LabelStatusLine;
 	private static Label LabelStatusLineLogin;
 	private static Label LabelStatusLineName;
+	public static Logger logger = Logger.getRootLogger();
 	
 	 public static void main(String[] args) {
 		 
@@ -183,13 +185,13 @@ public class AdminClient {
 		        	int accountType = at[((Combo)event.widget.getData("accountType")).getSelectionIndex()].getId();
 		        	int accountId = AdminClient.createAccount(admin.getId(), bank, customer, administrator, accountType);
 		        	if (accountId != 0) {
-		        		System.out.println("new AccountId = " + accountId);
+		        		logger.info(new java.util.Date() + "new AccountId = " + accountId);
 		        	} else {
-		        		System.out.println("no new AccountId available at this point");
+		        		logger.info(new java.util.Date() + "no new AccountId available at this point");
 		        	}
 		        	}
 		        	catch (ArrayIndexOutOfBoundsException e) {
-		        		System.out.println("Please complete your selection!");
+		        		logger.info(new java.util.Date() + "Please complete your selection!");
 		        	}
 		        }
 	        });
@@ -202,13 +204,13 @@ public class AdminClient {
 		        	if (!(firstName.isEmpty() || lastName.isEmpty() || password.isEmpty())) {
 		        	int customerId = AdminClient.createCustomer(admin.getId(), firstName, lastName, password);
 		        		if (customerId != 0) {
-		        			System.out.println("new CustomerId = " + customerId);
+		        			logger.info(new java.util.Date() + "new CustomerId = " + customerId);
 		        		} else {
-		        			System.out.println("no new CustomerId available at this point");
+		        			logger.info(new java.util.Date() + "no new CustomerId available at this point");
 		        		}
 		        	}
 		        	else
-		        		System.out.println("Please fill in all required fields!");
+		        		logger.info(new java.util.Date() + "Please fill in all required fields!");
         	  	}
 	        });
 		    
@@ -384,13 +386,13 @@ public class AdminClient {
 		        	//String active = ((Text)event.widget.getData("active")).getText();
 		        	int accountId = createAccount(admin.getId(), bank, customer, administrator, accountType);
 		        	if (accountId != 0) {
-		        		System.out.println("new AccountId = " + accountId);
+		        		logger.info(new java.util.Date() + "new AccountId = " + accountId);
 		        	} else {
-		        		System.out.println("no new AccountId available at this point");
+		        		logger.info(new java.util.Date() + "no new AccountId available at this point");
 		        	}
 		        	}
 		        	catch (ArrayIndexOutOfBoundsException e) {
-		        		System.out.println("Please complete your selection!");
+		        		logger.info(new java.util.Date() + "Please complete your selection!");
 		        	}
 		        }
 	        });
@@ -511,7 +513,7 @@ public class AdminClient {
 		        		Table t = (Table)event.widget.getData("customers");
 		        		int[] index = t.getSelectionIndices();
 		        		if (index.length != 1)
-		        			System.out.println("Please mark exactly one row!");
+		        			logger.info(new java.util.Date() + "Please mark exactly one row!");
 		        		else {
 		        			TableItem i = t.getItem(index[0]);
 		        			int idAccount = Convert.toInt(i.getText(0));
@@ -527,7 +529,7 @@ public class AdminClient {
 		        	Table t = (Table)event.widget.getData("customers");
 	        		int[] index = t.getSelectionIndices();
 	        		if (index.length != 1)
-	        			System.out.println("Please mark exactly one row!");
+	        			logger.info(new java.util.Date() + "Please mark exactly one row!");
 	        		else {
 	        			TableItem i = t.getItem(index[0]);
 	        			int idAccount = Convert.toInt(i.getText(0));

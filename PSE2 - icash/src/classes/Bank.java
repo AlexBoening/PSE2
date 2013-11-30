@@ -12,10 +12,9 @@ public class Bank {
     private Account bank_account;
     
     public Bank(int blz, String description) throws SQLException {
-    	this.id = SQL.getID("idBank", "Bank");
+    	this.id = SQL.getID("idBank", "Bank", "");
     	this.blz = blz;
     	this.description = description;
-    	this.accounts = new ArrayList<Account>();
     	//this.setBank_account(new Account(true, new Customer(1), new Administrator(1), this, new AccountType(1)));
     	
     	String[] value = new String[3];

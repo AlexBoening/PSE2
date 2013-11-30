@@ -15,7 +15,9 @@ public class Account {
 
 public Account(boolean flagActive, Customer customer, Administrator administrator, 
 		       Bank bank, AccountType accountType) throws SQLException {
-    this.id = SQL.getID("idAccount", "Account");
+    this.id = SQL.getID("idAccount", "Account", "bank_idBank = " + bank.getId());
+    if (id == 1)
+    	id += bank.getId() * 100000;
     this.flagActive = flagActive;
     this.customer = customer;
     customer.add(this);
@@ -66,27 +68,10 @@ public int getBalance() throws SQLException {
     	t = it.next();
     	if (t.getIncomingAccount().getId() == id)
     		balance += t.getAmount();
-    	else if (t.getOutgoingAccount().getId() == id)
+    	if (t.getOutgoingAccount().getId() == id)
     		balance -= t.getAmount();
     }
     return balance;
-}
-
-public void printTransactions() throws SQLException {
-	
-	Iterator<Transaction> it = getTransactions().iterator();
-    Transaction t;
-    while (it.hasNext()) {
-    	t = it.next();
-    	if (t.getIncomingAccount().getId() == id && !t.isShownIncoming()) {
-    		// actual PrintOut
-    		t.setShownIncoming(true);
-    	}
-    	else if (t.getOutgoingAccount().getId() == id && !t.isShownOutgoing()) {
-    		// actual PrintOut;
-    		t.setShownOutgoing(true);
-    	}
-    }
 }
 
 public void showTransactions() throws SQLException {

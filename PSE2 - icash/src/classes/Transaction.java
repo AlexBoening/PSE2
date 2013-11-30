@@ -9,16 +9,16 @@ public class Transaction {
     private Date date;
     private Account incomingAccount;
     private Account outgoingAccount;    
-    private boolean shownIncoming;
-    private boolean shownOutgoing;
+    private boolean sentIncoming;
+    private boolean sentOutgoing;
     
     public Transaction(int amount, String description, Date date, Account incomingAccount, Account outgoingAccount) throws SQLException {
-        this.id = SQL.getID("idTransaction", "Transaction");
+        this.id = SQL.getID("idTransaction", "Transaction", "");
         this.amount = amount;
         this.description = description;
         this.date = date;
-        this.shownIncoming = false;
-        this.shownOutgoing = false;
+        this.sentIncoming = false;
+        this.sentOutgoing = false;
         this.incomingAccount = incomingAccount;
         incomingAccount.add(this);
         this.outgoingAccount = outgoingAccount;
@@ -49,8 +49,8 @@ public class Transaction {
         this.description = value[0][1];
         String s = value[0][2].substring(0,10);
         this.date = Date.valueOf(value[0][2].substring(0, 10));
-        this.shownIncoming = value[0][3].equals("X");
-        this.shownOutgoing = value[0][4].equals("X");
+        this.sentIncoming = value[0][3].equals("X");
+        this.sentOutgoing = value[0][4].equals("X");
     }
     
     public Transaction() {
@@ -89,20 +89,20 @@ public class Transaction {
 		this.date = date;
 		}
 	
-	public boolean isShownIncoming() {
-		return shownIncoming;
+	public boolean isSentIncoming() {
+		return sentIncoming;
 	}
 	
-	public void setShownIncoming(boolean shownIncoming) {
-		this.shownIncoming = shownIncoming;
+	public void setSentIncoming(boolean shownIncoming) {
+		this.sentIncoming = shownIncoming;
 		}
 	
-	public boolean isShownOutgoing() {
-		return shownOutgoing;
+	public boolean isSentOutgoing() {
+		return sentOutgoing;
 	}
 	
-	public void setShownOutgoing(boolean shownOutgoing) {
-		this.shownOutgoing = shownOutgoing;
+	public void setSentOutgoing(boolean shownOutgoing) {
+		this.sentOutgoing = shownOutgoing;
 	}
 	
 	public Account getIncomingAccount() throws SQLException {
@@ -150,15 +150,17 @@ public class Transaction {
 		value[0] = "" + amount;
 		value[1] = description;
 		value[2] = date.toString();
-		if (shownIncoming)
+		if (sentIncoming)
 			value[3] = "X";
 		else
 			value[3] = " ";
-		if (shownOutgoing)
+		if (sentOutgoing)
 			value[4] = "X";
 		else
 			value[4] = " ";
 		value[5] = "" + getIncomingAccount().getId();
 		value[6] = "" + getOutgoingAccount().getId();
+		
+		SQL.update(column, value, "Transaction", condition, "and");
 	}
 }

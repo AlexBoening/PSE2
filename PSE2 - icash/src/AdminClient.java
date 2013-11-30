@@ -2,7 +2,11 @@
 
 import java.io.InputStream;
 
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -79,7 +83,7 @@ public class AdminClient {
 	private static Label LabelStatusLineName;
 	public static Logger logger = Logger.getRootLogger();
 	
-	 public static void main(String[] args) {
+	 public static void main(String[] args) throws Exception {
 		 
 		 	initializeShell();
 		 	
@@ -134,7 +138,12 @@ public class AdminClient {
 		      });
 		    
 		    buttonMenuPayInterests.addListener(SWT.Selection, new Listener() {
+		    	
 		        public void handleEvent(Event event) {
+		        	compositePayInterestsPage = new Composite(compositeContent, SWT.NONE);
+					compositePayInterestsPage.setBackground(new Color(display,255,255,255));
+					compositePayInterestsPage.setLayout(layoutMainClient);
+					fillCompositePayInterestPage();
 		        	stackLayoutContent.topControl = compositePayInterestsPage;
 			        compositeContent.layout();
 			    }
@@ -386,13 +395,13 @@ public class AdminClient {
 		        	//String active = ((Text)event.widget.getData("active")).getText();
 		        	int accountId = createAccount(admin.getId(), bank, customer, administrator, accountType);
 		        	if (accountId != 0) {
-		        		logger.info(new java.util.Date() + "new AccountId = " + accountId);
+		        		logger.info(new java.util.Date() + ": new AccountId = " + accountId);
 		        	} else {
-		        		logger.info(new java.util.Date() + "no new AccountId available at this point");
+		        		logger.info(new java.util.Date() + ": no new AccountId available at this point");
 		        	}
 		        	}
 		        	catch (ArrayIndexOutOfBoundsException e) {
-		        		logger.info(new java.util.Date() + "Please complete your selection!");
+		        		logger.info(new java.util.Date() + ": Please complete your selection!");
 		        	}
 		        }
 	        });
@@ -400,6 +409,9 @@ public class AdminClient {
 
 	private static void fillCompositePayInterestPage() {
 		 
+		 if (admin != null)
+		    getData(admin.getId());
+		
 		 GridData griddataPayInterests = new GridData(GridData.BEGINNING, GridData.FILL,true, false);
 		 griddataPayInterests.horizontalSpan = 1;
 		    Label labelCaption = new Label(compositePayInterestsPage, SWT.NONE);
@@ -409,18 +421,36 @@ public class AdminClient {
 		
 		    final GridData griddataTexts = new GridData(GridData.FILL, GridData.FILL,false, false);
 	    	griddataTexts.horizontalSpan=2;
-		    Text textBank = new Text(compositePayInterestsPage,SWT.BORDER);
-		    textBank.setLayoutData(griddataTexts);
+	    	Combo PayInterestBank = new Combo(compositePayInterestsPage, SWT.READ_ONLY);
+		    PayInterestBank.setLayoutData(griddataText);
+		    if (b != null) {
+		    	String bank[] = new String[b.length];
+		    	for (int i=0; i<b.length; i++) {
+		    		bank[i] = b[i].getDescription();
+		    	}
+		    	PayInterestBank.setItems(bank);
+		    }
 		    
 		    buttonPayInterests = new Button(compositePayInterestsPage, SWT.PUSH);
 		    buttonPayInterests.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
 		    buttonPayInterests.setText("Pay Interests");
 		    buttonPayInterests.setBackground(new Color(display, 31, 78, 121));
 		    buttonPayInterests.setLayoutData(griddataButton);
+		    buttonPayInterests.setData("bank", PayInterestBank);
 		    
 		    buttonPayInterests.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-		        	//Pay here
+			        try {
+			        	Bank bank = b[((Combo)event.widget.getData("bank")).getSelectionIndex()];
+			        	int status = payInterests(admin.getId(), bank);
+			        	if (status == 200) {
+			        		logger.info(new java.util.Date() + ": Interests were paid at bank " + bank.getId());
+			        	}
+			        		
+			        }
+			        catch (ArrayIndexOutOfBoundsException e) {
+		        		logger.info(new java.util.Date() + ": Please complete your selection!");
+		        	}
 		        }
 		      });
 	}
@@ -513,7 +543,7 @@ public class AdminClient {
 		        		Table t = (Table)event.widget.getData("customers");
 		        		int[] index = t.getSelectionIndices();
 		        		if (index.length != 1)
-		        			logger.info(new java.util.Date() + "Please mark exactly one row!");
+		        			logger.info(new java.util.Date() + ": Please mark exactly one row!");
 		        		else {
 		        			TableItem i = t.getItem(index[0]);
 		        			int idAccount = Convert.toInt(i.getText(0));
@@ -529,7 +559,7 @@ public class AdminClient {
 		        	Table t = (Table)event.widget.getData("customers");
 	        		int[] index = t.getSelectionIndices();
 	        		if (index.length != 1)
-	        			logger.info(new java.util.Date() + "Please mark exactly one row!");
+	        			logger.info(new java.util.Date() + ": Please mark exactly one row!");
 	        		else {
 	        			TableItem i = t.getItem(index[0]);
 	        			int idAccount = Convert.toInt(i.getText(0));
@@ -726,7 +756,16 @@ public class AdminClient {
 		    compositeLogin.pack();
 	 }
 	
-	private static void initializeComposites() {
+	private static void initializeComposites() throws Exception {
+		
+		// Logger
+		Logger logger = Logger.getRootLogger();
+        SimpleLayout layout = new SimpleLayout();
+        ConsoleAppender appender = new ConsoleAppender(layout);
+        logger.addAppender(appender);
+        FileAppender fa = new FileAppender(layout, "log_admin.txt");
+		logger.addAppender(fa);
+        logger.setLevel(Level.ALL);
 		 
 		 compositeLogin = new Composite(shell,0);
 		    compositeLogin.setBackground(new Color(display,200,200,200));
@@ -845,7 +884,7 @@ public class AdminClient {
 				admin.setFirstName(jo.getString("firstName"));
 				admin.setLastName(jo.getString("lastName"));
 				
-				LabelStatusLineName.setText("Hallo " + admin.getFirstName() + " " + admin.getLastName() + "!");
+				LabelStatusLineName.setText("Hello " + admin.getFirstName() + " " + admin.getLastName() + "!");
 				
 				JSONArray ja = jo.getJSONArray("accounts");
 				
@@ -1046,7 +1085,7 @@ public class AdminClient {
 	}
 	
 	public static int payInterests(int idLogin, Bank b) {
-		String POSTString = server + "rest/s/payInterests";
+		String POSTString = server + "/rest/s/payInterests";
 		
 		Form f = new Form();
 		f.add("idBank", b.getId());

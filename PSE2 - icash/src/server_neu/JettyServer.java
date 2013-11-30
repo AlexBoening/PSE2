@@ -28,7 +28,7 @@ import java.util.logging.*;
 
 public class JettyServer {
     
-	public static boolean securityMode;
+	public static boolean securityMode = true;
 	
 	public static void main(String[] args) throws Exception {
 		Server server = new Server(9998);
@@ -44,7 +44,7 @@ public class JettyServer {
         logger.setLevel(Level.ALL);
         
 		// JERSEY
-		ResourceConfig rc = new PackagesResourceConfig("server_neu");
+		ResourceConfig rc = new PackagesResourceConfig("server");
 		ServletContextHandler sh = new ServletContextHandler();
 		sh.setContextPath("/rest");
 		sh.addServlet(new ServletHolder(new ServletContainer(rc)), "/*");
@@ -61,7 +61,8 @@ public class JettyServer {
 		server.setHandler(handlerCollection);
 		server.start();
 		try {
-			SQL.getConnection();  
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/icash", "root", "");
 			logger.info(new java.util.Date() + ": Server started");
 		}
 		catch (SQLException e) {

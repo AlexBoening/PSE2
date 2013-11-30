@@ -9,7 +9,7 @@ public class AccountType {
 	private double interestRate;
 	
 	public AccountType(String description, double interestRate) throws SQLException {
-	    this.id = SQL.getID("idAccountTyp", "AccountTyp");
+	    this.id = SQL.getID("idAccountTyp", "AccountTyp", "");
 	    this.description = description;
 	    this.interestRate = interestRate;
 	    

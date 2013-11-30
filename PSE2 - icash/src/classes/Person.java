@@ -13,10 +13,10 @@ public abstract class Person {
     
     public Person(String firstName, String lastName, String password, boolean admin) throws SQLException {
     	if (admin) {
-    	    this.id = SQL.getID("idAdministrator", "Administrator");
+    	    this.id = SQL.getID("idAdministrator", "Administrator", "");
     	}
     	else {
-    		this.id = SQL.getID("idCustomer", "Customer");
+    		this.id = SQL.getID("idCustomer", "Customer", "");
     	}
     	this.firstName = firstName;
     	this.lastName = lastName;

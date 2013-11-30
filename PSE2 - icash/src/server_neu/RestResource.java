@@ -379,8 +379,9 @@ public class RestResource {
 			if (a.getId() == 0)
 				return Response.status(404).build();			// Account does not exist
 		    
-			int customer = a.getCustomer().getId();
-			jo.put("customer", customer);
+			jo.put("id", a.getCustomer().getId());
+			jo.put("firstName", a.getCustomer().getFirstName());
+			jo.put("lastName", a.getCustomer().getLastName());
 			return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
 		}
 		catch(SQLException e) {
@@ -483,6 +484,74 @@ public class RestResource {
 			return Response.status(500).build();            // Internal Server Error
 		}
     }
+	
+	@POST
+	@Path("/changeAccount")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response changeAccount(@FormParam("firstName")String firstName, 
+			                      @FormParam("lastName")String lastName, 
+			                      @FormParam("passwordNew")String passwordNew,
+			                      @FormParam("customerId")int customerId,
+			                      @Context HttpServletRequest req) {
+		
+		// Logging
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: /s/createAccountType");
+		logger.info(new java.util.Date() + ": Admin: " + customerId);
+		
+		try {
+			Customer c = new Customer(customerId);
+			if (c.getId() == 0)
+				return Response.status(404).build();			// Customer does not exist
+			
+			c.setFirstName(firstName);
+			c.setLastName(lastName);
+			c.setPassword(passwordNew);
+			c.updateDB();
+			// Customer Data was changed successfully
+			return Response.ok().build();
+		}
+		catch(SQLException e) {
+			return Response.status(500).build();			// Internal Server Error
+		}							
+	}
+	
+	@POST
+	@Path("/s/changeAccount")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response changeAccount(@FormParam("firstName")String firstName, 
+			                      @FormParam("lastName")String lastName, 
+			                      @FormParam("passwordNew")String passwordNew,
+			                      @FormParam("customerId")int customerId,
+						          @FormParam("passwortHash")String password,
+			                      @Context HttpServletRequest req) {
+		
+		// Logging
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: /s/changeAccount");
+		logger.info(new java.util.Date() + ": Admin: " + customerId);
+		
+		try {
+			Customer c = new Customer(customerId);
+			if (c.getId() == 0)
+				return Response.status(404).build();			// Customer does not exist
+			if (c.getPassword().equals(password)) {
+				c.setFirstName(firstName);
+				c.setLastName(lastName);
+				c.setPassword(passwordNew);
+				c.updateDB();
+				// Customer Data was changed successfully
+				return Response.ok().build();
+			}
+			else
+				return Response.status(403).build();			// Wrong Password
+		}
+		catch(SQLException e) {
+			return Response.status(500).build();			// Internal Server Error
+		}							
+	}
 	
 // Administrator Methods
 
@@ -722,7 +791,7 @@ public class RestResource {
 	@POST
 	@Path("/s/payInterests")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
-	public Response payInterests(@FormParam("bankId")int bankId,
+	public Response payInterests(@FormParam("idBank")int bankId,
 			                     @FormParam("idLogin")int idLogin,
 			                     @FormParam("passwortHash")String password,
 			                     @Context HttpServletRequest req) {

@@ -32,6 +32,8 @@ public class RestResource {
 	public Response getAccount(@QueryParam("number")String numberString,
 			                   @Context HttpServletRequest req) {
 		
+		if (JettyServer.securityMode)
+			return Response.status(403).build();			// Not Allowed in Security Mode
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
 		logger.info(new java.util.Date() + ": Method: getAccount");
@@ -150,6 +152,8 @@ public class RestResource {
 			                      @FormParam("reference")String reference,
 			                      @Context HttpServletRequest req) {
     	
+		if (JettyServer.securityMode)
+			return Response.status(403).build();			// Not Allowed in Security Mode
 		int sender = Convert.toInt(senderString);
 		int receiver = Convert.toInt(receiverString);
 		int amount = Convert.toCent(amountString);
@@ -247,6 +251,8 @@ public class RestResource {
 	public Response getBankAccount(@QueryParam("account")int account,
 			                       @Context HttpServletRequest req) {
 		
+		if (JettyServer.securityMode)
+			return Response.status(403).build();			// Not Allowed in Security Mode
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
 		logger.info(new java.util.Date() + ": Method: getBankAccount");
@@ -273,6 +279,8 @@ public class RestResource {
 	public Response getBalance(@QueryParam("account")int account,
 			                   @Context HttpServletRequest req) {
 		
+		if (JettyServer.securityMode)
+			return Response.status(403).build();			// Not Allowed in Security Mode
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
 		logger.info(new java.util.Date() + ": Method: getBalance");
@@ -367,6 +375,10 @@ public class RestResource {
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
 	public Response getCustomer(@QueryParam("account")int account,
                                 @Context HttpServletRequest req) {
+		
+		if (JettyServer.securityMode)
+			return Response.status(403).build();			// Not Allowed in Security Mode
+		
         Logger logger = Logger.getRootLogger();
         logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
         logger.info(new java.util.Date() + ": Method: getCustomer");
@@ -494,6 +506,9 @@ public class RestResource {
 			                      @FormParam("customerId")int customerId,
 			                      @Context HttpServletRequest req) {
 		
+		if (JettyServer.securityMode)
+			return Response.status(403).build();			// Not Allowed in Security Mode
+		
 		// Logging
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
@@ -554,36 +569,6 @@ public class RestResource {
 	}
 	
 // Administrator Methods
-
-//!* getAdmin brauchen wir nur im Security Modus... keine öffentliche Schnittstelle! *!//
-	
-	/*
-	@GET
-	@Path("/getAdmin")
-	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
-	public Response getAdmin(@QueryParam("account")int account,
-                                @Context HttpServletRequest req) {
-        Logger logger = Logger.getRootLogger();
-        logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
-        logger.info(new java.util.Date() + ": Method: getAdmin");
-        logger.info(new java.util.Date() + ": Account: " + account);
-                        		
-        JSONObject jo = new JSONObject();
-        
-        try {
-			Administrator a = new Administrator(account);
-			if (a.getId() == 0)
-				return Response.status(404).build();			// Admin does not exist
-			
-			int admin = a.getId();
-			jo.put("admin", admin);
-			return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
-		}
-		catch(SQLException e) {
-			logger.info(new java.util.Date() + ": SQL-Exception during select for adminId: " + account);
-			return Response.status(500).build();            // Internal Server Error
-		}
-    }*/
 	
 	@GET
 	@Path("/s/getAdmin")
@@ -1001,5 +986,63 @@ public class RestResource {
 		catch(SQLException e) {
 			return Response.status(500).build();			// Internal Server Error
 		}							
+	}
+	
+	@GET
+	@Path("/s/getSecurityMode")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response getSecurityMode(@QueryParam("idLogin")int idLogin,
+									@QueryParam("passwortHash")String password,
+									@Context HttpServletRequest req) {
+		
+        Logger logger = Logger.getRootLogger();
+        logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+        logger.info(new java.util.Date() + ": Method: /s/getSecurityMode");
+        logger.info(new java.util.Date() + ": Admin: " + idLogin);
+                        		
+        JSONObject jo = new JSONObject();
+        
+        try {
+			Administrator a = new Administrator(idLogin);
+			if (a.getId() == 0)
+				return Response.status(404).build();			// Account does not exist
+		    if (!a.getPassword().equals(password))
+				return Response.status(403).build();
+			
+			jo.put("securityMode", JettyServer.securityMode);
+			return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+		}
+		catch(SQLException e) {
+			return Response.status(500).build();            // Internal Server Error
+		}
+    }
+	
+	@POST
+	@Path("/s/setSecurityMode")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response setSecurityMode(@FormParam("securityMode")boolean securityMode,
+			                  		@FormParam("idLogin")int idLogin,
+			                  		@FormParam("passwortHash")String password,
+			                  		@Context HttpServletRequest req) {
+
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: /s/setSecurityMode");
+		logger.info(new java.util.Date() + ": Admin: " + idLogin);
+        
+        try {
+			Administrator a = new Administrator(idLogin);
+			if (a.getId() == 0)
+				return Response.status(404).build();			// Admin does not exist
+			if (a.getPassword().equals(password)) {				
+				JettyServer.securityMode = securityMode;
+				return Response.ok().build();
+			}
+			else
+				return Response.status(403).build();			// Wrong password
+        }
+        catch(SQLException e) {
+        	return Response.status(500).build();				// Internal Server Error
+        }
 	}
 }

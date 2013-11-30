@@ -65,8 +65,8 @@ public class AdminClient {
 	static Composite compositeLogin, compositeMainClient, compositeHeader, compositeNavigation, compositeContent, compositeWelcomePage, compositeAccountPage
 					,compositeCreateAccountPage, compositeCreateCustomerPage, compositePayInterestsPage;
 	
-	static Button buttonLogin, buttonLogout, buttonMenuDeactivateAccount, buttonMenuCreateAccount, buttonMenuCreateCustomer, buttonDeactivateAccount
-					, buttonActivateAccount, buttonCreateAccount, buttonCreateCustomer, buttonMenuPayInterests, buttonPayInterests;
+	static Button buttonLogin, buttonLogout, buttonMenuDeactivateAccount, buttonMenuCreateAccount, buttonMenuCreateCustomer, buttonMenuSetSecurityMode
+				  , buttonDeactivateAccount, buttonActivateAccount, buttonCreateAccount, buttonCreateCustomer, buttonMenuPayInterests, buttonPayInterests ;
 	
 	static Image imageLogo, imageTablePull;
 	
@@ -164,6 +164,22 @@ public class AdminClient {
 		        public void handleEvent(Event event) {
 		        	stackLayoutContent.topControl = compositeCreateCustomerPage;
 			          compositeContent.layout();
+			        }
+			      });
+		    
+		    buttonMenuSetSecurityMode.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	boolean securityMode = false;
+		        	if (admin != null) {
+		        		securityMode = getSecurityMode(admin.getId());
+		        		int status = setSecurityMode(admin.getId(), !securityMode);
+		        		if (status == 200) 
+		        			securityMode = !securityMode;
+		        	}
+		        	if (securityMode)
+		        		((Button)event.widget).setText("Disable Security");
+		        	else
+		        		((Button)event.widget).setText("Enable Security");
 			        }
 			      });
 		    
@@ -666,6 +682,15 @@ public class AdminClient {
 		    placeholder6.setBackground(new Color(display, 200,200,200));
 		    placeholder6.setLayoutData(griddataMenuContent);
 	    
+		    buttonMenuSetSecurityMode = new Button(compositeNavigation, SWT.PUSH);
+		    buttonMenuSetSecurityMode.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		    if (admin != null && getSecurityMode(admin.getId()))
+		    	buttonMenuSetSecurityMode.setText("Disable Security");
+		    else
+		    	buttonMenuSetSecurityMode.setText("Enable Security");
+		    buttonMenuSetSecurityMode.setBackground(new Color(display, 31, 78, 121));
+		    buttonMenuSetSecurityMode.setLayoutData(griddataMenuContent);
+		    
 	    Label placeholder7 = new Label(compositeNavigation, SWT.NONE | SWT.HORIZONTAL);
 		    placeholder7.setBackground(new Color(display, 200,200,200));
 		    placeholder7.setLayoutData(griddataMenuContent);
@@ -1014,9 +1039,9 @@ public class AdminClient {
 	
 	public static void getData(int id) {
 		
-		String POSTString = server + "/rest/s/getData" + "?adminID=" + id + "&passwortHash=" + password; 
+		String GETString = server + "/rest/s/getData" + "?adminID=" + id + "&passwortHash=" + password; 
 		
-		ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
+		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
 		int status = cr.getStatus();
 		LabelStatusLine.setText(getMessage(status));
 		
@@ -1082,6 +1107,36 @@ public class AdminClient {
 		int status = cr.getStatus();
 		LabelStatusLine.setText(getMessage(status));
 		return cr.getStatus();
+	}
+	
+	public static int setSecurityMode(int idLogin, boolean securityMode) {
+		
+		String POSTString = server + "/rest/s/setSecurityMode";
+		
+		Form f = new Form();
+		f.add("securityMode", securityMode);
+		f.add("idLogin", idLogin);
+		f.add("passwortHash", password);
+		
+		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		int status = cr.getStatus();
+		LabelStatusLine.setText(getMessage(status));
+		return cr.getStatus();
+	}
+	
+	public static boolean getSecurityMode(int idLogin) {
+		
+		String GETString = server + "/rest/s/getSecurityMode?idLogin=" + idLogin + "&passwortHash=" + password;
+		
+		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		int status = cr.getStatus();
+		LabelStatusLine.setText(getMessage(status));
+		if (cr.getStatus() == 200) {
+			JSONObject jo = new JSONObject(cr.getEntity(String.class));
+			return jo.getBoolean("securityMode");
+		}
+		// When server error, assume that security is disabled
+		return false;										
 	}
 	
 	public static int payInterests(int idLogin, Bank b) {

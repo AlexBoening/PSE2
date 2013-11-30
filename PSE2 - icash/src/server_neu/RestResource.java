@@ -37,7 +37,9 @@ public class RestResource {
 		logger.info(new java.util.Date() + ": Method: getAccount");
 		logger.info(new java.util.Date() + ": Account: " + numberString);
 		
-		int number = Convert.toInt(numberString);
+		int number = 0;
+		if (numberString != null)
+			number = Convert.toInt(numberString);
 		
 		if (number == 0) 
 			return Response.status(400).build();
@@ -106,7 +108,7 @@ public class RestResource {
 		// Build up transaction data
 		for (int i=0; i<t.length; i++) {
 			JSONObject transaction = new JSONObject();
-			transaction.put("amount", t[i].getAmount());
+			transaction.put("amount", Convert.toEuro(t[i].getAmount()));
 			//transaction.put("id", t[i].getId());
 			
 			// Receiver Data

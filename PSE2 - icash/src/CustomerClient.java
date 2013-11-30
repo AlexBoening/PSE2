@@ -211,6 +211,7 @@ public class CustomerClient {
 		        	  String amount = ((Text)event.widget.getData("amount")).getText();
 		        	  String description = ((Text)event.widget.getData("description")).getText();
 		        	  transferMoney(account.getId(), toAccount, amount, description);
+		        	  account = getAccount(account.getId());
 		        	  CurrentBalance.setText(getBalance(account.getId()));
 		        }
 			});
@@ -220,6 +221,7 @@ public class CustomerClient {
 		        	  String amount = ((Text)event.widget.getData("amount")).getText();
 		        	  String description = ((Text)event.widget.getData("description")).getText();
 		        	  transferMoney(getBankAccount(account.getId()), account.getId(), amount, description);
+		        	  account = getAccount(account.getId());
 		        	  CurrentBalance.setText(getBalance(account.getId()));
 			        }
 			});
@@ -229,6 +231,7 @@ public class CustomerClient {
 		        	  String amount = ((Text)event.widget.getData("amount")).getText();
 		        	  String description = ((Text)event.widget.getData("description")).getText();
 		        	  transferMoney(account.getId(), getBankAccount(account.getId()), amount, description);
+		        	  account = getAccount(account.getId());
 		        	  CurrentBalance.setText(getBalance(account.getId()));
 			    }
 			});
@@ -897,7 +900,7 @@ public static Account getAccount(int number) {
     for (int i=0; i<ja.length(); i++) {
     	Transaction t = new Transaction();
     	JSONObject transaction = ja.getJSONObject(i);
-    	t.setAmount(transaction.getInt("amount"));
+    	t.setAmount(Convert.toCent(transaction.getString("amount")));
     	t.setDate(Date.valueOf(transaction.getString("transactionDate").substring(0, 10)));
     	t.setDescription(transaction.getString("reference"));
     	

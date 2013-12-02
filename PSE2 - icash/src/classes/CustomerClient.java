@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -22,6 +23,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
@@ -36,12 +38,15 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import classes.Account;
 import classes.AccountType;
 import classes.Bank;
+import classes.Convert;
 import classes.Customer;
+import classes.Security;
 import classes.Transaction;
 
 import com.sun.jersey.api.client.Client;
@@ -63,12 +68,12 @@ public class CustomerClient {
 					, griddataLabel, griddataText;
 	
 	static Composite compositeLogin, compositeMainClient, compositeHeader, compositeNavigation, compositeContent, compositeWelcomePage, compositeViewTransaction
-					,compositePerformTransaction, compositeDepositPage,compositeWithdrawPage;
+					,compositePerformTransaction, compositeDepositPage,compositeWithdrawPage, compositeChangeCustomerPage;
 	
-	static Button buttonLogin, buttonLogout, buttonMenuViewTransaction, buttonCommitViewTransaction, buttonMenuPerformPage, buttonMenuDepositPage
-					, buttonMenuWithdrawPage, buttonCommitWithdraw, buttonCommitDeposit, buttonCommitPerformTransaction, buttonCommitPDF;
+	static Button buttonLogin, buttonLogout, buttonMenuViewTransaction, buttonCommitViewTransaction, buttonMenuPerformPage, buttonMenuDepositPage, buttonMenuChangeCustomer,
+					 buttonMenuWithdrawPage, buttonCommitWithdraw, buttonCommitDeposit, buttonCommitPerformTransaction, buttonCommitPDF, buttonCommitChangeCustomer;
 	
-	static Image imageLogo, imageTablePull;
+	static Image imageLogo, imageSafeHouse;//imageTablePull;
 	
 	private static boolean securityMode = false;
 	private static Customer customer;
@@ -78,7 +83,8 @@ public class CustomerClient {
 	private static Label CurrentBalance;
 	private static Label LabelStatusLine;
 	private static Label LabelStatusLineLogin;
-		   
+	private static Label LabelStatusLineName;
+	private static boolean notFirstTimer;	   
 	
 /*    GridData Captiondata = new GridData(GridData.FILL, GridData.FILL,true, false);
     Captiondata.horizontalSpan = 2;
@@ -106,17 +112,7 @@ public class CustomerClient {
 		 	
 		 	fillCompositeLogin();
 		 	
-		 	fillCompositeMainClient();
 		 	
-		 	fillCompositeWelcomePage();
-		 	
-		 	fillcompositeViewTransaction();
-		 	
-		 	fillcompositePerformTransaction();
-		 	
-		 	fillcompositeDepositPage();
-		 	
-		 	fillcompositeWithdrawPage();
 		 	
 		 	//set WelcomePage to be the first thing to see
 		 	stackLayoutMain.topControl=compositeLogin;
@@ -129,8 +125,27 @@ public class CustomerClient {
 	        
 		    buttonLogin.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
+      		 	
+		        	if(notFirstTimer==false){
+			        	fillCompositeMainClient();
+		      		 	
+		        		fillCompositeWelcomePage();
+		      		 	
+		      		 	fillcompositeViewTransaction();
+		      		 	
+		      		 	fillcompositePerformTransaction();
+		      		 	
+		      		 	fillcompositeDepositPage();
+		      		 	
+		      		 	fillcompositeWithdrawPage();
+		      		 	
+		      		 	fillcompositeChangeAcc();
+		      		 	
+		      		 	notFirstTimer = true;
+		        	}
+		        	
 		        	  server = ((Text)event.widget.getData("server")).getText();
-		        	  password = ((Text)event.widget.getData("password")).getText();
+		        	  password = Security.createPasswordHash(((Text)event.widget.getData("password")).getText());
 		        	  securityMode = ((Button)event.widget.getData("securityMode")).getSelection();
 		        	  int accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
 		        	  if (securityMode)
@@ -139,91 +154,15 @@ public class CustomerClient {
 		        		  account = getAccount(accountId);
 		        	      
 		        	  if (account != null) {
-		        		  if (securityMode) 
-		        			  CurrentBalance.setText(getBalance(account.getId()));
-		        		  stackLayoutMain.topControl = compositeMainClient;
-			          	shell.layout();
+		        		  CurrentBalance.setText(getBalance(account.getId()));
 		        	  }
+		        	  
+		        	  stackLayoutMain.topControl = compositeMainClient;
+				      compositeMainClient.layout();
+				      shell.pack();	   
+				      shell.layout();
 			        }
 			      });
-		    
-		    buttonMenuViewTransaction.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		    	    compositeViewTransaction = new Composite(compositeContent, SWT.NONE);
-				    compositeViewTransaction.setBackground(new Color(display,255,255,255));
-				    compositeViewTransaction.setLayout(layoutMainClient);
-		        	fillcompositeViewTransaction();
-		        	stackLayoutContent.topControl = compositeViewTransaction;
-		        	compositeContent.layout();
-		        }
-		      });
-		    
-		    buttonMenuPerformPage.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	stackLayoutContent.topControl = compositePerformTransaction;
-			          compositeContent.layout();
-			        }
-			      });
-		    
-		    buttonMenuDepositPage.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	stackLayoutContent.topControl = compositeDepositPage;
-			          compositeContent.layout();
-			        }
-			      });
-		    
-		    buttonMenuWithdrawPage.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	stackLayoutContent.topControl = compositeWithdrawPage;
-			          compositeContent.layout();
-			        }
-			      });
-		    
-		    buttonLogout.addSelectionListener(new SelectionAdapter() {
-		    	public void widgetSelected(SelectionEvent arg0) {
-		    		display.dispose();
-		    	}
-		    });
-		    
-		   // buttonDeactivateAccount.addListener(SWT.Selection, new Listener() {
-		       // public void handleEvent(Event event) {
-			          //do something here to deactivate selected account
-			     //   }
-			    //  });
-		    
-		    buttonCommitPerformTransaction.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	  int toAccount = Convert.toInt(((Text)event.widget.getData("toAccount")).getText());
-		        	  String amount = ((Text)event.widget.getData("amount")).getText();
-		        	  String description = ((Text)event.widget.getData("description")).getText();
-		        	  transferMoney(account.getId(), toAccount, amount, description);
-		        	  CurrentBalance.setText(getBalance(account.getId()));
-		        }
-			});
-		    
-		    buttonCommitDeposit.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	  String amount = ((Text)event.widget.getData("amount")).getText();
-		        	  String description = ((Text)event.widget.getData("description")).getText();
-		        	  transferMoney(getBankAccount(account.getId()), account.getId(), amount, description);
-		        	  CurrentBalance.setText(getBalance(account.getId()));
-			        }
-			});
-		    
-		    buttonCommitWithdraw.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	  String amount = ((Text)event.widget.getData("amount")).getText();
-		        	  String description = ((Text)event.widget.getData("description")).getText();
-		        	  transferMoney(account.getId(), getBankAccount(account.getId()), amount, description);
-		        	  CurrentBalance.setText(getBalance(account.getId()));
-			    }
-			});
-		    
-		    buttonCommitPDF.addListener(SWT.Selection, new Listener() {
-		    	public void handleEvent(Event event) {
-		    		printTransactions();
-		    	}
-		    });
 		    
 		    //Events
 		    
@@ -237,6 +176,68 @@ public class CustomerClient {
 		    display.dispose();
 }
 
+	 private static void fillcompositeChangeAcc(){
+		 
+		 GridData ChangeAccCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);		    
+		 ChangeAccCompositeData.horizontalSpan = 2;
+		    Label ChangeAccLabel = new Label(compositeChangeCustomerPage, SWT.NONE);
+		    ChangeAccLabel.setText("Change your personal data");
+		    ChangeAccLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
+		    ChangeAccLabel.setLayoutData(ChangeAccCompositeData);
+		    
+		    Label SepPerformChangeAcc1 = new Label(compositeChangeCustomerPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformChangeAcc1.setBackground(new Color(display,255,255,255));
+		    SepPerformChangeAcc1.setLayoutData(ChangeAccCompositeData);
+		    
+		    Label ChangeAccFirstNameLabel = new Label(compositeChangeCustomerPage,SWT.NONE);
+		    ChangeAccFirstNameLabel.setText("First Name:");
+		    ChangeAccFirstNameLabel.setLayoutData(griddataLabel);
+			Text ChangeAccFirstNameText = new Text(compositeChangeCustomerPage, SWT.SINGLE | SWT.BORDER);
+			ChangeAccFirstNameText.setLayoutData(griddataText);
+			
+			Label ChangeAccLastNameLabel = new Label(compositeChangeCustomerPage, SWT.NONE);
+			ChangeAccLastNameLabel.setText("Last Name:");
+			ChangeAccLastNameLabel.setLayoutData(griddataLabel);
+			Text ChangeAccLastNameText = new Text(compositeChangeCustomerPage, SWT.SINGLE | SWT.BORDER);
+			ChangeAccLastNameText.setLayoutData(griddataText);			
+			
+			Label ChangeAccPWLabel = new Label(compositeChangeCustomerPage, SWT.NONE);
+			ChangeAccPWLabel.setText("Password:");
+			ChangeAccPWLabel.setLayoutData(griddataLabel);
+			Text ChangeAccPWText = new Text(compositeChangeCustomerPage, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
+			ChangeAccPWText.setLayoutData(griddataText);
+			
+		    Label SepPerformChangeAcc2 = new Label(compositeChangeCustomerPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformChangeAcc2.setBackground(new Color(display,255,255,255));
+		    SepPerformChangeAcc2.setLayoutData(ChangeAccCompositeData);
+			
+		    buttonCommitChangeCustomer = new Button(compositeChangeCustomerPage, SWT.PUSH);
+		    buttonCommitChangeCustomer.setText("Commit");
+		    buttonCommitChangeCustomer.setBackground(new Color(display, 31, 78, 121));
+		    buttonCommitChangeCustomer.setLayoutData(griddataButton);
+		    buttonCommitChangeCustomer.setData("firstName", ChangeAccFirstNameText);
+		    buttonCommitChangeCustomer.setData("lastName", ChangeAccLastNameText);
+		    buttonCommitChangeCustomer.setData("password", ChangeAccPWText);
+		    
+		    buttonCommitChangeCustomer.addListener(SWT.Selection, new Listener() {
+		    	public void handleEvent(Event event) {
+
+	        	  String firstName = ((Text)event.widget.getData("firstName")).getText();
+	        	  String lastName = ((Text)event.widget.getData("lastName")).getText();
+	        	  String password = Security.createPasswordHash(((Text)event.widget.getData("password")).getText());
+	        	  
+	        	  customer = getCustomer(account.getId());
+	        	  changeAccount(customer.getId(), firstName, lastName, password);
+	        	  LabelStatusLineName.setText("Hello " + customer.getFirstName() + " " + customer.getLastName() + "!");
+	        	  
+	        	  ((Text)event.widget.getData("firstName")).setText("");
+	        	  ((Text)event.widget.getData("lastName")).setText("");
+	        	  ((Text)event.widget.getData("password")).setText("");
+		    	}
+	        });
+		    
+	 }
+
 	 private static void fillcompositeDepositPage() {
 		
 		 GridData DepositCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);		    
@@ -246,9 +247,9 @@ public class CustomerClient {
 		    DepositCaptionLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
 		    DepositCaptionLabel.setLayoutData(DepositCompositeData);
 		    
-		    Label SepPerform3 = new Label(compositeDepositPage, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform3.setBackground(new Color(display,255,255,255));
-		    SepPerform3.setLayoutData(DepositCompositeData);
+		    Label SepPerformDeposit1 = new Label(compositeDepositPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformDeposit1.setBackground(new Color(display,255,255,255));
+		    SepPerformDeposit1.setLayoutData(DepositCompositeData);
 		    
 		    Label DepositAmountLabel = new Label(compositeDepositPage,SWT.NONE);
 		    DepositAmountLabel.setText("Amount:");
@@ -264,9 +265,9 @@ public class CustomerClient {
 		    
 			DepositCaptionLabel.pack();
 		    
-		    Label SepPerform4 = new Label(compositeDepositPage, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform4.setBackground(new Color(display,255,255,255));
-		    SepPerform4.setLayoutData(DepositCompositeData);
+		    Label SepPerformDeposit2 = new Label(compositeDepositPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformDeposit2.setBackground(new Color(display,255,255,255));
+		    SepPerformDeposit2.setLayoutData(DepositCompositeData);
 		    
 		    buttonCommitDeposit = new Button(compositeDepositPage, SWT.PUSH);
 		    buttonCommitDeposit.setText("Commit");
@@ -274,6 +275,19 @@ public class CustomerClient {
 		    buttonCommitDeposit.setLayoutData(griddataButton);
 		    buttonCommitDeposit.setData("amount", DepositAmountText);
 		    buttonCommitDeposit.setData("description", DepositDescriptionText);
+		    
+		    buttonCommitDeposit.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	  String amount = ((Text)event.widget.getData("amount")).getText();
+		        	  String description = ((Text)event.widget.getData("description")).getText();
+		        	  transferMoney(getBankAccount(account.getId()), account.getId(), amount, description);
+		        	  account = getAccount(account.getId());
+		        	  CurrentBalance.setText(getBalance(account.getId()));
+		        	  ((Text)event.widget.getData("amount")).setText("");
+		        	  ((Text)event.widget.getData("description")).setText("");
+			        }
+			});
+		    
 	}
 
 	private static void fillcompositeViewTransaction() {
@@ -287,9 +301,9 @@ public class CustomerClient {
 		    PerformTransactionCaptionLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
 		    PerformTransactionCaptionLabel.setLayoutData(CreateAccountCompositeData);
 		    
-		    Label SepPerform1 = new Label(compositeViewTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform1.setBackground(new Color(display,255,255,255));
-		    SepPerform1.setLayoutData(CreateAccountCompositeData);
+		    Label SepPerformViewTransaction1 = new Label(compositeViewTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformViewTransaction1.setBackground(new Color(display,255,255,255));
+		    SepPerformViewTransaction1.setLayoutData(CreateAccountCompositeData);
 		    
 		    final Table table = new Table(compositeViewTransaction,
 		    		SWT.SINGLE | SWT.H_SCROLL |
@@ -371,9 +385,9 @@ public class CustomerClient {
 		   
 		    PerformTransactionCaptionLabel.pack();
 		    	    
-		    Label SepPerform3 = new Label(compositePerformTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform3.setBackground(new Color(display,255,255,255));
-		    SepPerform3.setLayoutData(ViewCompositeData);
+		    Label SepPerformPerformTransaction1 = new Label(compositePerformTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformPerformTransaction1.setBackground(new Color(display,255,255,255));
+		    SepPerformPerformTransaction1.setLayoutData(ViewCompositeData);
 		    
 		    Label PerformTransactionToAccountLabel = new Label(compositePerformTransaction,SWT.NONE);
 		    PerformTransactionToAccountLabel.setText("To Acc.:");
@@ -381,11 +395,11 @@ public class CustomerClient {
 			Text PerformTransactionToAccountText = new Text(compositePerformTransaction, SWT.SINGLE | SWT.BORDER);
 			PerformTransactionToAccountText.setLayoutData(griddataText);
 			
-			Label PerformTransactionBlzLabel = new Label(compositePerformTransaction, SWT.NONE);
+			/*Label PerformTransactionBlzLabel = new Label(compositePerformTransaction, SWT.NONE);
 			PerformTransactionBlzLabel.setText("BLZ:");
 			PerformTransactionBlzLabel.setLayoutData(griddataLabel);
 			Text PerformTransactionBlzText = new Text(compositePerformTransaction, SWT.SINGLE | SWT.BORDER);
-			PerformTransactionBlzText.setLayoutData(griddataText);		
+			PerformTransactionBlzText.setLayoutData(griddataText);	*/	
 			
 			Label PerformTransactionAmountLabel = new Label(compositePerformTransaction, SWT.NONE);
 			PerformTransactionAmountLabel.setText("Amount:");
@@ -401,19 +415,32 @@ public class CustomerClient {
 		    
 			PerformTransactionCaptionLabel.pack();
 		    
-		    Label SepPerform4 = new Label(compositePerformTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform4.setBackground(new Color(display,255,255,255));
-		    SepPerform4.setLayoutData(ViewCompositeData);
+		    Label SepPerformPerformTransaction2 = new Label(compositePerformTransaction, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformPerformTransaction2.setBackground(new Color(display,255,255,255));
+		    SepPerformPerformTransaction2.setLayoutData(ViewCompositeData);
 		    
 		    buttonCommitPerformTransaction = new Button(compositePerformTransaction, SWT.PUSH);
 		    buttonCommitPerformTransaction.setText("Commit");
 		    buttonCommitPerformTransaction.setBackground(new Color(display, 31, 78, 121));
 		    buttonCommitPerformTransaction.setLayoutData(griddataButton);	
 		    buttonCommitPerformTransaction.setData("toAccount", PerformTransactionToAccountText);
-		    buttonCommitPerformTransaction.setData("blz", PerformTransactionBlzText);
+		    //buttonCommitPerformTransaction.setData("blz", PerformTransactionBlzText);
 		    buttonCommitPerformTransaction.setData("amount", PerformTransactionAmountText);
 		    buttonCommitPerformTransaction.setData("description", PerformTransactionDescriptionText);
 		    
+		    buttonCommitPerformTransaction.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	  int toAccount = Convert.toInt(((Text)event.widget.getData("toAccount")).getText());
+		        	  String amount = ((Text)event.widget.getData("amount")).getText();
+		        	  String description = ((Text)event.widget.getData("description")).getText();
+		        	  transferMoney(account.getId(), toAccount, amount, description);
+		        	  account = getAccount(account.getId());
+		        	  CurrentBalance.setText(getBalance(account.getId()));
+		        	  ((Text)event.widget.getData("toAccount")).setText("");
+		        	  ((Text)event.widget.getData("amount")).setText("");
+		        	  ((Text)event.widget.getData("description")).setText("");
+		        }
+			});
 	}
 	
 	private static void fillcompositeWithdrawPage() {
@@ -425,9 +452,9 @@ public class CustomerClient {
 		    WithdrawCaptionLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
 		    WithdrawCaptionLabel.setLayoutData(CreateCustomerCompositeData);
 		    
-		    Label SepPerform3 = new Label(compositeWithdrawPage, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform3.setBackground(new Color(display,255,255,255));
-		    SepPerform3.setLayoutData(CreateCustomerCompositeData);
+		    Label SepPerformWithdraw1 = new Label(compositeWithdrawPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformWithdraw1.setBackground(new Color(display,255,255,255));
+		    SepPerformWithdraw1.setLayoutData(CreateCustomerCompositeData);
 		    
 		    Label WithdrawAmountLabel = new Label(compositeWithdrawPage,SWT.NONE);
 		    WithdrawAmountLabel.setText("Amount:");
@@ -443,9 +470,9 @@ public class CustomerClient {
 		    
 			WithdrawCaptionLabel.pack();
 		    
-		    Label SepPerform4 = new Label(compositeWithdrawPage, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    SepPerform4.setBackground(new Color(display,255,255,255));
-		    SepPerform4.setLayoutData(CreateCustomerCompositeData);
+		    Label SepPerformWithdraw2 = new Label(compositeWithdrawPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformWithdraw2.setBackground(new Color(display,255,255,255));
+		    SepPerformWithdraw2.setLayoutData(CreateCustomerCompositeData);
 		    
 		    buttonCommitWithdraw = new Button(compositeWithdrawPage, SWT.PUSH);
 		    buttonCommitWithdraw.setText("Commit");
@@ -453,6 +480,19 @@ public class CustomerClient {
 		    buttonCommitWithdraw.setLayoutData(griddataButton);
 		    buttonCommitWithdraw.setData("amount", WithdrawAmountText);
 		    buttonCommitWithdraw.setData("description", WithdrawDescriptionText);
+		    
+		    buttonCommitWithdraw.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	  String amount = ((Text)event.widget.getData("amount")).getText();
+		        	  String description = ((Text)event.widget.getData("description")).getText();
+		        	  transferMoney(account.getId(), getBankAccount(account.getId()), amount, description);
+		        	  account = getAccount(account.getId());
+		        	  CurrentBalance.setText(getBalance(account.getId()));
+		        	  ((Text)event.widget.getData("amount")).setText("");
+		        	  ((Text)event.widget.getData("description")).setText("");
+			    }
+			});
+		    
 	}
 
 	private static void fillCompositeWelcomePage() {
@@ -460,16 +500,17 @@ public class CustomerClient {
 		 GridData WelcomeCompositeData = new GridData(GridData.BEGINNING, GridData.FILL,true, false);
 		    WelcomeCompositeData.horizontalSpan = 2;
 		    Label CaptionWelcomePage = new Label(compositeWelcomePage, SWT.NONE);
-		    CaptionWelcomePage.setText("Welcome to ICash!");
+		    CaptionWelcomePage.setText("Welcome to ICash! - Your SafeHouse");
 		    CaptionWelcomePage.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
 		    CaptionWelcomePage.setLayoutData(WelcomeCompositeData);
 		
 		    Label labelForImage = new Label(compositeWelcomePage, SWT.None);
 		    final GridData griddataCaption = new GridData(GridData.FILL, GridData.FILL,false, false);
-		    griddataCaption.heightHint=236;
-		    griddataCaption.widthHint=310;
+		    griddataCaption.heightHint=400;
+		    griddataCaption.widthHint=760;
 		    
-		    labelForImage.setBackgroundImage(imageTablePull);
+		    //labelForImage.setBackgroundImage(imageTablePull);
+		    labelForImage.setBackgroundImage(imageSafeHouse);
 		    labelForImage.setLayoutData(griddataCaption);
 		    
 	}
@@ -505,6 +546,12 @@ public class CustomerClient {
 	    LabelStatusLine.setBackground(new Color(display, 200,200,200));
 	    //LabelStatusLine.setText("Here could be the status code");
 	    LabelStatusLine.setLayoutData(griddataStatusLine);
+	    
+	    griddataStatusLine.horizontalSpan = 2;
+	    LabelStatusLineName = new Label(compositeHeader, SWT.HORIZONTAL);
+	    LabelStatusLineName.setBackground(new Color(display, 200,200,200));
+	    //LabelStatusLine.setText("Here could be the status code");
+	    LabelStatusLineName.setLayoutData(griddataStatusLine);
 
 	    //Navigation
 	    final GridData griddataMenuContent = new GridData(GridData.FILL, GridData.CENTER,true, false);
@@ -546,9 +593,15 @@ public class CustomerClient {
 		    buttonMenuWithdrawPage.setBackground(new Color(display, 31, 78, 121));
 		    buttonMenuWithdrawPage.setLayoutData(griddataMenuContent);
 	    
-	    Label placeholder7 = new Label(compositeNavigation, SWT.NONE | SWT.HORIZONTAL);
+	    Label placeholder7 = new Label(compositeNavigation, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    placeholder7.setBackground(new Color(display, 200,200,200));
 		    placeholder7.setLayoutData(griddataMenuContent);
+		    
+		    buttonMenuChangeCustomer = new Button(compositeNavigation, SWT.PUSH);
+		    buttonMenuChangeCustomer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		    buttonMenuChangeCustomer.setText("Change personal data");
+		    buttonMenuChangeCustomer.setBackground(new Color(display, 31, 78, 121));
+		    buttonMenuChangeCustomer.setLayoutData(griddataMenuContent);
 	    
 	    Label placeholder8 = new Label(compositeNavigation, SWT.NONE | SWT.HORIZONTAL);
 		    placeholder8.setBackground(new Color(display, 200,200,200));
@@ -569,6 +622,57 @@ public class CustomerClient {
 		    if (account != null)
 		        CurrentBalance.setText(getBalance(account.getId()));
 		    CurrentBalance.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+		    
+		    buttonLogout.addSelectionListener(new SelectionAdapter() {
+		    	public void widgetSelected(SelectionEvent arg0) {
+//		    		display.dispose();
+		    		stackLayoutMain.topControl=compositeLogin;
+		    		notFirstTimer=true;
+		    		account=null;
+		    		shell.pack();
+		    		shell.layout();
+		    	}
+		    });
+		    
+		    buttonMenuViewTransaction.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		    	    compositeViewTransaction = new Composite(compositeContent, SWT.NONE);
+				    compositeViewTransaction.setBackground(new Color(display,255,255,255));
+				    compositeViewTransaction.setLayout(layoutMainClient);
+		        	fillcompositeViewTransaction();
+		        	stackLayoutContent.topControl = compositeViewTransaction;
+		        	compositeContent.layout();
+		        }
+		      });
+		    
+		    buttonMenuPerformPage.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositePerformTransaction;
+			          compositeContent.layout();
+			        }
+			      });
+		    
+		    buttonMenuDepositPage.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositeDepositPage;
+			          compositeContent.layout();
+			        }
+			      });
+		    
+		    buttonMenuChangeCustomer.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositeChangeCustomerPage;
+			          compositeContent.layout();
+		        }
+			});
+		    
+		    buttonMenuWithdrawPage.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositeWithdrawPage;
+			          compositeContent.layout();
+			        }
+			      });
+		    
 	}
 
 	private static void fillCompositeLogin()
@@ -586,7 +690,7 @@ public class CustomerClient {
 		    final GridData griddataTexts = new GridData(GridData.FILL, GridData.FILL,false, false);
 		    	griddataTexts.horizontalSpan=3;
 		    
-		    final GridData griddataLoginButton = new GridData(GridData.FILL, GridData.CENTER,false, false);
+		    final GridData griddataLoginButton = new GridData(GridData.END, GridData.CENTER,false, false);
 			    griddataLoginButton.horizontalSpan=1;
 			    griddataLoginButton.heightHint = 35;
 		    
@@ -620,13 +724,16 @@ public class CustomerClient {
 		    Text UserText = new Text(compositeLogin,SWT.BORDER);
 		    	UserText.setLayoutData(griddataTexts);
 		    
-		    Label PasswortLabel = new Label(compositeLogin, SWT.NONE);
+		    final Label PasswortLabel = new Label(compositeLogin, SWT.NONE);
 			    PasswortLabel.setText("Password:");
 			    PasswortLabel.setLayoutData(griddataDescription);
 		    
-		    Text PasswordText = new Text(compositeLogin,SWT.BORDER);
+		    final Text PasswordText = new Text(compositeLogin,SWT.BORDER | SWT.PASSWORD);
 		    	PasswordText.setLayoutData(griddataTexts);
 		    
+	    	PasswordText.setVisible(false);
+            PasswortLabel.setVisible(false);
+		    	
 		    Label placeholder1 = new Label(compositeLogin,SWT.NONE);
 			    placeholder1.setBackground(new Color(display,200,200,200));
 			    placeholder1.setText("");
@@ -647,15 +754,38 @@ public class CustomerClient {
 			buttonLogin.setText("Login NOW!");
 			buttonLogin.setLayoutData(griddataLoginButton);
 			
-			Button ButtonSecurityMode = new Button(compositeLogin, SWT.CHECK);
+			final Button ButtonSecurityMode = new Button(compositeLogin, SWT.CHECK);
 			ButtonSecurityMode.setText("SecurityMode");
+			ButtonSecurityMode.setBackground(new Color(display,200,200,200));
+			//griddataLoginButton.horizontalSpan = 4;
 			ButtonSecurityMode.setLayoutData(griddataLoginButton);
+			
+			
 			
 		    buttonLogin.setData("server", ServerText);
 		    buttonLogin.setData("user", UserText);
 		    buttonLogin.setData("password", PasswordText);
 		    buttonLogin.setData("securityMode", ButtonSecurityMode);
 		    compositeLogin.pack();
+		    
+		    ButtonSecurityMode.addSelectionListener(new SelectionAdapter()
+	        {       
+	            public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) 
+	            {
+	                boolean selected = ButtonSecurityMode.getSelection();
+	                if (selected == true) 
+	                {
+	                         PasswordText.setVisible(true);
+	                         PasswortLabel.setVisible(true);
+	                }
+	                else
+	                {
+	                	PasswordText.setVisible(false);
+                        PasswortLabel.setVisible(false);
+	                }
+	            }
+	        });
+		    
 	 }
 	
 	private static void initializeComposites() {
@@ -664,7 +794,7 @@ public class CustomerClient {
 		    compositeLogin.setBackground(new Color(display,200,200,200));
 		    compositeLogin.setLayoutData(griddataWindow);
 		    compositeLogin.setLayout(layoutLogin);
-		 
+		    
 		 compositeMainClient = new Composite(shell, 0);
 		    compositeMainClient.setBackground(new Color(display,255,255,255));
 		    compositeMainClient.setLayoutData(griddataWindow);
@@ -694,6 +824,10 @@ public class CustomerClient {
 	    compositeViewTransaction = new Composite(compositeContent, SWT.NONE);
 		    compositeViewTransaction.setBackground(new Color(display,255,255,255));
 		    compositeViewTransaction.setLayout(layoutMainClient);
+		    
+		compositeChangeCustomerPage = new Composite(compositeContent, SWT.NONE);
+		    compositeChangeCustomerPage.setBackground(new Color(display,255,255,255));
+		    compositeChangeCustomerPage.setLayout(layoutMainClient);
 		    
 	    compositePerformTransaction = new Composite(compositeContent, SWT.NONE);
 		    compositePerformTransaction.setBackground(new Color(display,255,255,255));
@@ -751,8 +885,9 @@ public class CustomerClient {
 	    layoutOneColumn = new GridLayout(1,false);
 	    final  InputStream stream1 = CustomerClient.class.getResourceAsStream("iCash - Logo.png");
 	    imageLogo = new Image(Display.getDefault(), stream1);
-	    final  InputStream stream2 = CustomerClient.class.getResourceAsStream("TablePull.png");
-	    imageTablePull = new Image(Display.getDefault(), stream2); 
+	    final  InputStream stream2 = CustomerClient.class.getResourceAsStream("SafeHouse.png"); //("TablePull.png");
+	    //imageTablePull = new Image(Display.getDefault(), stream2); 
+	    imageSafeHouse = new Image(Display.getDefault(), stream2);
     	shell.setLayout(stackLayoutMain);
 	}
 
@@ -795,67 +930,82 @@ private static void kalkuliereSpaltenbreite(Table tabelle, int minBreite)
 
 public static Account getAccount(int number) {
 	
-	String GETString = server + "/rest/getAccount?number=" + number;
+	String POSTString = server + "/rest/getAccount?number=" + number;
 	if (securityMode) 
-		GETString = server + "/rest/s/getAccount?number=" + number + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
-	ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		POSTString = server + "/rest/s/getAccount?number=" + number + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
+	ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
 	int status = cr.getStatus();
-	LabelStatusLine.setText(getMessage(status));
+	
 	LabelStatusLineLogin.setText(getMessage(status));
 	
 	String[] name;
 	if (status == 200) {
-	JSONObject jo = new JSONObject(cr.getEntity(String.class));
-    Account a = new Account();
-    a.setId(Convert.toInt(jo.getString("number")));
-    Customer c = new Customer();
-    name = jo.getString("owner").split(" ");
-    c.setFirstName(name[0]);
-    if (name.length > 1)
-        c.setLastName(name[1]);
-    a.setCustomer(c);
+		JSONObject jo = new JSONObject(cr.getEntity(String.class));
+		Account a = new Account();
+		a.setId(Convert.toInt(jo.getString("number")));
+		Customer c = new Customer();
+		name = jo.getString("owner").split(" ");
+		c.setFirstName(name[0]);
+		if (name.length > 1)
+			c.setLastName(name[1]);
+		a.setCustomer(c);
     
-    JSONArray ja = jo.getJSONArray("transactions");
+		LabelStatusLineName.setText("Hello " + c.getFirstName() + " " + c.getLastName() + "!");
     
-    for (int i=0; i<ja.length(); i++) {
-    	Transaction t = new Transaction();
-    	JSONObject transaction = ja.getJSONObject(i);
-    	t.setAmount(transaction.getInt("amount"));
-    	t.setDate(Date.valueOf(transaction.getString("transactionDate").substring(0, 10)));
-    	t.setDescription(transaction.getString("reference"));
+		JSONArray ja = jo.getJSONArray("transactions");
+    
+		for (int i=0; i<ja.length(); i++) {
+			Transaction t = new Transaction();
+			JSONObject transaction = ja.getJSONObject(i);
+			try {
+				t.setAmount(Convert.toCent(transaction.getString("amount")));
+			}
+			catch (JSONException e1) {
+				try {
+					t.setAmount(Convert.toCent("" + transaction.getDouble("amount")));
+				}
+				catch (JSONException e2) {
+					t.setAmount(0);
+				}
+			}
+			t.setDate(Date.valueOf(transaction.getString("transactionDate").substring(0, 10)));
+			t.setDescription(transaction.getString("reference"));
     	
-    	Account incomingAccount = new Account();
-    	JSONObject receiver = transaction.getJSONObject("receiver");
-    	incomingAccount.setId(Convert.toInt(receiver.getString("number")));
-    	Customer c_in = new Customer();
-    	name = receiver.getString("owner").split(" ");
-    	c_in.setFirstName(name[0]);
-    	if (name.length > 1)
-    	    c_in.setLastName(name[1]);
-    	incomingAccount.setCustomer(c_in);
-    	t.setIncomingAccount(incomingAccount);
+			Account incomingAccount = new Account();
+			JSONObject receiver = transaction.getJSONObject("receiver");
+			incomingAccount.setId(Convert.toInt(receiver.getString("number")));
+			Customer c_in = new Customer();
+			name = receiver.getString("owner").split(" ");
+			c_in.setFirstName(name[0]);
+			if (name.length > 1)
+				c_in.setLastName(name[1]);
+			incomingAccount.setCustomer(c_in);
+			t.setIncomingAccount(incomingAccount);
     	
-    	Account outgoingAccount = new Account();
-    	JSONObject sender = transaction.getJSONObject("sender");
-    	outgoingAccount.setId(Convert.toInt(sender.getString("number")));
-    	Customer c_out = new Customer();
-    	name = sender.getString("owner").split(" ");
-    	c_out.setFirstName(name[0]);
-    	if (name.length > 1)
-    	    c_out.setLastName(name[1]);
-    	outgoingAccount.setCustomer(c_out);
-    	t.setOutgoingAccount(outgoingAccount);
-    	
-    	a.add(t);
-    }
+			Account outgoingAccount = new Account();
+			JSONObject sender = transaction.getJSONObject("sender");
+			outgoingAccount.setId(Convert.toInt(sender.getString("number")));
+			Customer c_out = new Customer();
+			name = sender.getString("owner").split(" ");
+			c_out.setFirstName(name[0]);
+			if (name.length > 1)
+				c_out.setLastName(name[1]);
+			outgoingAccount.setCustomer(c_out);
+			t.setOutgoingAccount(outgoingAccount);
+			
+			a.add(t);
+		}
     return a;
     }
-    return null;
+	else {
+		LabelStatusLine.setText(getMessage(status));
+		return null;
+	}	
 }
 
 public static void transferMoney(int senderNumber, int receiverNumber, String amount, String reference) {
 	
-	String GETString = server + "/rest/transferMoney";
+	String POSTString = server + "/rest/transferMoney";
 	Form f = new Form();
 	f.add("senderNumber", senderNumber);
 	f.add("receiverNumber", receiverNumber);
@@ -864,19 +1014,19 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 	if (securityMode) {
 		f.add("kundenID", customer.getId());
 		f.add("passwortHash", password);
-		GETString = server + "/rest/s/transferMoney";
+		POSTString = server + "/rest/s/transferMoney";
 	}
 	
-	ClientResponse cr = Client.create().resource( GETString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+	ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 	LabelStatusLine.setText(getMessage(cr.getStatus()));
 }
 
 	public static int getBankAccount(int id) {
-		String GETString = server + "/rest/getBankAccount" + "?account=" + id;
+		String POSTString = server + "/rest/getBankAccount" + "?account=" + id;
 		if (securityMode) {
-			GETString = server + "/rest/s/getBankAccount" + "?account=" + id + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
+			POSTString = server + "/rest/s/getBankAccount" + "?account=" + id + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
 		}
-		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
 		int status = cr.getStatus();
 		LabelStatusLine.setText(getMessage(status));
 		if (status == 200) {
@@ -888,33 +1038,45 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 	
 	public static String getBalance(int id) {
 		
-		String GETString = server + "/rest/getBalance" + "?account=" + id;
+		String POSTString = server + "/rest/getBalance" + "?account=" + id;
 		if (securityMode) {
-			GETString = server + "/rest/s/getBalance" + "?account=" + id + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
-		}
+			POSTString = server + "/rest/s/getBalance" + "?account=" + id + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
+
+			ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
+			int status = cr.getStatus();
 		
-		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
-		int status = cr.getStatus();
-		
-		if (status == 200) {
-			JSONObject jo = new JSONObject(cr.getEntity(String.class));
-			String balance = jo.getString("balance");
-			//LabelStatusLine.setText(getMessage(200));
-			return balance;
-		}
+			if (status == 200) {
+				JSONObject jo = new JSONObject(cr.getEntity(String.class));
+				String balance = jo.getString("balance");
+				return balance;
+			}
 			else
 				LabelStatusLine.setText(getMessage(status));
-		return "";
+			return "";
+		}
+		else {
+			int amount = 0;
+			try {
+				amount = account.getBalance();
+				return Convert.toEuro(amount);
+			}
+			catch (SQLException e) {
+				return "";
+			}
+		}
 	}
 	
 	public static Customer getCustomer(int id) {
 		
-		String GETString = server + "/rest/getCustomer" + "?account=" + id;
+		String POSTString;
 		if (securityMode) {
-			GETString = server + "/rest/s/getCustomer" + "?account=" + id + "&passwortHash=" + password; 
+			POSTString = server + "/rest/s/getCustomer" + "?account=" + id + "&passwortHash=" + password; 
+		}
+		else {
+			POSTString = server + "/rest/getCustomer" + "?account=" + id;
 		}
 		
-		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
 		int status = cr.getStatus();
 		
 		if (status == 200) {
@@ -929,6 +1091,33 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		else
 			LabelStatusLineLogin.setText(getMessage(status));
 		return null;
+	}
+	
+	public static void changeAccount(int idLogin, String firstName, String lastName, String passwordNew) {
+		
+		String POSTString;
+		if (securityMode)
+			POSTString = server + "/rest/s/changeAccount";
+		else
+			POSTString = server + "/rest/changeAccount";
+		
+		Form f = new Form();
+		f.add("firstName", firstName);
+		f.add("lastName", lastName);
+		f.add("passwordNew", passwordNew);
+		f.add("customerId", idLogin);
+		if (securityMode)
+			f.add("passwortHash", password);
+		
+		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		int status = cr.getStatus();
+		LabelStatusLine.setText(getMessage(status));
+		if (cr.getStatus() == 200) {
+			customer.setFirstName(firstName);
+			customer.setLastName(lastName);
+			customer.setPassword(passwordNew);
+			password = passwordNew;
+		}
 	}
 	
 	public static String getMessage(int statusCode) {
@@ -949,8 +1138,8 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		Customer c = getCustomer(a.getId());
 		
 		Bank b = new Bank();
-		String GETString = server + "/rest/s/getBank" + "?account=" + a.getId() + "&passwortHash=" + password; 
-		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		String POSTString = server + "/rest/s/getBank" + "?account=" + a.getId() + "&passwortHash=" + password; 
+		ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
 		int status = cr.getStatus();
 		LabelStatusLineLogin.setText(getMessage(status));
 		
@@ -964,8 +1153,8 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 			return;
 		
 		AccountType at = new AccountType();
-		GETString = server + "/rest/s/getAccountType" + "?account=" + a.getId() + "&passwortHash=" + password; 
-		cr = Client.create().resource( GETString ).get( ClientResponse.class );
+		POSTString = server + "/rest/s/getAccountType" + "?account=" + a.getId() + "&passwortHash=" + password; 
+		cr = Client.create().resource( POSTString ).get( ClientResponse.class );
 		status = cr.getStatus();
 		LabelStatusLineLogin.setText(getMessage(status));
 		

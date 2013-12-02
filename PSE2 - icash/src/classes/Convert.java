@@ -24,6 +24,7 @@ public class Convert {
 			case '9': result += 9; break;
 			case '0': break;
 			case '-': negative = true; result /= 10; break;
+			default : result /= 10;
 			}
 		}
 		if (negative)
@@ -56,7 +57,10 @@ public class Convert {
 			case '0': break;
 			case '-': negative = true; result /= 10; break;
 			case ',':
-			case '.': decimalPlace = true; result /= 10;
+			case '.': decimalPlace = true; result /= 10; break;
+			default : result /= 10; 
+					  if (decimalPlace) 
+						  noDecimalPlaces--;
 			}
 		}	
 		for (int i=0; i<noDecimalPlaces; i++)

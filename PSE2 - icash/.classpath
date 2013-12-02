@@ -48,5 +48,6 @@
 	<classpathentry kind="lib" path="libs/itextpdf-5.4.4-sources.jar"/>
 	<classpathentry kind="lib" path="libs/itextpdf-5.4.4.jar"/>
 	<classpathentry kind="lib" path="src/libs/mysql-connector-java-5.1.25-bin.jar"/>
+	<classpathentry kind="lib" path="src/libs/commons-codec-1.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -658,7 +658,7 @@ public class CustomerClient {
 		    griddataMenuContent.verticalAlignment = GridData.FILL;
 		    if (account != null)
 		        CurrentBalance.setText(getBalance(account.getId()));
-		    CurrentBalance.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+		    CurrentBalance.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 	}
 
 	private static void fillCompositeLogin()

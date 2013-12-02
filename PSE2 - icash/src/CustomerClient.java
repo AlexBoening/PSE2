@@ -709,7 +709,7 @@ public class CustomerClient {
 			    PasswortLabel.setText("Password:");
 			    PasswortLabel.setLayoutData(griddataDescription);
 		    
-		    final Text PasswordText = new Text(compositeLogin,SWT.BORDER);
+		    final Text PasswordText = new Text(compositeLogin,SWT.BORDER | SWT.PASSWORD);
 		    	PasswordText.setLayoutData(griddataTexts);
 		    
 	    	PasswordText.setVisible(false);

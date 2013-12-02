@@ -123,6 +123,7 @@ public class CustomerClient {
 	        
 		    buttonLogin.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
+      		 	
 		        	if(notFirstTimer==false){
 			        	fillCompositeMainClient();
 		      		 	
@@ -137,8 +138,10 @@ public class CustomerClient {
 		      		 	fillcompositeWithdrawPage();
 		      		 	
 		      		 	fillcompositeChangeAcc();
+		      		 	
+		      		 	notFirstTimer = true;
 		        	}
-	      		 	
+		        	
 		        	  server = ((Text)event.widget.getData("server")).getText();
 		        	  password = Security.createPasswordHash(((Text)event.widget.getData("password")).getText());
 		        	  securityMode = ((Button)event.widget.getData("securityMode")).getSelection();
@@ -152,16 +155,13 @@ public class CustomerClient {
 		        		  CurrentBalance.setText(getBalance(account.getId()));
 		        		  stackLayoutMain.topControl = compositeMainClient;
 		        	  	
+				        	
 	      		 	
-	      		 	stackLayoutMain.topControl = compositeMainClient;
-	      		 	compositeMainClient.layout();
-	      		 	shell.pack();	   
-		        		  
-			          shell.layout();
+				        	stackLayoutMain.topControl = compositeMainClient;
+				        	compositeMainClient.layout();
+				        	shell.pack();	   
+				        	shell.layout();
 		        	  }
-		        	  
-
-	        		  
 		        	  shell.layout();
 			        }
 			      });
@@ -891,7 +891,6 @@ public class CustomerClient {
 	    //imageTablePull = new Image(Display.getDefault(), stream2); 
 	    imageSafeHouse = new Image(Display.getDefault(), stream2);
     	shell.setLayout(stackLayoutMain);
-    	notFirstTimer = false;
 	}
 
 	
@@ -938,59 +937,62 @@ public static Account getAccount(int number) {
 		POSTString = server + "/rest/s/getAccount?number=" + number + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
 	ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
 	int status = cr.getStatus();
-	LabelStatusLine.setText(getMessage(status));
+	
 	LabelStatusLineLogin.setText(getMessage(status));
 	
 	String[] name;
 	if (status == 200) {
-	JSONObject jo = new JSONObject(cr.getEntity(String.class));
-    Account a = new Account();
-    a.setId(Convert.toInt(jo.getString("number")));
-    Customer c = new Customer();
-    name = jo.getString("owner").split(" ");
-    c.setFirstName(name[0]);
-    if (name.length > 1)
-        c.setLastName(name[1]);
-    a.setCustomer(c);
+		JSONObject jo = new JSONObject(cr.getEntity(String.class));
+		Account a = new Account();
+		a.setId(Convert.toInt(jo.getString("number")));
+		Customer c = new Customer();
+		name = jo.getString("owner").split(" ");
+		c.setFirstName(name[0]);
+		if (name.length > 1)
+			c.setLastName(name[1]);
+		a.setCustomer(c);
     
-    LabelStatusLineName.setText("Hello " + c.getFirstName() + " " + c.getLastName() + "!");
+		LabelStatusLineName.setText("Hello " + c.getFirstName() + " " + c.getLastName() + "!");
     
-    JSONArray ja = jo.getJSONArray("transactions");
+		JSONArray ja = jo.getJSONArray("transactions");
     
-    for (int i=0; i<ja.length(); i++) {
-    	Transaction t = new Transaction();
-    	JSONObject transaction = ja.getJSONObject(i);
-    	t.setAmount(Convert.toCent(transaction.getString("amount")));
-    	t.setDate(Date.valueOf(transaction.getString("transactionDate").substring(0, 10)));
-    	t.setDescription(transaction.getString("reference"));
+		for (int i=0; i<ja.length(); i++) {
+			Transaction t = new Transaction();
+			JSONObject transaction = ja.getJSONObject(i);
+			t.setAmount(Convert.toCent(transaction.getString("amount")));
+			t.setDate(Date.valueOf(transaction.getString("transactionDate").substring(0, 10)));
+			t.setDescription(transaction.getString("reference"));
     	
-    	Account incomingAccount = new Account();
-    	JSONObject receiver = transaction.getJSONObject("receiver");
-    	incomingAccount.setId(Convert.toInt(receiver.getString("number")));
-    	Customer c_in = new Customer();
-    	name = receiver.getString("owner").split(" ");
-    	c_in.setFirstName(name[0]);
-    	if (name.length > 1)
-    	    c_in.setLastName(name[1]);
-    	incomingAccount.setCustomer(c_in);
-    	t.setIncomingAccount(incomingAccount);
+			Account incomingAccount = new Account();
+			JSONObject receiver = transaction.getJSONObject("receiver");
+			incomingAccount.setId(Convert.toInt(receiver.getString("number")));
+			Customer c_in = new Customer();
+			name = receiver.getString("owner").split(" ");
+			c_in.setFirstName(name[0]);
+			if (name.length > 1)
+				c_in.setLastName(name[1]);
+			incomingAccount.setCustomer(c_in);
+			t.setIncomingAccount(incomingAccount);
     	
-    	Account outgoingAccount = new Account();
-    	JSONObject sender = transaction.getJSONObject("sender");
-    	outgoingAccount.setId(Convert.toInt(sender.getString("number")));
-    	Customer c_out = new Customer();
-    	name = sender.getString("owner").split(" ");
-    	c_out.setFirstName(name[0]);
-    	if (name.length > 1)
-    	    c_out.setLastName(name[1]);
-    	outgoingAccount.setCustomer(c_out);
-    	t.setOutgoingAccount(outgoingAccount);
-    	
-    	a.add(t);
-    }
+			Account outgoingAccount = new Account();
+			JSONObject sender = transaction.getJSONObject("sender");
+			outgoingAccount.setId(Convert.toInt(sender.getString("number")));
+			Customer c_out = new Customer();
+			name = sender.getString("owner").split(" ");
+			c_out.setFirstName(name[0]);
+			if (name.length > 1)
+				c_out.setLastName(name[1]);
+			outgoingAccount.setCustomer(c_out);
+			t.setOutgoingAccount(outgoingAccount);
+			
+			a.add(t);
+		}
     return a;
     }
-    return null;
+	else {
+		LabelStatusLine.setText(getMessage(status));
+		return null;
+	}	
 }
 
 public static void transferMoney(int senderNumber, int receiverNumber, String amount, String reference) {

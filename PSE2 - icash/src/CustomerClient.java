@@ -613,7 +613,11 @@ public class CustomerClient {
 		    
 		    buttonLogout.addSelectionListener(new SelectionAdapter() {
 		    	public void widgetSelected(SelectionEvent arg0) {
-		    		display.dispose();
+//		    		display.dispose();
+		    		stackLayoutMain.topControl=compositeLogin;
+		    		account=null;
+		    		shell.pack();
+		    		shell.layout();
 		    	}
 		    });
 		    

@@ -710,13 +710,16 @@ public class CustomerClient {
 		    Text UserText = new Text(compositeLogin,SWT.BORDER);
 		    	UserText.setLayoutData(griddataTexts);
 		    
-		    Label PasswortLabel = new Label(compositeLogin, SWT.NONE);
+		    final Label PasswortLabel = new Label(compositeLogin, SWT.NONE);
 			    PasswortLabel.setText("Password:");
 			    PasswortLabel.setLayoutData(griddataDescription);
 		    
-		    Text PasswordText = new Text(compositeLogin,SWT.BORDER);
+		    final Text PasswordText = new Text(compositeLogin,SWT.BORDER);
 		    	PasswordText.setLayoutData(griddataTexts);
 		    
+	    	PasswordText.setVisible(false);
+            PasswortLabel.setVisible(false);
+		    	
 		    Label placeholder1 = new Label(compositeLogin,SWT.NONE);
 			    placeholder1.setBackground(new Color(display,200,200,200));
 			    placeholder1.setText("");
@@ -737,17 +740,38 @@ public class CustomerClient {
 			buttonLogin.setText("Login NOW!");
 			buttonLogin.setLayoutData(griddataLoginButton);
 			
-			Button ButtonSecurityMode = new Button(compositeLogin, SWT.CHECK);
+			final Button ButtonSecurityMode = new Button(compositeLogin, SWT.CHECK);
 			ButtonSecurityMode.setText("SecurityMode");
 			ButtonSecurityMode.setBackground(new Color(display,200,200,200));
 			//griddataLoginButton.horizontalSpan = 4;
 			ButtonSecurityMode.setLayoutData(griddataLoginButton);
+			
+			
 			
 		    buttonLogin.setData("server", ServerText);
 		    buttonLogin.setData("user", UserText);
 		    buttonLogin.setData("password", PasswordText);
 		    buttonLogin.setData("securityMode", ButtonSecurityMode);
 		    compositeLogin.pack();
+		    
+		    ButtonSecurityMode.addSelectionListener(new SelectionAdapter()
+	        {       
+	            public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) 
+	            {
+	                boolean selected = ButtonSecurityMode.getSelection();
+	                if (selected == true) 
+	                {
+	                         PasswordText.setVisible(true);
+	                         PasswortLabel.setVisible(true);
+	                }
+	                else
+	                {
+	                	PasswordText.setVisible(false);
+                        PasswortLabel.setVisible(false);
+	                }
+	            }
+	        });
+		    
 	 }
 	
 	private static void initializeComposites() {

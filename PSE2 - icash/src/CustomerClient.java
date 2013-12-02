@@ -228,6 +228,10 @@ public class CustomerClient {
 	        	  customer = getCustomer(account.getId());
 	        	  changeAccount(customer.getId(), firstName, lastName, password);
 	        	  LabelStatusLineName.setText("Hello " + customer.getFirstName() + " " + customer.getLastName() + "!");
+	        	  
+	        	  ((Text)event.widget.getData("firstName")).setText("");
+	        	  ((Text)event.widget.getData("lastName")).setText("");
+	        	  ((Text)event.widget.getData("password")).setText("");
 		    	}
 	        });
 		    
@@ -278,6 +282,8 @@ public class CustomerClient {
 		        	  transferMoney(getBankAccount(account.getId()), account.getId(), amount, description);
 		        	  account = getAccount(account.getId());
 		        	  CurrentBalance.setText(getBalance(account.getId()));
+		        	  ((Text)event.widget.getData("amount")).setText("");
+		        	  ((Text)event.widget.getData("description")).setText("");
 			        }
 			});
 		    
@@ -429,6 +435,9 @@ public class CustomerClient {
 		        	  transferMoney(account.getId(), toAccount, amount, description);
 		        	  account = getAccount(account.getId());
 		        	  CurrentBalance.setText(getBalance(account.getId()));
+		        	  ((Text)event.widget.getData("toAccount")).setText("");
+		        	  ((Text)event.widget.getData("amount")).setText("");
+		        	  ((Text)event.widget.getData("description")).setText("");
 		        }
 			});
 	}
@@ -478,6 +487,8 @@ public class CustomerClient {
 		        	  transferMoney(account.getId(), getBankAccount(account.getId()), amount, description);
 		        	  account = getAccount(account.getId());
 		        	  CurrentBalance.setText(getBalance(account.getId()));
+		        	  ((Text)event.widget.getData("amount")).setText("");
+		        	  ((Text)event.widget.getData("description")).setText("");
 			    }
 			});
 		    

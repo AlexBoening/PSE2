@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
@@ -81,7 +82,7 @@ public class CustomerClient {
 	private static Label LabelStatusLine;
 	private static Label LabelStatusLineLogin;
 	private static Label LabelStatusLineName;
-		   
+	private static boolean notFirstTimer;	   
 	
 /*    GridData Captiondata = new GridData(GridData.FILL, GridData.FILL,true, false);
     Captiondata.horizontalSpan = 2;
@@ -122,19 +123,21 @@ public class CustomerClient {
 	        
 		    buttonLogin.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
-		        	fillCompositeMainClient();
-	      		 	
-	        		  fillCompositeWelcomePage();
-	      		 	
-	      		 	fillcompositeViewTransaction();
-	      		 	
-	      		 	fillcompositePerformTransaction();
-	      		 	
-	      		 	fillcompositeDepositPage();
-	      		 	
-	      		 	fillcompositeWithdrawPage();
-	      		 	
-	      		 	fillcompositeChangeAcc();
+		        	if(notFirstTimer==false){
+			        	fillCompositeMainClient();
+		      		 	
+		        		fillCompositeWelcomePage();
+		      		 	
+		      		 	fillcompositeViewTransaction();
+		      		 	
+		      		 	fillcompositePerformTransaction();
+		      		 	
+		      		 	fillcompositeDepositPage();
+		      		 	
+		      		 	fillcompositeWithdrawPage();
+		      		 	
+		      		 	fillcompositeChangeAcc();
+		        	}
 	      		 	
 		        	  server = ((Text)event.widget.getData("server")).getText();
 		        	  password = Security.createPasswordHash(((Text)event.widget.getData("password")).getText());
@@ -626,6 +629,7 @@ public class CustomerClient {
 		    	public void widgetSelected(SelectionEvent arg0) {
 //		    		display.dispose();
 		    		stackLayoutMain.topControl=compositeLogin;
+		    		notFirstTimer=true;
 		    		account=null;
 		    		shell.pack();
 		    		shell.layout();
@@ -887,6 +891,7 @@ public class CustomerClient {
 	    //imageTablePull = new Image(Display.getDefault(), stream2); 
 	    imageSafeHouse = new Image(Display.getDefault(), stream2);
     	shell.setLayout(stackLayoutMain);
+    	notFirstTimer = false;
 	}
 
 	

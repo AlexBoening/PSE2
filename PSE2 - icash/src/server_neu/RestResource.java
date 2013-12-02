@@ -225,8 +225,11 @@ public class RestResource {
 	
 	public Response transferMoney(int sender, int receiver, int amount, String reference, Account outgoingAccount){
 		try {
+			
 			Transaction t;
 			
+			if (amount < 0)
+				return Response.status(400).build();         	// Negative Amounts not allowed
 			Account incomingAccount = new Account(receiver);
 			if (incomingAccount.getId() == 0)
 				return Response.status(404).build();			// Account does not exist
@@ -512,7 +515,7 @@ public class RestResource {
 		// Logging
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
-		logger.info(new java.util.Date() + ": Method: /s/createAccountType");
+		logger.info(new java.util.Date() + ": Method: /s/changeAccount");
 		logger.info(new java.util.Date() + ": Admin: " + customerId);
 		
 		try {
@@ -961,7 +964,7 @@ public class RestResource {
 		// Logging
 		Logger logger = Logger.getRootLogger();
 		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
-		logger.info(new java.util.Date() + ": Method: /s/createAccountType");
+		logger.info(new java.util.Date() + ": Method: /s/createBank");
 		logger.info(new java.util.Date() + ": Admin: " + adminIdLogin);
 		
 		try {

@@ -7,6 +7,7 @@ public class Convert {
 	public static int toInt(String s) {
 		
 		int result = 0;
+		boolean negative = false;
 		char[] c = s.toCharArray();
 		
 		for (int i=0; i<c.length; i++) {
@@ -22,15 +23,18 @@ public class Convert {
 			case '8': result += 8; break;
 			case '9': result += 9; break;
 			case '0': break;
+			case '-': negative = true; result /= 10; break;
 			}
 		}
-		
+		if (negative)
+			result = -result;
 		return result;
 	}
 
 	public static double toDouble(String s) {
 		
 		double result = 0;
+		boolean negative = false;
 		char[] c = s.toCharArray();
 		boolean decimalPlace = false;
 		int noDecimalPlaces = 0;
@@ -50,12 +54,15 @@ public class Convert {
 			case '8': result += 8; break;
 			case '9': result += 9; break;
 			case '0': break;
+			case '-': negative = true; result /= 10; break;
 			case ',':
 			case '.': decimalPlace = true; result /= 10;
 			}
 		}	
 		for (int i=0; i<noDecimalPlaces; i++)
 			result /= 10;
+		if (negative)
+			result = -result;
 		return result;
 	}
 	
@@ -66,13 +73,20 @@ public class Convert {
 	}
 	
 	public static String toEuro(int cent) {
+		String sign;
+		if (cent < 0) {
+			sign = "-";
+			cent = -cent;
+		}
+		else
+			sign = "";
 		String euro = "" + cent;
 		if (cent >= 100)
-			return euro.substring(0, euro.length() - 2) + "." + euro.substring(euro.length() - 2, euro.length());
+			return sign + euro.substring(0, euro.length() - 2) + "." + euro.substring(euro.length() - 2, euro.length());
 		else if (cent >= 10)
-			return "0." + euro.substring(euro.length() - 2, euro.length());
+			return sign + "0." + euro.substring(euro.length() - 2, euro.length());
 		else
-			return "0.0" + euro.substring(euro.length() - 1, euro.length());
+			return sign + "0.0" + euro.substring(euro.length() - 1, euro.length());
 	}
 	
 	public static Date currentDate() {

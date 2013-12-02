@@ -16,8 +16,8 @@ public class Security {
 	
 	public static String createPasswordHash(String password) {
         try {
-        	  MessageDigest md5 = MessageDigest.getInstance("MD5");
-        	  String hash = new String (md5.digest(password.getBytes()));
+        	  MessageDigest sha1 = MessageDigest.getInstance("SHA1");
+        	  String hash = new String (sha1.digest(password.getBytes()));
         	  hash.replace("\'", "!");
         	  hash.replace("\"", "!");
         	  password = hash;

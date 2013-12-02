@@ -62,13 +62,13 @@ public class AdminClient {
 	static GridData griddataWindow, griddataHeader, griddataNavigation, griddataContent, griddataLogoutButton, griddataButton
 					, griddataLabel, griddataText;
 	
-	static Composite compositeLogin, compositeMainClient, compositeHeader, compositeNavigation, compositeContent, compositeWelcomePage, compositeAccountPage
-					,compositeCreateAccountPage, compositeCreateCustomerPage, compositePayInterestsPage;
+	static Composite compositeLogin, compositeMainClient, compositeHeader, compositeNavigation, compositeContent, compositeWelcomePage, compositeAccountPage, compositeChangeAdminPage
+					,compositeCreateAccountPage, compositeCreateCustomerPage, compositePayInterestsPage, compositeCreateAccountTypePage, compositeCreateAdminPage, compositeChangeAccountTypePage;
 	
-	static Button buttonLogin, buttonLogout, buttonMenuDeactivateAccount, buttonMenuCreateAccount, buttonMenuCreateCustomer, buttonMenuSetSecurityMode
-				  , buttonDeactivateAccount, buttonActivateAccount, buttonCreateAccount, buttonCreateCustomer, buttonMenuPayInterests, buttonPayInterests ;
+	static Button buttonLogin, buttonLogout, buttonMenuDeactivateAccount, buttonMenuCreateAccount, buttonMenuCreateCustomer, buttonMenuSetSecurityMode, buttonMenuCreateAccountType, buttonMenuChangeAccountType, buttonMenuPayInterests
+				  , buttonMenuCreateAdmin, buttonMenuChangeAdmin, buttonDeactivateAccount, buttonActivateAccount, buttonCreateAccount, buttonCreateCustomer, buttonCreateAdmin, buttonCreateAccountType, buttonChangeAccountType, buttonChangeAdmin, buttonPayInterests ;
 	
-	static Image imageLogo, imageTablePull;
+	static Image imageLogo, imageSafeHouse;
 	
 	private static boolean securityMode = true;
 	private static Administrator admin;
@@ -104,6 +104,14 @@ public class AdminClient {
 		 	fillCompositeCreateAccountPage();
 		 	
 		 	fillCompositeCreateCustomerPage();
+		 	
+		 	fillCompositeCreateAdminPage();
+		 	
+		 	fillCompositeCreateAccountTypePage();
+		 	
+		 	fillCompositeChangeAdminPage();
+		 	
+		 	fillCompositeChangeAccountTypePage();
 		 	
 		 	//set WelcomePage to be the first thing to see
 		 	stackLayoutMain.topControl=compositeLogin;
@@ -167,6 +175,38 @@ public class AdminClient {
 			        }
 			      });
 		    
+		    buttonMenuCreateAdmin.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositeCreateAdminPage;
+			          compositeContent.layout();
+			        }
+			      });
+		    
+		    buttonMenuCreateAccountType.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositeCreateAccountTypePage;
+			          compositeContent.layout();
+			        }
+			      });
+		    
+		    buttonMenuChangeAdmin.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositeChangeAdminPage;
+			          compositeContent.layout();
+			        }
+			      });
+		    
+		    buttonMenuChangeAccountType.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	compositeChangeAccountTypePage = new Composite(compositeContent, SWT.NONE);
+					compositeChangeAccountTypePage.setBackground(new Color(display,255,255,255));
+					compositeChangeAccountTypePage.setLayout(layoutMainClient);
+					fillCompositeChangeAccountTypePage();
+		        	stackLayoutContent.topControl = compositeChangeAccountTypePage;
+			          compositeContent.layout();
+			        }
+			      });
+		    
 		    buttonMenuSetSecurityMode.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
 		        	boolean securityMode = false;
@@ -189,7 +229,7 @@ public class AdminClient {
 		    	}
 		    });
 		    
-		    buttonDeactivateAccount.addListener(SWT.Selection, new Listener() {
+		    /*buttonDeactivateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
 		        	// doSomething
 			    }
@@ -199,7 +239,7 @@ public class AdminClient {
 		        public void handleEvent(Event event) {
 		        	// doSomething
 		        }
-			      });
+			      });*/
 		    
 		    buttonCreateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
@@ -210,13 +250,13 @@ public class AdminClient {
 		        	int accountType = at[((Combo)event.widget.getData("accountType")).getSelectionIndex()].getId();
 		        	int accountId = AdminClient.createAccount(admin.getId(), bank, customer, administrator, accountType);
 		        	if (accountId != 0) {
-		        		logger.info(new java.util.Date() + "new AccountId = " + accountId);
+		        		logger.info(new java.util.Date() + ": New AccountId = " + accountId);
 		        	} else {
-		        		logger.info(new java.util.Date() + "no new AccountId available at this point");
+		        		logger.info(new java.util.Date() + ": No new AccountId available at this point");
 		        	}
 		        	}
 		        	catch (ArrayIndexOutOfBoundsException e) {
-		        		logger.info(new java.util.Date() + "Please complete your selection!");
+		        		logger.info(new java.util.Date() + ": Please complete your selection!");
 		        	}
 		        }
 	        });
@@ -227,15 +267,50 @@ public class AdminClient {
 		        	String lastName  = (((Text)event.widget.getData("lastName")).getText());
 		        	String password  = Security.createPasswordHash((((Text)event.widget.getData("password")).getText()));
 		        	if (!(firstName.isEmpty() || lastName.isEmpty() || password.isEmpty())) {
-		        	int customerId = AdminClient.createCustomer(admin.getId(), firstName, lastName, password);
+		        	int customerId = createCustomer(admin.getId(), firstName, lastName, password);
 		        		if (customerId != 0) {
-		        			logger.info(new java.util.Date() + "new CustomerId = " + customerId);
+		        			logger.info(new java.util.Date() + ": New CustomerId = " + customerId);
 		        		} else {
-		        			logger.info(new java.util.Date() + "no new CustomerId available at this point");
+		        			logger.info(new java.util.Date() + ": No new CustomerId available at this point");
 		        		}
 		        	}
 		        	else
-		        		logger.info(new java.util.Date() + "Please fill in all required fields!");
+		        		logger.info(new java.util.Date() + ": Please fill in all required fields!");
+        	  	}
+	        });
+		    
+		    buttonCreateAdmin.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {		        		        	
+		        	String firstName = (((Text)event.widget.getData("firstName")).getText());
+		        	String lastName  = (((Text)event.widget.getData("lastName")).getText());
+		        	String password  = Security.createPasswordHash((((Text)event.widget.getData("password")).getText()));
+		        	if (!(firstName.isEmpty() || lastName.isEmpty() || password.isEmpty())) {
+		        	int administratorId = createAdministrator(admin.getId(), firstName, lastName, password);
+		        		if (administratorId != 0) {
+		        			logger.info(new java.util.Date() + ": New AdministratorId = " + administratorId);
+		        		} else {
+		        			logger.info(new java.util.Date() + ": No new AdministratorId available at this point");
+		        		}
+		        	}
+		        	else
+		        		logger.info(new java.util.Date() + ": Please fill in all required fields!");
+        	  	}
+	        });
+		    
+		    buttonCreateAccountType.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {		        		        	
+		        	String description = (((Text)event.widget.getData("description")).getText());
+		        	String interestRate  = (((Text)event.widget.getData("interestRate")).getText());
+		        	if (!(description.isEmpty() || interestRate.isEmpty())) {
+		        	int accountTypeId = createAccountType(admin.getId(), interestRate, description);
+		        		if (accountTypeId != 0) {
+		        			logger.info(new java.util.Date() + ": New AccountTypeId = " + accountTypeId);
+		        		} else {
+		        			logger.info(new java.util.Date() + ": No new AccountTypeId available at this point");
+		        		}
+		        	}
+		        	else
+		        		logger.info(new java.util.Date() + ": Please fill in all required fields!");
         	  	}
 	        });
 		    
@@ -274,14 +349,14 @@ public class AdminClient {
 			Label LastnameLabel = new Label(compositeCreateCustomerPage, SWT.NONE);
 			LastnameLabel.setText("Lastname:");
 			LastnameLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeLastname = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
-			CreateAccountTypeLastname.setLayoutData(griddataText);
+			Text CreateCustomerLastname = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
+			CreateCustomerLastname.setLayoutData(griddataText);
 			
 			Label InitPasswordLabel = new Label(compositeCreateCustomerPage, SWT.NONE);
 			InitPasswordLabel.setText("Initial Password:");
 			InitPasswordLabel.setLayoutData(griddataLabel);
-			Text CreateAccountTypeInitPassword = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER);
-			CreateAccountTypeInitPassword.setLayoutData(griddataText);
+			Text CreateCustomerInitPassword = new Text(compositeCreateCustomerPage, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
+			CreateCustomerInitPassword.setLayoutData(griddataText);
 		    
 			CaptionCreateCustomerPage.pack();
 			
@@ -294,8 +369,55 @@ public class AdminClient {
 		    buttonCreateCustomer.setBackground(new Color(display, 31, 78, 121));
 		    buttonCreateCustomer.setLayoutData(griddataButton);
 			buttonCreateCustomer.setData("firstName",CreateCustomerTypeFirstname);
-		    buttonCreateCustomer.setData("lastName",CreateAccountTypeLastname);
-		    buttonCreateCustomer.setData("password",CreateAccountTypeInitPassword);	    
+		    buttonCreateCustomer.setData("lastName",CreateCustomerLastname);
+		    buttonCreateCustomer.setData("password",CreateCustomerInitPassword);	    
+	}
+	 
+	 private static void fillCompositeCreateAdminPage() {
+			
+		 GridData CreateAdminCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
+		 
+		    CreateAdminCompositeData.horizontalSpan = 2;
+		    Label CaptionCreateAdminPage = new Label(compositeCreateAdminPage, SWT.NONE);
+		    CaptionCreateAdminPage.setText("Create a new Administrator");
+		    CaptionCreateAdminPage.setLayoutData(CreateAdminCompositeData);
+		    
+		    Label SepPerform3 = new Label(compositeCreateAdminPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform3.setBackground(new Color(display,255,255,255));
+		    SepPerform3.setLayoutData(CreateAdminCompositeData);
+		    
+		    Label FirstnameLabel = new Label(compositeCreateAdminPage,SWT.NONE);
+		    FirstnameLabel.setText("Firstname:");
+		    FirstnameLabel.setLayoutData(griddataLabel);
+			Text CreateAdminFirstname = new Text(compositeCreateAdminPage, SWT.SINGLE | SWT.BORDER);
+			//CreateCustomerTypeFirstname.setText("Jonas");
+			CreateAdminFirstname.setLayoutData(griddataText);
+			
+			Label LastnameLabel = new Label(compositeCreateAdminPage, SWT.NONE);
+			LastnameLabel.setText("Lastname:");
+			LastnameLabel.setLayoutData(griddataLabel);
+			Text CreateAdminLastname = new Text(compositeCreateAdminPage, SWT.SINGLE | SWT.BORDER);
+			CreateAdminLastname.setLayoutData(griddataText);
+			
+			Label InitPasswordLabel = new Label(compositeCreateAdminPage, SWT.NONE);
+			InitPasswordLabel.setText("Initial Password:");
+			InitPasswordLabel.setLayoutData(griddataLabel);
+			Text CreateAdminInitPassword = new Text(compositeCreateAdminPage, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
+			CreateAdminInitPassword.setLayoutData(griddataText);
+		    
+			CaptionCreateAdminPage.pack();
+			
+			Label SepPerform4 = new Label(compositeCreateAdminPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform4.setBackground(new Color(display,255,255,255));
+		    SepPerform4.setLayoutData(CreateAdminCompositeData);
+
+		    buttonCreateAdmin = new Button(compositeCreateAdminPage, SWT.PUSH);
+		    buttonCreateAdmin.setText("Create Admin");
+		    buttonCreateAdmin.setBackground(new Color(display, 31, 78, 121));
+		    buttonCreateAdmin.setLayoutData(griddataButton);
+			buttonCreateAdmin.setData("firstName",CreateAdminFirstname);
+		    buttonCreateAdmin.setData("lastName",CreateAdminLastname);
+		    buttonCreateAdmin.setData("password",CreateAdminInitPassword);	    
 	}
 
 	private static void fillCompositeCreateAccountPage() {
@@ -327,8 +449,6 @@ public class AdminClient {
 		    	}
 		    	CreateAccountBank.setItems(bank);
 		    }
-			//Text CreateAccountTypeBank = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			//CreateAccountTypeBank.setLayoutData(griddataText);
 			
 			Label CustomerLabel = new Label(compositeCreateAccountPage, SWT.NONE);
 			CustomerLabel.setText("Customer:");
@@ -342,8 +462,6 @@ public class AdminClient {
 		    	}
 		    	CreateAccountCustomer.setItems(customer);
 		    }
-			//Text CreateAccountTypeCustomer = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			//CreateAccountTypeCustomer.setLayoutData(griddataText);
 			
 			Label AdministratorLabel = new Label(compositeCreateAccountPage, SWT.NONE);
 			AdministratorLabel.setText("Administrator:");
@@ -357,8 +475,6 @@ public class AdminClient {
 		    	}
 		    	CreateAccountAdministrator.setItems(admin);
 		    }
-			//Text CreateAccountTypeResponsible = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			//CreateAccountTypeResponsible.setLayoutData(griddataText);
 			
 			Label AccountTypeLabel = new Label(compositeCreateAccountPage, SWT.NONE);
 			AccountTypeLabel.setText("AccountType:");
@@ -372,17 +488,14 @@ public class AdminClient {
 		    	}
 		    	CreateAccountAccountType.setItems(accountType);
 		    }
-			//Text CreateAccountTypeAccountType = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			//CreateAccountTypeAccountType.setLayoutData(griddataText);
 			
-			Label ActiveLabel = new Label(compositeCreateAccountPage, SWT.NONE);
+		    // Wird bisher nicht verwendet - Default: active
+			/*Label ActiveLabel = new Label(compositeCreateAccountPage, SWT.NONE);
 			ActiveLabel.setText("Active:");
 			ActiveLabel.setLayoutData(griddataLabel);
 			Button CreateAccountActive = new Button(compositeCreateAccountPage, SWT.CHECK);
 			CreateAccountActive.setText("active");
-			CreateAccountActive.setLayoutData(griddataText);
-			//Text CreateAccountTypeActive = new Text(compositeCreateAccountPage, SWT.SINGLE | SWT.BORDER);
-			//CreateAccountTypeActive.setLayoutData(griddataText);
+			CreateAccountActive.setLayoutData(griddataText);*/
 			
 		    CaptionCreateAccountPage.pack();
 		    
@@ -399,7 +512,7 @@ public class AdminClient {
 		    buttonCreateAccount.setData("customer",CreateAccountCustomer);
 		    buttonCreateAccount.setData("admin",CreateAccountAdministrator);
     		buttonCreateAccount.setData("accountType",CreateAccountAccountType);
-    		buttonCreateAccount.setData("active",CreateAccountActive);
+    		//buttonCreateAccount.setData("active",CreateAccountActive);
     		
     		buttonCreateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
@@ -422,17 +535,67 @@ public class AdminClient {
 		        }
 	        });
 	}
+	
+	private static void fillCompositeCreateAccountTypePage() {
+		
+		 GridData CreateAccountTypeCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
+		 
+		    CreateAccountTypeCompositeData.horizontalSpan = 2;
+		    Label CaptionCreateAccountTypePage = new Label(compositeCreateAccountTypePage, SWT.NONE);
+		    CaptionCreateAccountTypePage.setText("Create a new Account Type");
+		    CaptionCreateAccountTypePage.setLayoutData(CreateAccountTypeCompositeData);
+		    
+		    Label SepPerform3 = new Label(compositeCreateAccountTypePage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform3.setBackground(new Color(display,255,255,255));
+		    SepPerform3.setLayoutData(CreateAccountTypeCompositeData);
+		    
+		    Label DescriptionLabel = new Label(compositeCreateAccountTypePage,SWT.NONE);
+		    DescriptionLabel.setText("Description:");
+		    DescriptionLabel.setLayoutData(griddataLabel);
+			Text CreateAccountTypeDescription = new Text(compositeCreateAccountTypePage, SWT.SINGLE | SWT.BORDER);
+			CreateAccountTypeDescription.setLayoutData(griddataText);
+			
+			Label InterestRateLabel = new Label(compositeCreateAccountTypePage, SWT.NONE);
+			InterestRateLabel.setText("Interest Rate:");
+			InterestRateLabel.setLayoutData(griddataLabel);
+			Text CreateAccountTypeInterestRate = new Text(compositeCreateAccountTypePage, SWT.SINGLE | SWT.BORDER);
+			CreateAccountTypeInterestRate.setLayoutData(griddataText);
+		    
+			CaptionCreateAccountTypePage.pack();
+			
+			Label SepPerform4 = new Label(compositeCreateAccountTypePage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform4.setBackground(new Color(display,255,255,255));
+		    SepPerform4.setLayoutData(CreateAccountTypeCompositeData);
+
+		    buttonCreateAccountType = new Button(compositeCreateAccountTypePage, SWT.PUSH);
+		    buttonCreateAccountType.setText("Commit");
+		    buttonCreateAccountType.setBackground(new Color(display, 31, 78, 121));
+		    buttonCreateAccountType.setLayoutData(griddataButton);
+			buttonCreateAccountType.setData("description",CreateAccountTypeDescription);
+		    buttonCreateAccountType.setData("interestRate",CreateAccountTypeInterestRate);    
+	}
 
 	private static void fillCompositePayInterestPage() {
 		 
 		 if (admin != null)
 		    getData(admin.getId());
-		
+		 
+		 GridData PayInterestsCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
+		 
+		 PayInterestsCompositeData.horizontalSpan = 2;
+		    Label CaptionPayInterestsPage = new Label(compositePayInterestsPage, SWT.NONE);
+		    CaptionPayInterestsPage.setText("Pay Interests to a Bank");
+		    CaptionPayInterestsPage.setLayoutData(PayInterestsCompositeData);
+		    
+		    Label SepPerform3 = new Label(compositePayInterestsPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform3.setBackground(new Color(display,255,255,255));
+		    SepPerform3.setLayoutData(PayInterestsCompositeData);
+		    
 		 GridData griddataPayInterests = new GridData(GridData.BEGINNING, GridData.FILL,true, false);
 		 griddataPayInterests.horizontalSpan = 1;
 		    Label labelCaption = new Label(compositePayInterestsPage, SWT.NONE);
 		    labelCaption.setText("Bank:");
-		    labelCaption.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
+		    //labelCaption.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
 		    labelCaption.setLayoutData(griddataPayInterests);
 		
 		    final GridData griddataTexts = new GridData(GridData.FILL, GridData.FILL,false, false);
@@ -446,6 +609,12 @@ public class AdminClient {
 		    	}
 		    	PayInterestBank.setItems(bank);
 		    }
+		    
+		    CaptionPayInterestsPage.pack();
+			
+			Label SepPerform4 = new Label(compositePayInterestsPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform4.setBackground(new Color(display,255,255,255));
+		    SepPerform4.setLayoutData(PayInterestsCompositeData);
 		    
 		    buttonPayInterests = new Button(compositePayInterestsPage, SWT.PUSH);
 		    buttonPayInterests.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
@@ -463,6 +632,89 @@ public class AdminClient {
 			        		logger.info(new java.util.Date() + ": Interests were paid at bank " + bank.getId());
 			        	}
 			        		
+			        }
+			        catch (ArrayIndexOutOfBoundsException e) {
+		        		logger.info(new java.util.Date() + ": Please complete your selection!");
+		        	}
+		        }
+		      });
+	}
+	
+	private static void fillCompositeChangeAccountTypePage() {
+		 
+		 if (admin != null)
+		    getData(admin.getId());
+		 
+		 GridData ChangeAccountTypeCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
+		 
+		 	ChangeAccountTypeCompositeData.horizontalSpan = 2;
+		    Label CaptionChangeAccountTypePage = new Label(compositeChangeAccountTypePage, SWT.NONE);
+		    CaptionChangeAccountTypePage.setText("Change an Account Type");
+		    CaptionChangeAccountTypePage.setLayoutData(ChangeAccountTypeCompositeData);
+		    
+		    Label SepPerform3 = new Label(compositeChangeAccountTypePage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform3.setBackground(new Color(display,255,255,255));
+		    SepPerform3.setLayoutData(ChangeAccountTypeCompositeData);
+		 
+		 GridData griddataChangeAccountType = new GridData(GridData.BEGINNING, GridData.FILL,true, false);
+		 griddataChangeAccountType.horizontalSpan = 1;
+		    Label labelCaption = new Label(compositeChangeAccountTypePage, SWT.NONE);
+		    labelCaption.setText("Account Type:");
+		    //labelCaption.setFont(new Font(null, "Tahoma",20, SWT.BOLD));
+		    labelCaption.setLayoutData(griddataChangeAccountType);
+		
+		    final GridData griddataTexts = new GridData(GridData.FILL, GridData.FILL,false, false);
+	    	griddataTexts.horizontalSpan=2;
+	    	Combo ChangeAccountType = new Combo(compositeChangeAccountTypePage, SWT.READ_ONLY);
+	    	ChangeAccountType.setLayoutData(griddataText);
+		    if (at != null) {
+		    	String accountType[] = new String[at.length];
+		    	for (int i=0; i<at.length; i++) {
+		    		accountType[i] = at[i].getDescription();
+		    	}
+		    	ChangeAccountType.setItems(accountType);
+		    }
+		    
+		    Label DescriptionLabel = new Label(compositeChangeAccountTypePage,SWT.NONE);
+		    DescriptionLabel.setText("Description:");
+		    DescriptionLabel.setLayoutData(griddataLabel);
+			Text ChangeAccountTypeDescription = new Text(compositeChangeAccountTypePage, SWT.SINGLE | SWT.BORDER);
+			ChangeAccountTypeDescription.setLayoutData(griddataText);
+			
+			Label InterestRateLabel = new Label(compositeChangeAccountTypePage, SWT.NONE);
+			InterestRateLabel.setText("Interest Rate:");
+			InterestRateLabel.setLayoutData(griddataLabel);
+			Text ChangeAccountTypeInterestRate = new Text(compositeChangeAccountTypePage, SWT.SINGLE | SWT.BORDER);
+			ChangeAccountTypeInterestRate.setLayoutData(griddataText);
+		    
+			CaptionChangeAccountTypePage.pack();
+			
+			Label SepPerform4 = new Label(compositeChangeAccountTypePage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerform4.setBackground(new Color(display,255,255,255));
+		    SepPerform4.setLayoutData(ChangeAccountTypeCompositeData);
+		    
+		    buttonChangeAccountType = new Button(compositeChangeAccountTypePage, SWT.PUSH);
+		    buttonChangeAccountType.setLayoutData(new GridData(SWT.NONE, SWT.NONE, true, true));
+		    buttonChangeAccountType.setText("Commit");
+		    buttonChangeAccountType.setBackground(new Color(display, 31, 78, 121));
+		    buttonChangeAccountType.setLayoutData(griddataButton);
+		    buttonChangeAccountType.setData("accountType", ChangeAccountType);
+		    buttonChangeAccountType.setData("description", ChangeAccountTypeDescription);
+		    buttonChangeAccountType.setData("interestRate", ChangeAccountTypeInterestRate);
+		    
+		    buttonChangeAccountType.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+			        try {
+			        	AccountType accountType = at[((Combo)event.widget.getData("accountType")).getSelectionIndex()];
+			        	accountType.setDescription(((Text)event.widget.getData("description")).getText());
+			        	accountType.setInterestRate(Convert.toDouble(((Text)event.widget.getData("interestRate")).getText()));
+			        	int status = changeAccountType(admin.getId(), accountType);
+			        	if (status == 200) {
+			        		logger.info(new java.util.Date() + ": Account Type " + accountType.getDescription() + " was changed!");
+			        	}
+			        	else {
+			        		logger.info(new java.util.Date() + ": Account Type " + accountType.getDescription() + " could not be changed!");
+			        	}
 			        }
 			        catch (ArrayIndexOutOfBoundsException e) {
 		        		logger.info(new java.util.Date() + ": Please complete your selection!");
@@ -586,7 +838,69 @@ public class AdminClient {
 			        }
 			      });
 	}
+	
+	private static void fillCompositeChangeAdminPage(){
+		 
+		 GridData ChangeAccCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);		    
+		 ChangeAccCompositeData.horizontalSpan = 2;
+		    Label ChangeAccLabel = new Label(compositeChangeAdminPage, SWT.NONE);
+		    ChangeAccLabel.setText("Change your personal data");
+		    //ChangeAccLabel.setFont(new Font(null, "Tahoma",16, SWT.BOLD));
+		    ChangeAccLabel.setLayoutData(ChangeAccCompositeData);
+		    
+		    Label SepPerformChangeAcc1 = new Label(compositeChangeAdminPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformChangeAcc1.setBackground(new Color(display,255,255,255));
+		    SepPerformChangeAcc1.setLayoutData(ChangeAccCompositeData);
+		    
+		    Label ChangeAccFirstNameLabel = new Label(compositeChangeAdminPage,SWT.NONE);
+		    ChangeAccFirstNameLabel.setText("First Name:");
+		    ChangeAccFirstNameLabel.setLayoutData(griddataLabel);
+			Text ChangeAccFirstNameText = new Text(compositeChangeAdminPage, SWT.SINGLE | SWT.BORDER);
+			ChangeAccFirstNameText.setLayoutData(griddataText);
+			
+			Label ChangeAccLastNameLabel = new Label(compositeChangeAdminPage, SWT.NONE);
+			ChangeAccLastNameLabel.setText("Last Name:");
+			ChangeAccLastNameLabel.setLayoutData(griddataLabel);
+			Text ChangeAccLastNameText = new Text(compositeChangeAdminPage, SWT.SINGLE | SWT.BORDER);
+			ChangeAccLastNameText.setLayoutData(griddataText);			
+			
+			Label ChangeAccPWLabel = new Label(compositeChangeAdminPage, SWT.NONE);
+			ChangeAccPWLabel.setText("Password:");
+			ChangeAccPWLabel.setLayoutData(griddataLabel);
+			Text ChangeAccPWText = new Text(compositeChangeAdminPage, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
+			ChangeAccPWText.setLayoutData(griddataText);
+			
+		    Label SepPerformChangeAcc2 = new Label(compositeChangeAdminPage, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    SepPerformChangeAcc2.setBackground(new Color(display,255,255,255));
+		    SepPerformChangeAcc2.setLayoutData(ChangeAccCompositeData);
+			
+		    buttonChangeAdmin = new Button(compositeChangeAdminPage, SWT.PUSH);
+		    buttonChangeAdmin.setText("Commit");
+		    buttonChangeAdmin.setBackground(new Color(display, 31, 78, 121));
+		    buttonChangeAdmin.setLayoutData(griddataButton);
+		    buttonChangeAdmin.setData("firstName", ChangeAccFirstNameText);
+		    buttonChangeAdmin.setData("lastName", ChangeAccLastNameText);
+		    buttonChangeAdmin.setData("password", ChangeAccPWText);
+		    
+		    buttonChangeAdmin.addListener(SWT.Selection, new Listener() {
+		    	public void handleEvent(Event event) {
 
+	        	  String firstName = ((Text)event.widget.getData("firstName")).getText();
+	        	  String lastName = ((Text)event.widget.getData("lastName")).getText();
+	        	  String password = Security.createPasswordHash(((Text)event.widget.getData("password")).getText());
+	        	  
+	        	  admin = getAdmin(admin.getId());
+	        	  changeAdmin(admin.getId(), firstName, lastName, password);
+	        	  LabelStatusLineName.setText("Hello " + admin.getFirstName() + " " + admin.getLastName() + "!");
+	        	  
+	        	  ((Text)event.widget.getData("firstName")).setText("");
+	        	  ((Text)event.widget.getData("lastName")).setText("");
+	        	  ((Text)event.widget.getData("password")).setText("");
+		    	}
+	        });
+		    
+	 }
+	
 	private static void fillCompositeWelcomePage() {
 		 
 		 GridData WelcomeCompositeData = new GridData(GridData.BEGINNING, GridData.FILL,true, false);
@@ -601,7 +915,7 @@ public class AdminClient {
 		    griddataCaption.heightHint=236;
 		    griddataCaption.widthHint=310;
 		    
-		    labelForImage.setBackgroundImage(imageTablePull);
+		    labelForImage.setBackgroundImage(imageSafeHouse);
 		    labelForImage.setLayoutData(griddataCaption);
 	}
 
@@ -642,6 +956,41 @@ public class AdminClient {
 	    //Navigation
 	    final GridData griddataMenuContent = new GridData(GridData.FILL, GridData.CENTER,true, false);
 	    
+	    buttonMenuSetSecurityMode = new Button(compositeNavigation, SWT.PUSH);
+	    	buttonMenuSetSecurityMode.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+	    	if (admin == null)
+	    		buttonMenuSetSecurityMode.setText("Get Security");
+	    	else if  (getSecurityMode(admin.getId()))
+	    		buttonMenuSetSecurityMode.setText("Disable Security");
+	    	else
+	    		buttonMenuSetSecurityMode.setText("Enable Security");
+	    	buttonMenuSetSecurityMode.setBackground(new Color(display, 31, 78, 121));
+	    	buttonMenuSetSecurityMode.setLayoutData(griddataMenuContent);
+	    
+	    Label placeholder1 = new Label(compositeNavigation, SWT.SEPARATOR | SWT.HORIZONTAL);
+	    	placeholder1.setBackground(new Color(display, 200,200,200));
+	    	placeholder1.setLayoutData(griddataMenuContent);
+	    
+	    	buttonMenuChangeAdmin = new Button(compositeNavigation, SWT.PUSH);
+		    buttonMenuChangeAdmin.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		    buttonMenuChangeAdmin.setText("Change personal data");
+		    buttonMenuChangeAdmin.setBackground(new Color(display, 31, 78, 121));
+		    buttonMenuChangeAdmin.setLayoutData(griddataMenuContent);
+		    
+		Label placeholder2 = new Label(compositeNavigation, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    placeholder2.setBackground(new Color(display, 200,200,200));
+		    placeholder2.setLayoutData(griddataMenuContent);
+		
+		    buttonMenuCreateAccount = new Button(compositeNavigation, SWT.PUSH);
+		    buttonMenuCreateAccount.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		    buttonMenuCreateAccount.setText("Create Account");
+		    buttonMenuCreateAccount.setBackground(new Color(display, 31, 78, 121));
+		    buttonMenuCreateAccount.setLayoutData(griddataMenuContent);
+	    
+	    Label placeholder3 = new Label(compositeNavigation, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    placeholder3.setBackground(new Color(display, 200,200,200));
+		    placeholder3.setLayoutData(griddataMenuContent);
+		    
 	    buttonMenuDeactivateAccount = new Button(compositeNavigation, SWT.PUSH);
 		    buttonMenuDeactivateAccount.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		    buttonMenuDeactivateAccount.setText("Deactivate Account");
@@ -652,52 +1001,52 @@ public class AdminClient {
 		    placeholder4.setBackground(new Color(display, 200,200,200));
 		    placeholder4.setLayoutData(griddataMenuContent);
 	    
-	    buttonMenuPayInterests = new Button(compositeNavigation, SWT.PUSH);
-		    buttonMenuPayInterests.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		    buttonMenuPayInterests.setText("Pay Interests");
-		    buttonMenuPayInterests.setBackground(new Color(display, 31, 78, 121));
-		    buttonMenuPayInterests.setLayoutData(griddataMenuContent);
-		    
-	    Label placeholder9 = new Label(compositeNavigation, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    placeholder9.setBackground(new Color(display, 200,200,200));
-		    placeholder9.setLayoutData(griddataMenuContent);
-		    
-	    buttonMenuCreateAccount = new Button(compositeNavigation, SWT.PUSH);
-		    buttonMenuCreateAccount.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		    buttonMenuCreateAccount.setText("Create Account");
-		    buttonMenuCreateAccount.setBackground(new Color(display, 31, 78, 121));
-		    buttonMenuCreateAccount.setLayoutData(griddataMenuContent);
-	    
-	    Label placeholder5 = new Label(compositeNavigation, SWT.SEPARATOR | SWT.HORIZONTAL);
-		    placeholder5.setBackground(new Color(display, 200,200,200));
-		    placeholder5.setLayoutData(griddataMenuContent);
-	    
 	    buttonMenuCreateCustomer = new Button(compositeNavigation, SWT.PUSH);
 		    buttonMenuCreateCustomer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		    buttonMenuCreateCustomer.setText("Create Customer");
 		    buttonMenuCreateCustomer.setBackground(new Color(display, 31, 78, 121));
 		    buttonMenuCreateCustomer.setLayoutData(griddataMenuContent);
 	    
+	    Label placeholder5 = new Label(compositeNavigation, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    placeholder5.setBackground(new Color(display, 200,200,200));
+		    placeholder5.setLayoutData(griddataMenuContent);
+	    
+		buttonMenuCreateAdmin = new Button(compositeNavigation, SWT.PUSH);
+		    buttonMenuCreateAdmin.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		    buttonMenuCreateAdmin.setText("Create Admin");
+		    buttonMenuCreateAdmin.setBackground(new Color(display, 31, 78, 121));
+		    buttonMenuCreateAdmin.setLayoutData(griddataMenuContent);
+		    
 	    Label placeholder6 = new Label(compositeNavigation, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    placeholder6.setBackground(new Color(display, 200,200,200));
 		    placeholder6.setLayoutData(griddataMenuContent);
-	    
-		    buttonMenuSetSecurityMode = new Button(compositeNavigation, SWT.PUSH);
-		    buttonMenuSetSecurityMode.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		    if (admin != null && getSecurityMode(admin.getId()))
-		    	buttonMenuSetSecurityMode.setText("Disable Security");
-		    else
-		    	buttonMenuSetSecurityMode.setText("Enable Security");
-		    buttonMenuSetSecurityMode.setBackground(new Color(display, 31, 78, 121));
-		    buttonMenuSetSecurityMode.setLayoutData(griddataMenuContent);
 		    
-	    Label placeholder7 = new Label(compositeNavigation, SWT.NONE | SWT.HORIZONTAL);
+		buttonMenuCreateAccountType = new Button(compositeNavigation, SWT.PUSH);
+		    buttonMenuCreateAccountType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		    buttonMenuCreateAccountType.setText("Create Account Type");
+		    buttonMenuCreateAccountType.setBackground(new Color(display, 31, 78, 121));
+		    buttonMenuCreateAccountType.setLayoutData(griddataMenuContent);
+	    
+        Label placeholder7 = new Label(compositeNavigation, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    placeholder7.setBackground(new Color(display, 200,200,200));
 		    placeholder7.setLayoutData(griddataMenuContent);
-	    
-	    Label placeholder8 = new Label(compositeNavigation, SWT.NONE | SWT.HORIZONTAL);
+		    
+		buttonMenuChangeAccountType = new Button(compositeNavigation, SWT.PUSH);
+		    buttonMenuChangeAccountType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		    buttonMenuChangeAccountType.setText("Change Account Type");
+		    buttonMenuChangeAccountType.setBackground(new Color(display, 31, 78, 121));
+		    buttonMenuChangeAccountType.setLayoutData(griddataMenuContent);
+		
+		Label placeholder8 = new Label(compositeNavigation, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    placeholder8.setBackground(new Color(display, 200,200,200));
 		    placeholder8.setLayoutData(griddataMenuContent);
+		    
+		buttonMenuPayInterests = new Button(compositeNavigation, SWT.PUSH);
+		    buttonMenuPayInterests.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		    buttonMenuPayInterests.setText("Pay Interests");
+		    buttonMenuPayInterests.setBackground(new Color(display, 31, 78, 121));
+		    buttonMenuPayInterests.setLayoutData(griddataMenuContent);
+		    
 	    
 	}
 
@@ -754,7 +1103,7 @@ public class AdminClient {
 			    PasswortLabel.setText("Password:");
 			    PasswortLabel.setLayoutData(griddataDescription);
 		    
-		    Text PasswordText = new Text(compositeLogin,SWT.BORDER);
+			Text PasswordText = new Text(compositeLogin,SWT.BORDER | SWT.PASSWORD);
 		    	PasswordText.setLayoutData(griddataTexts);
 		    
 		    Label placeholder1 = new Label(compositeLogin,SWT.NONE);
@@ -838,6 +1187,22 @@ public class AdminClient {
 	    compositeCreateCustomerPage = new Composite(compositeContent, SWT.NONE);
 		    compositeCreateCustomerPage.setBackground(new Color(display,255,255,255));
 		    compositeCreateCustomerPage.setLayout(layoutMainClient);
+		
+        compositeCreateAdminPage = new Composite(compositeContent, SWT.NONE);
+		    compositeCreateAdminPage.setBackground(new Color(display,255,255,255));
+		    compositeCreateAdminPage.setLayout(layoutMainClient);
+		
+		compositeCreateAccountTypePage = new Composite(compositeContent, SWT.NONE);
+		    compositeCreateAccountTypePage.setBackground(new Color(display,255,255,255));
+		    compositeCreateAccountTypePage.setLayout(layoutMainClient);
+		    
+		compositeChangeAdminPage = new Composite(compositeContent, SWT.NONE);
+		    compositeChangeAdminPage.setBackground(new Color(display,255,255,255));
+		    compositeChangeAdminPage.setLayout(layoutMainClient);
+		
+		compositeChangeAccountTypePage = new Composite(compositeContent, SWT.NONE);
+		    compositeChangeAccountTypePage.setBackground(new Color(display,255,255,255));
+		    compositeChangeAccountTypePage.setLayout(layoutMainClient);
 	}
 	
 	private static void initializeGridData() {
@@ -876,11 +1241,11 @@ public class AdminClient {
 	    layoutOneColumn = new GridLayout(1,false);
 	    
 	    final InputStream stream = AdminClient.class.getResourceAsStream("iCash - Logo.png");
-	    final InputStream stream2 = AdminClient.class.getResourceAsStream("TablePull.png");
+	    final InputStream stream2 = AdminClient.class.getResourceAsStream("SafeHouse.png");
 	    imageLogo = new Image(Display.getDefault(), stream);
 	    
 //	    imageLogo = new Image(display, ".\\src\\iCash - Logo.png");
-	    imageTablePull = new Image(display, stream2);  
+	    imageSafeHouse = new Image(display, stream2);  
 	    
     	shell.setLayout(stackLayoutMain);
 	}
@@ -946,6 +1311,9 @@ public class AdminClient {
 				}
 				return admin;
 			}
+			else {
+				LabelStatusLineLogin.setText(getMessage(status));
+			}
 		}
 		
 		return null;
@@ -972,7 +1340,29 @@ public class AdminClient {
 		}
 		
 			return 0;
+	}
+	
+	public static int createAdministrator(int idLogin, String firstName, String lastName, String password) {
 		
+		String POSTString = server + "/rest/s/createAdministrator";
+		
+		Form f = new Form();
+		f.add("firstName", firstName);
+		f.add("lastName", lastName);
+		f.add("password", password);
+		f.add("adminIdLogin", idLogin);
+		f.add("passwortHash", password);
+		
+		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		int status = cr.getStatus();
+		LabelStatusLine.setText(getMessage(status));
+		if (cr.getStatus() == 200) {
+			JSONObject jo = new JSONObject(cr.getEntity(String.class));
+			int id = jo.getInt("id");
+			return id;
+		}
+		
+			return 0;
 	}
 	
 	public static int createAccount(int idLogin, int bankId, int customerId, int adminId, int accountTypeId) {
@@ -1152,6 +1542,46 @@ public class AdminClient {
 		LabelStatusLine.setText(getMessage(status));
 		return cr.getStatus();
 	}
+	
+public static void changeAdmin(int idLogin, String firstName, String lastName, String passwordNew) {
+		
+		String POSTString = server + "/rest/s/changeAdmin";
+		
+		Form f = new Form();
+		f.add("firstName", firstName);
+		f.add("lastName", lastName);
+		f.add("passwordNew", passwordNew);
+		f.add("administratorId", idLogin);
+		if (securityMode)
+			f.add("passwortHash", password);
+		
+		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		int status = cr.getStatus();
+		LabelStatusLine.setText(getMessage(status));
+		if (cr.getStatus() == 200) {
+			admin.setFirstName(firstName);
+			admin.setLastName(lastName);
+			admin.setPassword(passwordNew);
+			password = passwordNew;
+		}
+	}
+
+public static int changeAccountType(int idLogin, AccountType at) {
+	
+	String POSTString = server + "/rest/s/changeAccountType";
+	
+	Form f = new Form();
+	f.add("idAccountType", at.getId());
+	f.add("description", at.getDescription());
+	f.add("interestRate", at.getInterestRate());
+	f.add("idLogin", idLogin);
+	f.add("passwortHash", password);
+	
+	ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+	int status = cr.getStatus();
+	LabelStatusLine.setText(getMessage(status));
+	return cr.getStatus();
+}
 
 	public static String getMessage(int statusCode) {
 		switch (statusCode) {

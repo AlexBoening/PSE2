@@ -52,7 +52,7 @@ public class Administrator extends Person {
 		return password;
 	}
 	
-	public void setPasswort(String password) {
+	public void setPassword(String password) {
 		this.password = password;
 	}
 	

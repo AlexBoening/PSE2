@@ -1,6 +1,7 @@
 package server_neu;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -129,7 +130,8 @@ public class RestResource {
 			sender.put("owner", t[i].getOutgoingAccount().getCustomer().getFirstName() + " " 
 			                    + t[i].getOutgoingAccount().getCustomer().getLastName());
 			transaction.put("sender", sender);
-			transaction.put("transactionDate", t[i].getDate());
+			//transaction.put("transactionDate", t[i].getDate());
+			transaction.put("transactionDate", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+01:00'").format(t[i].getDate()));
 			
 			ja.put(transaction);
 		}
@@ -840,8 +842,43 @@ public class RestResource {
 		}
 		catch(SQLException e) {
 			return Response.status(500).build();			// Internal Server Error
+		}						
+	}
+	
+	@POST
+	@Path("/s/createAdministrator")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response createAdministrator(@FormParam("firstName")String firstName, 
+			                       		@FormParam("lastName") String lastName, 
+			                       		@FormParam("password") String password,
+			                       		@FormParam("adminIdLogin")int adminIdLogin,
+			                       		@FormParam("passwortHash")String passwordLogin,
+			                       		@Context HttpServletRequest req) {
+		
+		// Logging
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: /s/createAdministrator");
+		logger.info(new java.util.Date() + ": first name: " + firstName + "/ last name: " + lastName);
+		
+		try {
+			Administrator adminLogin = new Administrator(adminIdLogin);
+			if (adminLogin.getId() == 0)
+				return Response.status(404).build();			// Admin does not exist
+			if (adminLogin.getPassword().equals(password)) {
+				Administrator a = new Administrator(firstName, lastName, password);
+				JSONObject jo = new JSONObject();
+				jo.put("id", a.getId());
+				// Administrator was created successfully
+				return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
+			}
+			else {
+				return Response.status(403).build();			// Wrong Password
+			}
 		}
-								
+		catch(SQLException e) {
+			return Response.status(500).build();			// Internal Server Error
+		}						
 	}
 		
 	@POST
@@ -923,7 +960,7 @@ public class RestResource {
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
 	public Response createAccountType(@FormParam("interestRate")double interestRate, 
 			                       	  @FormParam("description")String description, 
-			                       	  @FormParam("AdminIdLogin")int adminIdLogin,
+			                       	  @FormParam("adminIdLogin")int adminIdLogin,
 						              @FormParam("passwortHash")String password,
 			                       	  @Context HttpServletRequest req) {
 		
@@ -1047,5 +1084,81 @@ public class RestResource {
         catch(SQLException e) {
         	return Response.status(500).build();				// Internal Server Error
         }
+	}
+	
+	@POST
+	@Path("/s/changeAdmin")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response changeAdmin(@FormParam("firstName")String firstName, 
+			                    @FormParam("lastName")String lastName, 
+			                    @FormParam("passwordNew")String passwordNew,
+			                    @FormParam("administratorId")int administratorId,
+						        @FormParam("passwortHash")String password,
+			                    @Context HttpServletRequest req) {
+		
+		// Logging
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: /s/changeAdmin");
+		logger.info(new java.util.Date() + ": Admin: " + administratorId);
+		
+		try {
+			Administrator a = new Administrator(administratorId);
+			if (a.getId() == 0)
+				return Response.status(404).build();			// Administrator does not exist
+			if (a.getPassword().equals(password)) {
+				a.setFirstName(firstName);
+				a.setLastName(lastName);
+				a.setPassword(passwordNew);
+				a.updateDB();
+				// Administrator Data was changed successfully
+				return Response.ok().build();
+			}
+			else
+				return Response.status(403).build();			// Wrong Password
+		}
+		catch(SQLException e) {
+			return Response.status(500).build();			// Internal Server Error
+		}							
+	}
+	
+	@POST
+	@Path("/s/changeAccountType")
+	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
+	public Response changeAccountType(@FormParam("idAccountType")int idAccountType, 
+			                    	  @FormParam("description")String description, 
+			                    	  @FormParam("interestRate")double interestRate,
+			                    	  @FormParam("idLogin")int idLogin,
+			                    	  @FormParam("passwortHash")String password,
+			                    	  @Context HttpServletRequest req) {
+		
+		// Logging
+		Logger logger = Logger.getRootLogger();
+		logger.info(new java.util.Date() + ": IP: " + req.getRemoteAddr());
+		logger.info(new java.util.Date() + ": Method: /s/changeAccountType");
+		logger.info(new java.util.Date() + ": Admin: " + idLogin);
+		
+		try {
+			Administrator a = new Administrator(idLogin);
+			if (a.getId() == 0)
+				return Response.status(404).build();			// Administrator does not exist
+			if (a.getPassword().equals(password)) {
+				AccountType at = new AccountType(idAccountType);
+				if (at == null)
+					return Response.status(400).build();		// Account Type not found
+				else {
+					at.setDescription(description);
+					at.setInterestRate(interestRate);
+					at.updateDB();
+					// Account Type Data was changed successfully
+					return Response.ok().build();
+				}
+			}
+			else
+				return Response.status(403).build();			// Wrong Password
+		}
+		catch(SQLException e) {
+			return Response.status(500).build();			// Internal Server Error
+		}							
 	}
 }

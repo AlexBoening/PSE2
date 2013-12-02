@@ -122,6 +122,20 @@ public class CustomerClient {
 	        
 		    buttonLogin.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
+		        	fillCompositeMainClient();
+	      		 	
+	        		  fillCompositeWelcomePage();
+	      		 	
+	      		 	fillcompositeViewTransaction();
+	      		 	
+	      		 	fillcompositePerformTransaction();
+	      		 	
+	      		 	fillcompositeDepositPage();
+	      		 	
+	      		 	fillcompositeWithdrawPage();
+	      		 	
+	      		 	fillcompositeChangeAcc();
+	      		 	
 		        	  server = ((Text)event.widget.getData("server")).getText();
 		        	  password = Security.createPasswordHash(((Text)event.widget.getData("password")).getText());
 		        	  securityMode = ((Button)event.widget.getData("securityMode")).getSelection();
@@ -134,19 +148,7 @@ public class CustomerClient {
 		        	  if (account != null) {
 		        		  CurrentBalance.setText(getBalance(account.getId()));
 		        		  stackLayoutMain.topControl = compositeMainClient;
-		        	  fillCompositeMainClient();
-	      		 	
-	        		  fillCompositeWelcomePage();
-	      		 	
-	      		 	fillcompositeViewTransaction();
-	      		 	
-	      		 	fillcompositePerformTransaction();
-	      		 	
-	      		 	fillcompositeDepositPage();
-	      		 	
-	      		 	fillcompositeWithdrawPage();
-	      		 	
-	      		 	fillcompositeChangeAcc();	
+		        	  	
 	      		 	
 	      		 	stackLayoutMain.topControl = compositeMainClient;
 	      		 	compositeMainClient.layout();
@@ -201,7 +203,7 @@ public class CustomerClient {
 			Label ChangeAccPWLabel = new Label(compositeChangeCustomerPage, SWT.NONE);
 			ChangeAccPWLabel.setText("Password:");
 			ChangeAccPWLabel.setLayoutData(griddataLabel);
-			Text ChangeAccPWText = new Text(compositeChangeCustomerPage, SWT.SINGLE | SWT.BORDER);
+			Text ChangeAccPWText = new Text(compositeChangeCustomerPage, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
 			ChangeAccPWText.setLayoutData(griddataText);
 			
 		    Label SepPerformChangeAcc2 = new Label(compositeChangeCustomerPage, SWT.SEPARATOR | SWT.HORIZONTAL);

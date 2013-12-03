@@ -70,7 +70,10 @@ public class CustomerClient {
 					,compositePerformTransaction, compositeDepositPage,compositeWithdrawPage, compositeChangeCustomerPage;
 	
 	static Button buttonLogin, buttonLogout, buttonMenuViewTransaction, buttonCommitViewTransaction, buttonMenuPerformPage, buttonMenuDepositPage, buttonMenuChangeCustomer,
-					 buttonMenuWithdrawPage, buttonCommitWithdraw, buttonCommitDeposit, buttonCommitPerformTransaction, buttonCommitPDF, buttonCommitChangeCustomer;
+					 buttonMenuWithdrawPage, buttonCommitWithdraw, buttonCommitDeposit, buttonCommitPerformTransaction, buttonCommitPDF, buttonCommitChangeCustomer,
+					 ButtonSecurityMode;
+	
+	static Text ServerText, UserText, PasswordText;
 	
 	static Image imageLogo, imageSafeHouse;//imageTablePull;
 	
@@ -125,6 +128,25 @@ public class CustomerClient {
 		    buttonLogin.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
       		 	
+		        	buttonLoginListenerAdd();
+		        	
+			        }
+			      });
+		    
+		    //Events
+		    
+		    shell.pack();
+		    shell.open();
+		    while (!shell.isDisposed()) {
+		      if (!display.readAndDispatch()) {
+		        display.sleep();
+		      }
+		    }
+		    display.dispose();
+}
+
+	 private static void buttonLoginListenerAdd() {
+		 
 		        	if(notFirstTimer==false){
 			        	fillCompositeMainClient();
 		      		 	
@@ -143,10 +165,10 @@ public class CustomerClient {
 		      		 	notFirstTimer = true;
 		        	}
 		        	
-		        	  server = ((Text)event.widget.getData("server")).getText();
-		        	  password = Security.createPasswordHash(((Text)event.widget.getData("password")).getText());
-		        	  securityMode = ((Button)event.widget.getData("securityMode")).getSelection();
-		        	  int accountId = Convert.toInt(((Text)event.widget.getData("user")).getText());
+		        	  server = ((Text)ServerText).getText();
+		        	  password = Security.createPasswordHash(((Text)PasswordText).getText());
+		        	  securityMode = ((Button)ButtonSecurityMode).getSelection();
+		        	  int accountId = Convert.toInt(((Text)UserText).getText());
 		        	  if (securityMode)
 		        		  customer = getCustomer(accountId);
 		        	  if (customer != null || !securityMode)
@@ -164,22 +186,10 @@ public class CustomerClient {
 				        	shell.layout();
 		        	  }
 		        	  shell.layout();
-			        }
-			      });
-		    
-		    //Events
-		    
-		    shell.pack();
-		    shell.open();
-		    while (!shell.isDisposed()) {
-		      if (!display.readAndDispatch()) {
-		        display.sleep();
-		      }
-		    }
-		    display.dispose();
-}
+			      
+	}
 
-	 private static void fillcompositeChangeAcc(){
+	private static void fillcompositeChangeAcc(){
 		 
 		 GridData ChangeAccCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);		    
 		 ChangeAccCompositeData.horizontalSpan = 2;
@@ -716,7 +726,8 @@ public class CustomerClient {
 			    ServerLabel.setText("Server:");
 			    ServerLabel.setLayoutData(griddataDescription);
 		    
-		    final Text ServerText = new Text(compositeLogin,SWT.BORDER);
+//		    final Text 
+		    ServerText = new Text(compositeLogin,SWT.BORDER);
 		    	ServerText.setText("http://localhost:9998");
 		    	ServerText.setLayoutData(griddataTexts);
 		    
@@ -724,14 +735,16 @@ public class CustomerClient {
 			    UserLabel.setText("Account:");
 			    UserLabel.setLayoutData(griddataDescription);
 		    
-		    final Text UserText = new Text(compositeLogin,SWT.BORDER);
+//		    final Text 
+		    UserText = new Text(compositeLogin,SWT.BORDER);
 		    	UserText.setLayoutData(griddataTexts);
 		    
 		    final Label PasswortLabel = new Label(compositeLogin, SWT.NONE);
 			    PasswortLabel.setText("Password:");
 			    PasswortLabel.setLayoutData(griddataDescription);
 		    
-		    final Text PasswordText = new Text(compositeLogin,SWT.BORDER | SWT.PASSWORD);
+//		    final Text 
+			    PasswordText = new Text(compositeLogin,SWT.BORDER | SWT.PASSWORD);
 		    	PasswordText.setLayoutData(griddataTexts);
 		    
 	    	PasswordText.setVisible(false);
@@ -757,7 +770,8 @@ public class CustomerClient {
 			buttonLogin.setText("Login NOW!");
 			buttonLogin.setLayoutData(griddataLoginButton);
 			
-			final Button ButtonSecurityMode = new Button(compositeLogin, SWT.CHECK);
+//			final Button 
+			ButtonSecurityMode = new Button(compositeLogin, SWT.CHECK);
 			ButtonSecurityMode.setText("SecurityMode");
 			ButtonSecurityMode.setBackground(new Color(display,200,200,200));
 			//griddataLoginButton.horizontalSpan = 4;
@@ -793,47 +807,8 @@ public class CustomerClient {
 				public void keyReleased(org.eclipse.swt.events.KeyEvent e)
 				{
 					if(e.keyCode == 13)
-					{			      		 	
-				        	if(notFirstTimer==false){
-					        	fillCompositeMainClient();
-				      		 	
-				        		fillCompositeWelcomePage();
-				      		 	
-				      		 	fillcompositeViewTransaction();
-				      		 	
-				      		 	fillcompositePerformTransaction();
-				      		 	
-				      		 	fillcompositeDepositPage();
-				      		 	
-				      		 	fillcompositeWithdrawPage();
-				      		 	
-				      		 	fillcompositeChangeAcc();
-				      		 	
-				      		 	notFirstTimer = true;
-				        	}
-				        	
-				        	  server = ((Text)ServerText).getText();
-				        	  password = Security.createPasswordHash(((Text)PasswordText).getText());
-				        	  securityMode = ((Button)ButtonSecurityMode).getSelection();
-				        	  int accountId = Convert.toInt(((Text)UserText).getText());
-				        	  if (securityMode)
-				        		  customer = getCustomer(accountId);
-				        	  if (customer != null || !securityMode)
-				        		  account = getAccount(accountId);
-				        	      
-				        	  if (account != null) {
-				        		  CurrentBalance.setText(getBalance(account.getId()));
-				        		  stackLayoutMain.topControl = compositeMainClient;
-				        	  	
-						        	
-			      		 	
-						        	stackLayoutMain.topControl = compositeMainClient;
-						        	compositeMainClient.layout();
-						        	shell.pack();	   
-						        	shell.layout();
-				        	  }
-				        	  shell.layout();
-					        
+					{		
+						buttonLoginListenerAdd();
 					}
 				}
 		    });
@@ -843,45 +818,7 @@ public class CustomerClient {
 				{
 					if(e.keyCode == 13)
 					{
-						if(notFirstTimer==false){
-				        	fillCompositeMainClient();
-			      		 	
-			        		fillCompositeWelcomePage();
-			      		 	
-			      		 	fillcompositeViewTransaction();
-			      		 	
-			      		 	fillcompositePerformTransaction();
-			      		 	
-			      		 	fillcompositeDepositPage();
-			      		 	
-			      		 	fillcompositeWithdrawPage();
-			      		 	
-			      		 	fillcompositeChangeAcc();
-			      		 	
-			      		 	notFirstTimer = true;
-			        	}
-			        	
-						server = ((Text)ServerText).getText();
-			        	  password = Security.createPasswordHash(((Text)PasswordText).getText());
-			        	  securityMode = ((Button)ButtonSecurityMode).getSelection();
-			        	  int accountId = Convert.toInt(((Text)UserText).getText());
-			        	  if (securityMode)
-			        		  customer = getCustomer(accountId);
-			        	  if (customer != null || !securityMode)
-			        		  account = getAccount(accountId);
-			        	      
-			        	  if (account != null) {
-			        		  CurrentBalance.setText(getBalance(account.getId()));
-			        		  stackLayoutMain.topControl = compositeMainClient;
-			        	  	
-					        	
-		      		 	
-					        	stackLayoutMain.topControl = compositeMainClient;
-					        	compositeMainClient.layout();
-					        	shell.pack();	   
-					        	shell.layout();
-			        	  }
-			        	  shell.layout();
+						buttonLoginListenerAdd();
 					}
 				}
 		    });

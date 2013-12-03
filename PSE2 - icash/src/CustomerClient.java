@@ -942,6 +942,7 @@ public static Account getAccount(int number) {
 	
 	String[] name;
 	if (status == 200) {
+		LabelStatusLine.setText(getMessage(status));
 		JSONObject jo = new JSONObject(cr.getEntity(String.class));
 		Account a = new Account();
 		a.setId(Convert.toInt(jo.getString("number")));

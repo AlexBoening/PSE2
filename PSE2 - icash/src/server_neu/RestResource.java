@@ -829,7 +829,7 @@ public class RestResource {
 			Administrator adminLogin = new Administrator(adminIdLogin);
 			if (adminLogin.getId() == 0)
 				return Response.status(404).build();			// Admin does not exist
-			if (adminLogin.getPassword().equals(password)) {
+			if (adminLogin.getPassword().equals(passwordLogin)) {
 				Customer c = new Customer(firstName, lastName, password);
 				JSONObject jo = new JSONObject();
 				jo.put("id", c.getId());
@@ -865,7 +865,7 @@ public class RestResource {
 			Administrator adminLogin = new Administrator(adminIdLogin);
 			if (adminLogin.getId() == 0)
 				return Response.status(404).build();			// Admin does not exist
-			if (adminLogin.getPassword().equals(password)) {
+			if (adminLogin.getPassword().equals(passwordLogin)) {
 				Administrator a = new Administrator(firstName, lastName, password);
 				JSONObject jo = new JSONObject();
 				jo.put("id", a.getId());

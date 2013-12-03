@@ -88,22 +88,6 @@ public class CustomerClient {
 	private static Label LabelStatusLineName;
 	private static boolean notFirstTimer;	   
 	
-/*    GridData Captiondata = new GridData(GridData.FILL, GridData.FILL,true, false);
-    Captiondata.horizontalSpan = 2;
-    Captiondata.horizontalAlignment = GridData.CENTER;
-		    
-    GridData Textdata = new GridData(GridData.BEGINNING, GridData.CENTER,false, false);
-	Textdata.widthHint = 400;
-	Textdata.verticalIndent= 15;
-	
-    GridData Labeldata = new GridData(GridData.BEGINNING, GridData.CENTER,false, false);
-    Labeldata.widthHint = 150;
-    Labeldata.verticalIndent= 15;
-    		    
-    GridData Separatordata = new GridData(GridData.FILL, GridData.FILL,true, false);
-    Separatordata.horizontalSpan = 2;
-    Separatordata.verticalIndent= 15;*/
-	
 	 public static void main(String[] args) {
 		 
 		 	initializeShell();
@@ -1149,8 +1133,15 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		if (securityMode)
 			f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
-		int status = cr.getStatus();
+		ClientResponse cr = null;
+		int status;
+		try {
+			cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
 		LabelStatusLine.setText(getMessage("Change Account", status));
 		if (cr.getStatus() == 200) {
 			customer.setFirstName(firstName);
@@ -1166,9 +1157,16 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		Customer c = getCustomer(a.getId());
 		
 		Bank b = new Bank();
-		String POSTString = server + "/rest/s/getBank" + "?account=" + a.getId() + "&passwortHash=" + password; 
-		ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
-		int status = cr.getStatus();
+		String GETString = server + "/rest/s/getBank" + "?account=" + a.getId() + "&passwortHash=" + password; 
+		ClientResponse cr = null;
+		int status;
+		try {
+			cr = Client.create().resource( GETString ).post( ClientResponse.class);
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
 		LabelStatusLineLogin.setText(getMessage("Print Transactions", status));
 		
 		if (status == 200) {
@@ -1181,9 +1179,15 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 			return;
 		
 		AccountType at = new AccountType();
-		POSTString = server + "/rest/s/getAccountType" + "?account=" + a.getId() + "&passwortHash=" + password; 
-		cr = Client.create().resource( POSTString ).get( ClientResponse.class );
-		status = cr.getStatus();
+		GETString = server + "/rest/s/getAccountType" + "?account=" + a.getId() + "&passwortHash=" + password; 
+		cr = null;
+		try {
+			cr = Client.create().resource( GETString ).post( ClientResponse.class);
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
 		LabelStatusLineLogin.setText(getMessage("Print Transactions", status));
 		
 		if (status == 200) {

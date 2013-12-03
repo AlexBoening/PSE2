@@ -165,6 +165,8 @@ public class CustomerClient {
 				        	
 	      		 	
 				        	stackLayoutMain.topControl = compositeMainClient;
+				        	stackLayoutContent.topControl = compositeWelcomePage;
+					        compositeContent.layout();
 				        	compositeMainClient.layout();
 				        	shell.pack();	   
 				        	shell.layout();

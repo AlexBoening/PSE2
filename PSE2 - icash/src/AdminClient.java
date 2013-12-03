@@ -912,8 +912,8 @@ public class AdminClient {
 		
 		    Label labelForImage = new Label(compositeWelcomePage, SWT.None);
 		    final GridData griddataCaption = new GridData(GridData.FILL, GridData.FILL,false, false);
-		    griddataCaption.heightHint=236;
-		    griddataCaption.widthHint=310;
+		    griddataCaption.heightHint=400;
+		    griddataCaption.widthHint=760;
 		    
 		    labelForImage.setBackgroundImage(imageSafeHouse);
 		    labelForImage.setLayoutData(griddataCaption);

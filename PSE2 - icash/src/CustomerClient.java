@@ -960,7 +960,17 @@ public static Account getAccount(int number) {
 		for (int i=0; i<ja.length(); i++) {
 			Transaction t = new Transaction();
 			JSONObject transaction = ja.getJSONObject(i);
-			t.setAmount(Convert.toCent(transaction.getString("amount")));
+			try {
+				t.setAmount(Convert.toCent(transaction.getString("amount")));
+			}
+				catch (Exception e1) {
+					try {
+						t.setAmount(Convert.toCent("" + transaction.getDouble("amount")));
+					}
+					catch (Exception e2) {
+						t.setAmount(0);
+					}
+				}
 			t.setDate(Date.valueOf(transaction.getString("transactionDate").substring(0, 10)));
 			t.setDescription(transaction.getString("reference"));
     	

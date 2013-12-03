@@ -886,7 +886,7 @@ public class AdminClient {
 		    
 	    buttonMenuDeactivateAccount = new Button(compositeNavigation, SWT.PUSH);
 		    buttonMenuDeactivateAccount.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		    buttonMenuDeactivateAccount.setText("Deactivate Account");
+		    buttonMenuDeactivateAccount.setText("Manage Accounts");
 		    buttonMenuDeactivateAccount.setBackground(new Color(display, 31, 78, 121));
 		    buttonMenuDeactivateAccount.setLayoutData(griddataMenuContent);
 	    
@@ -1269,18 +1269,25 @@ public class AdminClient {
 // Methoden zur Datenübertragung an die RestResource
 	
 	public static Administrator getAdmin(int id) {
-		String POSTString;
+		String GETString;
 		if (securityMode) {
-			POSTString = server + "/rest/s/getAdmin" + "?adminID=" + id + "&passwortHash=" + password; 
+			GETString = server + "/rest/s/getAdmin" + "?adminID=" + id + "&passwortHash=" + password; 
 		} else {
-			POSTString = server + "/rest/getAdmin" + "?adminID=" + id;
+			GETString = server + "/rest/getAdmin" + "?adminID=" + id;
 		}
 		
-		if (!POSTString.isEmpty()) {
-			ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
-			int status = cr.getStatus();
+		if (!GETString.isEmpty()) {
+			ClientResponse cr = null;
+			int status;
+			try {
+				cr = Client.create().resource( GETString ).get( ClientResponse.class);
+				status = cr.getStatus();
+			}
+			catch (Exception e) {
+				status = 500;
+			}
 			LabelStatusLine.setText(getMessage("Get Administrator", status));
-			if (cr.getStatus() == 200) {
+			if (status == 200) {
 				
 				JSONObject jo = new JSONObject(cr.getEntity(String.class));
 				
@@ -1345,10 +1352,17 @@ public class AdminClient {
 		f.add("adminIdLogin", idLogin);
 		f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
-		int status = cr.getStatus();
+		ClientResponse cr = null;
+		int status;
+		try {
+			cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
 		LabelStatusLine.setText(getMessage("Create Customer", status));
-		if (cr.getStatus() == 200) {
+		if (status == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			int id = jo.getInt("id");
 			return id;
@@ -1368,10 +1382,17 @@ public class AdminClient {
 		f.add("adminIdLogin", idLogin);
 		f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
-		int status = cr.getStatus();
+		ClientResponse cr = null;
+		int status;
+		try {
+			cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
 		LabelStatusLine.setText(getMessage("Create Administrator", status));
-		if (cr.getStatus() == 200) {
+		if (status == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			int id = jo.getInt("id");
 			return id;
@@ -1392,10 +1413,17 @@ public class AdminClient {
 		f.add("adminIdLogin", idLogin);
 		f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
-		int status = cr.getStatus();
+		ClientResponse cr = null;
+		int status;
+		try {
+			cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
 		LabelStatusLine.setText(getMessage("Create Account", status));
-		if (cr.getStatus() == 200) {
+		if (status == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			return jo.getInt("id");
 		}
@@ -1412,10 +1440,17 @@ public class AdminClient {
 		f.add("adminIdLogin", idLogin);
 		f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
-		int status = cr.getStatus();
+		ClientResponse cr = null;
+		int status;
+		try {
+			cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
 		LabelStatusLine.setText(getMessage("Create Account Type", status));
-		if (cr.getStatus() == 200) {
+		if (status == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			return jo.getInt("id");
 		}
@@ -1432,10 +1467,17 @@ public class AdminClient {
 		f.add("idLogin", idLogin);
 		f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
-		int status = cr.getStatus();
+		ClientResponse cr = null;
+		int status;
+		try {
+			cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
 		LabelStatusLine.setText(getMessage("Create Bank", status));
-		if (cr.getStatus() == 200) {
+		if (status == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			return jo.getInt("id");
 		}
@@ -1446,11 +1488,18 @@ public class AdminClient {
 		
 		String GETString = server + "/rest/s/getData" + "?adminID=" + id + "&passwortHash=" + password; 
 		
-		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
-		int status = cr.getStatus();
+		ClientResponse cr = null;
+		int status;
+		try {
+			cr = Client.create().resource( GETString ).get( ClientResponse.class);
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
 		//LabelStatusLine.setText(getMessage(status));
 		
-		if (cr.getStatus() == 200) {
+		if (status == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			
 			JSONArray banks = jo.getJSONArray("banks");
@@ -1508,10 +1557,17 @@ public class AdminClient {
 		f.add("idLogin", idLogin);
 		f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
-		int status = cr.getStatus();
+		ClientResponse cr;
+		int status;
+		try {
+			cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
 		LabelStatusLine.setText(getMessage("Manage Accounts", status));
-		return cr.getStatus();
+		return status;
 	}
 	
 	public static int setSecurityMode(int idLogin, boolean securityMode) {
@@ -1523,8 +1579,15 @@ public class AdminClient {
 		f.add("idLogin", idLogin);
 		f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
-		int status = cr.getStatus();
+		ClientResponse cr = null;
+		int status;
+		try {
+			cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
 		LabelStatusLine.setText(getMessage("Set Security Mode", status));
 		return cr.getStatus();
 	}
@@ -1533,10 +1596,17 @@ public class AdminClient {
 		
 		String GETString = server + "/rest/s/getSecurityMode?idLogin=" + idLogin + "&passwortHash=" + password;
 		
-		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
-		int status = cr.getStatus();
+		ClientResponse cr = null;
+		int status;
+		try {
+			cr = Client.create().resource( GETString ).get( ClientResponse.class);
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
 		LabelStatusLine.setText(getMessage("Get Security Mode", status));
-		if (cr.getStatus() == 200) {
+		if (status == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			return jo.getBoolean("securityMode");
 		}
@@ -1552,10 +1622,17 @@ public class AdminClient {
 		f.add("idLogin", idLogin);
 		f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
-		int status = cr.getStatus();
+		ClientResponse cr;
+		int status;
+		try {
+			cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
 		LabelStatusLine.setText(getMessage("Pay Interests", status));
-		return cr.getStatus();
+		return status;
 	}
 	
 public static void changeAdmin(int idLogin, String firstName, String lastName, String passwordNew) {
@@ -1570,10 +1647,18 @@ public static void changeAdmin(int idLogin, String firstName, String lastName, S
 		if (securityMode)
 			f.add("passwortHash", password);
 		
-		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
-		int status = cr.getStatus();
+		ClientResponse cr;
+		int status;
+		try {
+			cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
+		
 		LabelStatusLine.setText(getMessage("Change Administrator", status));
-		if (cr.getStatus() == 200) {
+		if (status == 200) {
 			admin.setFirstName(firstName);
 			admin.setLastName(lastName);
 			admin.setPassword(passwordNew);
@@ -1592,7 +1677,13 @@ public static int changeAccountType(int idLogin, AccountType at) {
 	f.add("idLogin", idLogin);
 	f.add("passwortHash", password);
 	
-	ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+	ClientResponse cr;
+	try {
+		cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+	}
+	catch (Exception e) {
+		return 500;
+	}
 	int status = cr.getStatus();
 	LabelStatusLine.setText(getMessage("Change Account Type", status));
 	return cr.getStatus();

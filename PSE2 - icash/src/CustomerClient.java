@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Spinner;
@@ -715,7 +716,7 @@ public class CustomerClient {
 			    ServerLabel.setText("Server:");
 			    ServerLabel.setLayoutData(griddataDescription);
 		    
-		    Text ServerText = new Text(compositeLogin,SWT.BORDER);
+		    final Text ServerText = new Text(compositeLogin,SWT.BORDER);
 		    	ServerText.setText("http://localhost:9998");
 		    	ServerText.setLayoutData(griddataTexts);
 		    
@@ -723,7 +724,7 @@ public class CustomerClient {
 			    UserLabel.setText("Account:");
 			    UserLabel.setLayoutData(griddataDescription);
 		    
-		    Text UserText = new Text(compositeLogin,SWT.BORDER);
+		    final Text UserText = new Text(compositeLogin,SWT.BORDER);
 		    	UserText.setLayoutData(griddataTexts);
 		    
 		    final Label PasswortLabel = new Label(compositeLogin, SWT.NONE);
@@ -787,6 +788,103 @@ public class CustomerClient {
 	                }
 	            }
 	        });
+		    
+		    UserText.addKeyListener(new org.eclipse.swt.events.KeyAdapter() {
+				public void keyReleased(org.eclipse.swt.events.KeyEvent e)
+				{
+					if(e.keyCode == 13)
+					{			      		 	
+				        	if(notFirstTimer==false){
+					        	fillCompositeMainClient();
+				      		 	
+				        		fillCompositeWelcomePage();
+				      		 	
+				      		 	fillcompositeViewTransaction();
+				      		 	
+				      		 	fillcompositePerformTransaction();
+				      		 	
+				      		 	fillcompositeDepositPage();
+				      		 	
+				      		 	fillcompositeWithdrawPage();
+				      		 	
+				      		 	fillcompositeChangeAcc();
+				      		 	
+				      		 	notFirstTimer = true;
+				        	}
+				        	
+				        	  server = ((Text)ServerText).getText();
+				        	  password = Security.createPasswordHash(((Text)PasswordText).getText());
+				        	  securityMode = ((Button)ButtonSecurityMode).getSelection();
+				        	  int accountId = Convert.toInt(((Text)UserText).getText());
+				        	  if (securityMode)
+				        		  customer = getCustomer(accountId);
+				        	  if (customer != null || !securityMode)
+				        		  account = getAccount(accountId);
+				        	      
+				        	  if (account != null) {
+				        		  CurrentBalance.setText(getBalance(account.getId()));
+				        		  stackLayoutMain.topControl = compositeMainClient;
+				        	  	
+						        	
+			      		 	
+						        	stackLayoutMain.topControl = compositeMainClient;
+						        	compositeMainClient.layout();
+						        	shell.pack();	   
+						        	shell.layout();
+				        	  }
+				        	  shell.layout();
+					        
+					}
+				}
+		    });
+		    
+		    PasswordText.addKeyListener(new org.eclipse.swt.events.KeyAdapter() {
+				public void keyReleased(org.eclipse.swt.events.KeyEvent e)
+				{
+					if(e.keyCode == 13)
+					{
+						if(notFirstTimer==false){
+				        	fillCompositeMainClient();
+			      		 	
+			        		fillCompositeWelcomePage();
+			      		 	
+			      		 	fillcompositeViewTransaction();
+			      		 	
+			      		 	fillcompositePerformTransaction();
+			      		 	
+			      		 	fillcompositeDepositPage();
+			      		 	
+			      		 	fillcompositeWithdrawPage();
+			      		 	
+			      		 	fillcompositeChangeAcc();
+			      		 	
+			      		 	notFirstTimer = true;
+			        	}
+			        	
+						server = ((Text)ServerText).getText();
+			        	  password = Security.createPasswordHash(((Text)PasswordText).getText());
+			        	  securityMode = ((Button)ButtonSecurityMode).getSelection();
+			        	  int accountId = Convert.toInt(((Text)UserText).getText());
+			        	  if (securityMode)
+			        		  customer = getCustomer(accountId);
+			        	  if (customer != null || !securityMode)
+			        		  account = getAccount(accountId);
+			        	      
+			        	  if (account != null) {
+			        		  CurrentBalance.setText(getBalance(account.getId()));
+			        		  stackLayoutMain.topControl = compositeMainClient;
+			        	  	
+					        	
+		      		 	
+					        	stackLayoutMain.topControl = compositeMainClient;
+					        	compositeMainClient.layout();
+					        	shell.pack();	   
+					        	shell.layout();
+			        	  }
+			        	  shell.layout();
+					}
+				}
+		    });
 		    
 	 }
 	

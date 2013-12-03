@@ -75,7 +75,7 @@ public class CustomerClient {
 	
 	static Text ServerText, UserText, PasswordText;
 	
-	static Image imageLogo, imageSafeHouse;//imageTablePull;
+	static Image imageLogo, imageSafeHouse, imageWindow;//imageTablePull;
 	
 	private static boolean securityMode = false;
 	private static Customer customer;
@@ -900,6 +900,11 @@ public class CustomerClient {
 		display = new Display();
 //		    final Shell shell = new Shell(display);
 	 	shell = new Shell(display);
+	 	shell.setText("Customer Client - iCash");
+	 	final  InputStream stream3 = CustomerClient.class.getResourceAsStream("Dollarzeichen.jpg");
+	    imageWindow = new Image(Display.getDefault(), stream3);
+	 	
+	    shell.setImage(imageWindow);
 	    layoutMainClient = new GridLayout(2, false);
 	    layoutLogin = new GridLayout(5,false);
 //		    final StackLayout stackLoginLayout = new StackLayout();

@@ -68,7 +68,7 @@ public class AdminClient {
 	static Button buttonLogin, buttonLogout, buttonMenuDeactivateAccount, buttonMenuCreateAccount, buttonMenuCreateCustomer, buttonMenuSetSecurityMode, buttonMenuCreateAccountType, buttonMenuChangeAccountType, buttonMenuPayInterests
 				  , buttonMenuCreateAdmin, buttonMenuChangeAdmin, buttonDeactivateAccount, buttonActivateAccount, buttonCreateAccount, buttonCreateCustomer, buttonCreateAdmin, buttonCreateAccountType, buttonChangeAccountType, buttonChangeAdmin, buttonPayInterests ;
 	
-	static Image imageLogo, imageSafeHouse;
+	static Image imageLogo, imageSafeHouse, imageWindow;
 	
 	static boolean notFirstTimer;
 	
@@ -1249,6 +1249,11 @@ public class AdminClient {
 		
 		display = new Display();
 	 	shell = new Shell(display);
+	 	shell.setText("Admin Frontend - iCash");
+	 	final  InputStream stream3 = CustomerClient.class.getResourceAsStream("Dollarzeichen.jpg");
+	    imageWindow = new Image(Display.getDefault(), stream3);
+	 	
+	    shell.setImage(imageWindow);
 	    layoutMainClient = new GridLayout(2, false);
 	    layoutLogin = new GridLayout(5,false);
 	    stackLayoutMain = new StackLayout();

@@ -959,7 +959,7 @@ public static Account getAccount(int number) {
 	ClientResponse cr = null;
 	int status;
 	try {
-		cr = Client.create().resource( GETString ).post( ClientResponse.class);
+		cr = Client.create().resource( GETString ).get( ClientResponse.class);
 		status = cr.getStatus();
 	}
 	catch (Exception e) {
@@ -1068,7 +1068,7 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		ClientResponse cr = null;
 		int status;
 		try {
-			cr = Client.create().resource( GETString ).post( ClientResponse.class);
+			cr = Client.create().resource( GETString ).get( ClientResponse.class);
 			status = cr.getStatus();
 		}
 		catch (Exception e) {
@@ -1091,7 +1091,7 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 			ClientResponse cr = null;
 			int status;
 			try {
-				cr = Client.create().resource( GETString ).post( ClientResponse.class);
+				cr = Client.create().resource( GETString ).get( ClientResponse.class);
 				status = cr.getStatus();
 			}
 			catch (Exception e) {
@@ -1132,7 +1132,7 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		ClientResponse cr = null;
 		int status;
 		try {
-			cr = Client.create().resource( GETString ).post( ClientResponse.class);
+			cr = Client.create().resource( GETString ).get( ClientResponse.class);
 			status = cr.getStatus();
 		}
 		catch (Exception e) {
@@ -1197,7 +1197,7 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		ClientResponse cr = null;
 		int status;
 		try {
-			cr = Client.create().resource( GETString ).post( ClientResponse.class);
+			cr = Client.create().resource( GETString ).get( ClientResponse.class);
 			status = cr.getStatus();
 		}
 		catch (Exception e) {
@@ -1218,7 +1218,7 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		GETString = server + "/rest/s/getAccountType" + "?account=" + a.getId() + "&passwortHash=" + password; 
 		cr = null;
 		try {
-			cr = Client.create().resource( GETString ).post( ClientResponse.class);
+			cr = Client.create().resource( GETString ).get( ClientResponse.class);
 			status = cr.getStatus();
 		}
 		catch (Exception e) {

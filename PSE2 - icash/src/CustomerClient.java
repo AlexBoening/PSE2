@@ -953,11 +953,18 @@ private static void kalkuliereSpaltenbreite(Table tabelle, int minBreite)
 
 public static Account getAccount(int number) {
 	
-	String POSTString = server + "/rest/getAccount?number=" + number;
+	String GETString = server + "/rest/getAccount?number=" + number;
 	if (securityMode) 
-		POSTString = server + "/rest/s/getAccount?number=" + number + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
-	ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
-	int status = cr.getStatus();
+		GETString = server + "/rest/s/getAccount?number=" + number + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
+	ClientResponse cr = null;
+	int status;
+	try {
+		cr = Client.create().resource( GETString ).post( ClientResponse.class);
+		status = cr.getStatus();
+	}
+	catch (Exception e) {
+		status = 500;
+	}
 	
 	LabelStatusLineLogin.setText(getMessage("Get Account", status));
 	
@@ -1041,17 +1048,32 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		POSTString = server + "/rest/s/transferMoney";
 	}
 	
-	ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
-	LabelStatusLine.setText(getMessage("Get Bank", cr.getStatus()));
+	ClientResponse cr = null;
+	int status;
+	try {
+		cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
+		status = cr.getStatus();
+	}
+	catch (Exception e) {
+		status = 500;
+	}
+	LabelStatusLine.setText(getMessage("Get Bank", status));
 }
 
 	public static int getBankAccount(int id) {
-		String POSTString = server + "/rest/getBankAccount" + "?account=" + id;
+		String GETString = server + "/rest/getBankAccount" + "?account=" + id;
 		if (securityMode) {
-			POSTString = server + "/rest/s/getBankAccount" + "?account=" + id + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
+			GETString = server + "/rest/s/getBankAccount" + "?account=" + id + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
 		}
-		ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
-		int status = cr.getStatus();
+		ClientResponse cr = null;
+		int status;
+		try {
+			cr = Client.create().resource( GETString ).post( ClientResponse.class);
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
 		LabelStatusLine.setText(getMessage("Get Bank", status));
 		if (status == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
@@ -1062,12 +1084,19 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 	
 	public static String getBalance(int id) {
 		
-		String POSTString = server + "/rest/getBalance" + "?account=" + id;
+		String GETString = server + "/rest/getBalance" + "?account=" + id;
 		if (securityMode) {
-			POSTString = server + "/rest/s/getBalance" + "?account=" + id + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
+			GETString = server + "/rest/s/getBalance" + "?account=" + id + "&kundenID=" + customer.getId() + "&passwortHash=" + password; 
 
-			ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
-			int status = cr.getStatus();
+			ClientResponse cr = null;
+			int status;
+			try {
+				cr = Client.create().resource( GETString ).post( ClientResponse.class);
+				status = cr.getStatus();
+			}
+			catch (Exception e) {
+				status = 500;
+			}
 		
 			if (status == 200) {
 				JSONObject jo = new JSONObject(cr.getEntity(String.class));
@@ -1092,16 +1121,23 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 	
 	public static Customer getCustomer(int id) {
 		
-		String POSTString;
+		String GETString;
 		if (securityMode) {
-			POSTString = server + "/rest/s/getCustomer" + "?account=" + id + "&passwortHash=" + password; 
+			GETString = server + "/rest/s/getCustomer" + "?account=" + id + "&passwortHash=" + password; 
 		}
 		else {
-			POSTString = server + "/rest/getCustomer" + "?account=" + id;
+			GETString = server + "/rest/getCustomer" + "?account=" + id;
 		}
 		
-		ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
-		int status = cr.getStatus();
+		ClientResponse cr = null;
+		int status;
+		try {
+			cr = Client.create().resource( GETString ).post( ClientResponse.class);
+			status = cr.getStatus();
+		}
+		catch (Exception e) {
+			status = 500;
+		}
 		
 		if (status == 200) {
 			LabelStatusLine.setText(getMessage("Get Customer", 200));

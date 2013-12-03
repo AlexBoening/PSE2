@@ -70,6 +70,8 @@ public class AdminClient {
 	
 	static Image imageLogo, imageSafeHouse;
 	
+	static boolean notFirstTimer;
+	
 	private static boolean securityMode = true;
 	private static Administrator admin;
 	private static String password;
@@ -226,6 +228,10 @@ public class AdminClient {
 		    buttonLogout.addSelectionListener(new SelectionAdapter() {
 		    	public void widgetSelected(SelectionEvent arg0) {
 		    		display.dispose();
+		    		stackLayoutMain.topControl=compositeLogin;
+		    		notFirstTimer=true;
+		    		shell.pack();
+		    		shell.layout();
 		    	}
 		    });
 		    

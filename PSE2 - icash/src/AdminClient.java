@@ -72,6 +72,8 @@ public class AdminClient {
 	
 	static boolean notFirstTimer;
 	
+	static Text ServerText, UserText, PasswordText;
+	
 	private static boolean securityMode = true;
 	private static Administrator admin;
 	private static String password;
@@ -95,25 +97,7 @@ public class AdminClient {
 		 	
 		 	fillCompositeLogin();
 		 	
-		 	fillCompositeMainClient();
 		 	
-		 	fillCompositeWelcomePage();
-		 	
-		 	fillCompositeAccountPage();
-		 	
-		 	fillCompositePayInterestPage();
-		 	
-		 	fillCompositeCreateAccountPage();
-		 	
-		 	fillCompositeCreateCustomerPage();
-		 	
-		 	fillCompositeCreateAdminPage();
-		 	
-		 	fillCompositeCreateAccountTypePage();
-		 	
-		 	fillCompositeChangeAdminPage();
-		 	
-		 	fillCompositeChangeAccountTypePage();
 		 	
 		 	//set WelcomePage to be the first thing to see
 		 	stackLayoutMain.topControl=compositeLogin;
@@ -125,200 +109,9 @@ public class AdminClient {
 		    buttonLogin.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
 
-	        	  server = ((Text)event.widget.getData("server")).getText();
-	        	  password = Security.createPasswordHash(((Text)event.widget.getData("password")).getText());
-	        	  int adminId = Convert.toInt(((Text)event.widget.getData("user")).getText());
-	        	  admin  = getAdmin(adminId);
-	        	  if (admin != null) {
-			          stackLayoutMain.topControl = compositeMainClient;
-			          shell.layout();
-	        	  }	        	  
+		        	buttonLoginListenerAdd();    	  
 			    }
 			   });
-		    
-		    buttonMenuDeactivateAccount.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {		   
-		    	    compositeAccountPage = new Composite(compositeContent, SWT.NONE);
-				    compositeAccountPage.setBackground(new Color(display,255,255,255));
-				    compositeAccountPage.setLayout(layoutMainClient);
-				    fillCompositeAccountPage();
-		        	stackLayoutContent.topControl = compositeAccountPage;
-		            compositeContent.layout();
-		        }
-		      });
-		    
-		    buttonMenuPayInterests.addListener(SWT.Selection, new Listener() {
-		    	
-		        public void handleEvent(Event event) {
-		        	compositePayInterestsPage = new Composite(compositeContent, SWT.NONE);
-					compositePayInterestsPage.setBackground(new Color(display,255,255,255));
-					compositePayInterestsPage.setLayout(layoutMainClient);
-					fillCompositePayInterestPage();
-		        	stackLayoutContent.topControl = compositePayInterestsPage;
-			        compositeContent.layout();
-			    }
-			});
-		    
-		    buttonMenuCreateAccount.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	compositeCreateAccountPage = new Composite(compositeContent, SWT.NONE);
-				    compositeCreateAccountPage.setBackground(new Color(display,255,255,255));
-				    compositeCreateAccountPage.setLayout(layoutMainClient);
-				    fillCompositeCreateAccountPage();
-		        	stackLayoutContent.topControl = compositeCreateAccountPage;
-			        compositeContent.layout();
-			    }
-			});
-		    
-		    buttonMenuCreateCustomer.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	stackLayoutContent.topControl = compositeCreateCustomerPage;
-			          compositeContent.layout();
-			        }
-			      });
-		    
-		    buttonMenuCreateAdmin.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	stackLayoutContent.topControl = compositeCreateAdminPage;
-			          compositeContent.layout();
-			        }
-			      });
-		    
-		    buttonMenuCreateAccountType.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	stackLayoutContent.topControl = compositeCreateAccountTypePage;
-			          compositeContent.layout();
-			        }
-			      });
-		    
-		    buttonMenuChangeAdmin.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	stackLayoutContent.topControl = compositeChangeAdminPage;
-			          compositeContent.layout();
-			        }
-			      });
-		    
-		    buttonMenuChangeAccountType.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	compositeChangeAccountTypePage = new Composite(compositeContent, SWT.NONE);
-					compositeChangeAccountTypePage.setBackground(new Color(display,255,255,255));
-					compositeChangeAccountTypePage.setLayout(layoutMainClient);
-					fillCompositeChangeAccountTypePage();
-		        	stackLayoutContent.topControl = compositeChangeAccountTypePage;
-			          compositeContent.layout();
-			        }
-			      });
-		    
-		    buttonMenuSetSecurityMode.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	boolean securityMode = false;
-		        	if (admin != null) {
-		        		securityMode = getSecurityMode(admin.getId());
-		        		int status = setSecurityMode(admin.getId(), !securityMode);
-		        		if (status == 200) 
-		        			securityMode = !securityMode;
-		        	}
-		        	if (securityMode)
-		        		((Button)event.widget).setText("Disable Security");
-		        	else
-		        		((Button)event.widget).setText("Enable Security");
-			        }
-			      });
-		    
-		    buttonLogout.addSelectionListener(new SelectionAdapter() {
-		    	public void widgetSelected(SelectionEvent arg0) {
-		    		display.dispose();
-		    		stackLayoutMain.topControl=compositeLogin;
-		    		notFirstTimer=true;
-		    		shell.pack();
-		    		shell.layout();
-		    	}
-		    });
-		    
-		    /*buttonDeactivateAccount.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	// doSomething
-			    }
-			      });
-		    
-		    buttonActivateAccount.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	// doSomething
-		        }
-			      });*/
-		    
-		    buttonCreateAccount.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {
-		        	try {
-		        	int bank = b[((Combo)event.widget.getData("bank")).getSelectionIndex()].getId();
-		        	int customer = c[((Combo)event.widget.getData("customer")).getSelectionIndex()].getId();
-		        	int administrator = a[((Combo)event.widget.getData("admin")).getSelectionIndex()].getId();
-		        	int accountType = at[((Combo)event.widget.getData("accountType")).getSelectionIndex()].getId();
-		        	int accountId = AdminClient.createAccount(admin.getId(), bank, customer, administrator, accountType);
-		        	if (accountId != 0) {
-		        		logger.info(new java.util.Date() + ": New AccountId = " + accountId);
-		        	} else {
-		        		logger.info(new java.util.Date() + ": No new AccountId available at this point");
-		        	}
-		        	}
-		        	catch (ArrayIndexOutOfBoundsException e) {
-		        		logger.info(new java.util.Date() + ": Please complete your selection!");
-		        	}
-		        }
-	        });
-		    
-		    buttonCreateCustomer.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {		        		        	
-		        	String firstName = (((Text)event.widget.getData("firstName")).getText());
-		        	String lastName  = (((Text)event.widget.getData("lastName")).getText());
-		        	String password  = Security.createPasswordHash((((Text)event.widget.getData("password")).getText()));
-		        	if (!(firstName.isEmpty() || lastName.isEmpty() || password.isEmpty())) {
-		        	int customerId = createCustomer(admin.getId(), firstName, lastName, password);
-		        		if (customerId != 0) {
-		        			logger.info(new java.util.Date() + ": New CustomerId = " + customerId);
-		        		} else {
-		        			logger.info(new java.util.Date() + ": No new CustomerId available at this point");
-		        		}
-		        	}
-		        	else
-		        		logger.info(new java.util.Date() + ": Please fill in all required fields!");
-        	  	}
-	        });
-		    
-		    buttonCreateAdmin.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {		        		        	
-		        	String firstName = (((Text)event.widget.getData("firstName")).getText());
-		        	String lastName  = (((Text)event.widget.getData("lastName")).getText());
-		        	String password  = Security.createPasswordHash((((Text)event.widget.getData("password")).getText()));
-		        	if (!(firstName.isEmpty() || lastName.isEmpty() || password.isEmpty())) {
-		        	int administratorId = createAdministrator(admin.getId(), firstName, lastName, password);
-		        		if (administratorId != 0) {
-		        			logger.info(new java.util.Date() + ": New AdministratorId = " + administratorId);
-		        		} else {
-		        			logger.info(new java.util.Date() + ": No new AdministratorId available at this point");
-		        		}
-		        	}
-		        	else
-		        		logger.info(new java.util.Date() + ": Please fill in all required fields!");
-        	  	}
-	        });
-		    
-		    buttonCreateAccountType.addListener(SWT.Selection, new Listener() {
-		        public void handleEvent(Event event) {		        		        	
-		        	String description = (((Text)event.widget.getData("description")).getText());
-		        	String interestRate  = (((Text)event.widget.getData("interestRate")).getText());
-		        	if (!(description.isEmpty() || interestRate.isEmpty())) {
-		        	int accountTypeId = createAccountType(admin.getId(), interestRate, description);
-		        		if (accountTypeId != 0) {
-		        			logger.info(new java.util.Date() + ": New AccountTypeId = " + accountTypeId);
-		        		} else {
-		        			logger.info(new java.util.Date() + ": No new AccountTypeId available at this point");
-		        		}
-		        	}
-		        	else
-		        		logger.info(new java.util.Date() + ": Please fill in all required fields!");
-        	  	}
-	        });
 		    
 		    //Events
 		    
@@ -332,6 +125,47 @@ public class AdminClient {
 		    display.dispose();
 }
 
+	 private static void buttonLoginListenerAdd() {
+
+     	if(notFirstTimer==false){
+     		fillCompositeMainClient();
+ 		 	
+ 		 	fillCompositeWelcomePage();
+ 		 	
+ 		 	fillCompositeAccountPage();
+ 		 	
+ 		 	fillCompositePayInterestPage();
+ 		 	
+ 		 	fillCompositeCreateAccountPage();
+ 		 	
+ 		 	fillCompositeCreateCustomerPage();
+ 		 	
+ 		 	fillCompositeCreateAdminPage();
+ 		 	
+ 		 	fillCompositeCreateAccountTypePage();
+ 		 	
+ 		 	fillCompositeChangeAdminPage();
+ 		 	
+ 		 	fillCompositeChangeAccountTypePage();
+ 		 	
+ 		 	notFirstTimer=true;
+     	}
+     	
+		 	  
+     	server = ((Text)ServerText).getText();
+     	password = Security.createPasswordHash(((Text)PasswordText).getText());
+     	int adminId = Convert.toInt(((Text)UserText).getText());
+	 	admin  = getAdmin(adminId);
+ 	    if (admin != null) {
+	          stackLayoutMain.topControl = compositeMainClient;
+	          shell.pack();	   
+	        	shell.layout();
+	         
+ 	    }
+	        	 shell.layout();
+	}
+	 
+	 
 	 private static void fillCompositeCreateCustomerPage() {
 		
 		 GridData CreateCustomerCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
@@ -376,7 +210,25 @@ public class AdminClient {
 		    buttonCreateCustomer.setLayoutData(griddataButton);
 			buttonCreateCustomer.setData("firstName",CreateCustomerTypeFirstname);
 		    buttonCreateCustomer.setData("lastName",CreateCustomerLastname);
-		    buttonCreateCustomer.setData("password",CreateCustomerInitPassword);	    
+		    buttonCreateCustomer.setData("password",CreateCustomerInitPassword);
+		    
+		    buttonCreateCustomer.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {		        		        	
+		        	String firstName = (((Text)event.widget.getData("firstName")).getText());
+		        	String lastName  = (((Text)event.widget.getData("lastName")).getText());
+		        	String password  = Security.createPasswordHash((((Text)event.widget.getData("password")).getText()));
+		        	if (!(firstName.isEmpty() || lastName.isEmpty() || password.isEmpty())) {
+		        	int customerId = createCustomer(admin.getId(), firstName, lastName, password);
+		        		if (customerId != 0) {
+		        			logger.info(new java.util.Date() + ": New CustomerId = " + customerId);
+		        		} else {
+		        			logger.info(new java.util.Date() + ": No new CustomerId available at this point");
+		        		}
+		        	}
+		        	else
+		        		logger.info(new java.util.Date() + ": Please fill in all required fields!");
+        	  	}
+	        });
 	}
 	 
 	 private static void fillCompositeCreateAdminPage() {
@@ -423,7 +275,25 @@ public class AdminClient {
 		    buttonCreateAdmin.setLayoutData(griddataButton);
 			buttonCreateAdmin.setData("firstName",CreateAdminFirstname);
 		    buttonCreateAdmin.setData("lastName",CreateAdminLastname);
-		    buttonCreateAdmin.setData("password",CreateAdminInitPassword);	    
+		    buttonCreateAdmin.setData("password",CreateAdminInitPassword);	
+		    
+		    buttonCreateAdmin.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {		        		        	
+		        	String firstName = (((Text)event.widget.getData("firstName")).getText());
+		        	String lastName  = (((Text)event.widget.getData("lastName")).getText());
+		        	String password  = Security.createPasswordHash((((Text)event.widget.getData("password")).getText()));
+		        	if (!(firstName.isEmpty() || lastName.isEmpty() || password.isEmpty())) {
+		        	int administratorId = createAdministrator(admin.getId(), firstName, lastName, password);
+		        		if (administratorId != 0) {
+		        			logger.info(new java.util.Date() + ": New AdministratorId = " + administratorId);
+		        		} else {
+		        			logger.info(new java.util.Date() + ": No new AdministratorId available at this point");
+		        		}
+		        	}
+		        	else
+		        		logger.info(new java.util.Date() + ": Please fill in all required fields!");
+        	  	}
+	        });
 	}
 
 	private static void fillCompositeCreateAccountPage() {
@@ -520,6 +390,7 @@ public class AdminClient {
     		buttonCreateAccount.setData("accountType",CreateAccountAccountType);
     		//buttonCreateAccount.setData("active",CreateAccountActive);
     		
+    	
     		buttonCreateAccount.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
 		        	try {
@@ -527,12 +398,11 @@ public class AdminClient {
 		        	int customer = c[((Combo)event.widget.getData("customer")).getSelectionIndex()].getId();
 		        	int administrator = a[((Combo)event.widget.getData("admin")).getSelectionIndex()].getId();
 		        	int accountType = at[((Combo)event.widget.getData("accountType")).getSelectionIndex()].getId();
-		        	//String active = ((Text)event.widget.getData("active")).getText();
 		        	int accountId = createAccount(admin.getId(), bank, customer, administrator, accountType);
 		        	if (accountId != 0) {
-		        		logger.info(new java.util.Date() + ": new AccountId = " + accountId);
+		        		logger.info(new java.util.Date() + ": New AccountId = " + accountId);
 		        	} else {
-		        		logger.info(new java.util.Date() + ": no new AccountId available at this point");
+		        		logger.info(new java.util.Date() + ": No new AccountId available at this point");
 		        	}
 		        	}
 		        	catch (ArrayIndexOutOfBoundsException e) {
@@ -578,7 +448,24 @@ public class AdminClient {
 		    buttonCreateAccountType.setBackground(new Color(display, 31, 78, 121));
 		    buttonCreateAccountType.setLayoutData(griddataButton);
 			buttonCreateAccountType.setData("description",CreateAccountTypeDescription);
-		    buttonCreateAccountType.setData("interestRate",CreateAccountTypeInterestRate);    
+		    buttonCreateAccountType.setData("interestRate",CreateAccountTypeInterestRate);
+		    
+		    buttonCreateAccountType.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {		        		        	
+		        	String description = (((Text)event.widget.getData("description")).getText());
+		        	String interestRate  = (((Text)event.widget.getData("interestRate")).getText());
+		        	if (!(description.isEmpty() || interestRate.isEmpty())) {
+		        	int accountTypeId = createAccountType(admin.getId(), interestRate, description);
+		        		if (accountTypeId != 0) {
+		        			logger.info(new java.util.Date() + ": New AccountTypeId = " + accountTypeId);
+		        		} else {
+		        			logger.info(new java.util.Date() + ": No new AccountTypeId available at this point");
+		        		}
+		        	}
+		        	else
+		        		logger.info(new java.util.Date() + ": Please fill in all required fields!");
+        	  	}
+	        });
 	}
 
 	private static void fillCompositePayInterestPage() {
@@ -1053,6 +940,104 @@ public class AdminClient {
 		    buttonMenuPayInterests.setBackground(new Color(display, 31, 78, 121));
 		    buttonMenuPayInterests.setLayoutData(griddataMenuContent);
 		    
+		    buttonMenuDeactivateAccount.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {		   
+		    	    compositeAccountPage = new Composite(compositeContent, SWT.NONE);
+				    compositeAccountPage.setBackground(new Color(display,255,255,255));
+				    compositeAccountPage.setLayout(layoutMainClient);
+				    fillCompositeAccountPage();
+		        	stackLayoutContent.topControl = compositeAccountPage;
+		            compositeContent.layout();
+		        }
+		      });
+		    
+		    buttonMenuPayInterests.addListener(SWT.Selection, new Listener() {
+		    	
+		        public void handleEvent(Event event) {
+		        	compositePayInterestsPage = new Composite(compositeContent, SWT.NONE);
+					compositePayInterestsPage.setBackground(new Color(display,255,255,255));
+					compositePayInterestsPage.setLayout(layoutMainClient);
+					fillCompositePayInterestPage();
+		        	stackLayoutContent.topControl = compositePayInterestsPage;
+			        compositeContent.layout();
+			    }
+			});
+		    
+		    buttonMenuCreateAccount.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	compositeCreateAccountPage = new Composite(compositeContent, SWT.NONE);
+				    compositeCreateAccountPage.setBackground(new Color(display,255,255,255));
+				    compositeCreateAccountPage.setLayout(layoutMainClient);
+				    fillCompositeCreateAccountPage();
+		        	stackLayoutContent.topControl = compositeCreateAccountPage;
+			        compositeContent.layout();
+			    }
+			});
+		    
+		    buttonMenuCreateCustomer.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositeCreateCustomerPage;
+			          compositeContent.layout();
+			        }
+			      });
+		    
+		    buttonMenuCreateAdmin.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositeCreateAdminPage;
+			          compositeContent.layout();
+			        }
+			      });
+		    
+		    buttonMenuCreateAccountType.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositeCreateAccountTypePage;
+			          compositeContent.layout();
+			        }
+			      });
+		    
+		    buttonMenuChangeAdmin.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	stackLayoutContent.topControl = compositeChangeAdminPage;
+			          compositeContent.layout();
+			        }
+			      });
+		    
+		    buttonMenuChangeAccountType.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	compositeChangeAccountTypePage = new Composite(compositeContent, SWT.NONE);
+					compositeChangeAccountTypePage.setBackground(new Color(display,255,255,255));
+					compositeChangeAccountTypePage.setLayout(layoutMainClient);
+					fillCompositeChangeAccountTypePage();
+		        	stackLayoutContent.topControl = compositeChangeAccountTypePage;
+			          compositeContent.layout();
+			        }
+			      });
+		    
+		    buttonMenuSetSecurityMode.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	boolean securityMode = false;
+		        	if (admin != null) {
+		        		securityMode = getSecurityMode(admin.getId());
+		        		int status = setSecurityMode(admin.getId(), !securityMode);
+		        		if (status == 200) 
+		        			securityMode = !securityMode;
+		        	}
+		        	if (securityMode)
+		        		((Button)event.widget).setText("Disable Security");
+		        	else
+		        		((Button)event.widget).setText("Enable Security");
+			        }
+			      });
+		    
+		    buttonLogout.addSelectionListener(new SelectionAdapter() {
+		    	public void widgetSelected(SelectionEvent arg0) {
+//		    		display.dispose();
+		    		stackLayoutMain.topControl=compositeLogin;
+		    		notFirstTimer=true;
+		    		shell.pack();
+		    		shell.layout();
+		    	}
+		    });
 	    
 	}
 
@@ -1094,7 +1079,8 @@ public class AdminClient {
 			    ServerLabel.setText("Server:");
 			    ServerLabel.setLayoutData(griddataDescription);
 		    
-		    Text ServerText = new Text(compositeLogin,SWT.BORDER);
+//		    Text 
+			    ServerText = new Text(compositeLogin,SWT.BORDER);
 		    	ServerText.setText("http://localhost:9998");
 		    	ServerText.setLayoutData(griddataTexts);
 		    
@@ -1102,14 +1088,16 @@ public class AdminClient {
 			    UserLabel.setText("Account:");
 			    UserLabel.setLayoutData(griddataDescription);
 		    
-		    Text UserText = new Text(compositeLogin,SWT.BORDER);
+//		    Text 
+			    UserText = new Text(compositeLogin,SWT.BORDER);
 		    	UserText.setLayoutData(griddataTexts);
 		    
 		    Label PasswortLabel = new Label(compositeLogin, SWT.NONE);
 			    PasswortLabel.setText("Password:");
 			    PasswortLabel.setLayoutData(griddataDescription);
 		    
-			Text PasswordText = new Text(compositeLogin,SWT.BORDER | SWT.PASSWORD);
+//			Text 
+			    PasswordText = new Text(compositeLogin,SWT.BORDER | SWT.PASSWORD);
 		    	PasswordText.setLayoutData(griddataTexts);
 		    
 		    Label placeholder1 = new Label(compositeLogin,SWT.NONE);
@@ -1132,7 +1120,28 @@ public class AdminClient {
 			    buttonLogin.setLayoutData(griddataLoginButton);
 			    buttonLogin.setData("server", ServerText);
 			    buttonLogin.setData("user", UserText);
-			    buttonLogin.setData("password", PasswordText);		    
+			    buttonLogin.setData("password", PasswordText);	
+			    
+			    UserText.addKeyListener(new org.eclipse.swt.events.KeyAdapter() {
+					public void keyReleased(org.eclipse.swt.events.KeyEvent e)
+					{
+						if(e.keyCode == 13)
+						{		
+							buttonLoginListenerAdd();
+						}
+					}
+			    });
+			    
+			    PasswordText.addKeyListener(new org.eclipse.swt.events.KeyAdapter() {
+					public void keyReleased(org.eclipse.swt.events.KeyEvent e)
+					{
+						if(e.keyCode == 13)
+						{
+							buttonLoginListenerAdd();
+						}
+					}
+			    });
+			    
 		    compositeLogin.pack();
 	 }
 	
@@ -1325,14 +1334,14 @@ public class AdminClient {
 		return null;
 	}
 	
-	public static int createCustomer(int idLogin, String firstName, String lastName, String password) {
+	public static int createCustomer(int idLogin, String firstName, String lastName, String passwordCustomer) {
 	
 		String POSTString = server + "/rest/s/createCustomer";
 		
 		Form f = new Form();
 		f.add("firstName", firstName);
 		f.add("lastName", lastName);
-		f.add("password", password);
+		f.add("password", passwordCustomer);
 		f.add("adminIdLogin", idLogin);
 		f.add("passwortHash", password);
 		
@@ -1348,14 +1357,14 @@ public class AdminClient {
 			return 0;
 	}
 	
-	public static int createAdministrator(int idLogin, String firstName, String lastName, String password) {
+	public static int createAdministrator(int idLogin, String firstName, String lastName, String passwordAdmin) {
 		
 		String POSTString = server + "/rest/s/createAdministrator";
 		
 		Form f = new Form();
 		f.add("firstName", firstName);
 		f.add("lastName", lastName);
-		f.add("password", password);
+		f.add("password", passwordAdmin);
 		f.add("adminIdLogin", idLogin);
 		f.add("passwortHash", password);
 		

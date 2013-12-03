@@ -1279,7 +1279,7 @@ public class AdminClient {
 		if (!POSTString.isEmpty()) {
 			ClientResponse cr = Client.create().resource( POSTString ).get( ClientResponse.class );
 			int status = cr.getStatus();
-			LabelStatusLine.setText(getMessage(status));
+			LabelStatusLine.setText(getMessage("Get Administrator", status));
 			if (cr.getStatus() == 200) {
 				
 				JSONObject jo = new JSONObject(cr.getEntity(String.class));
@@ -1327,7 +1327,7 @@ public class AdminClient {
 				return admin;
 			}
 			else {
-				LabelStatusLineLogin.setText(getMessage(status));
+				LabelStatusLineLogin.setText(getMessage("Get Administrator", status));
 			}
 		}
 		
@@ -1347,7 +1347,7 @@ public class AdminClient {
 		
 		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		int status = cr.getStatus();
-		LabelStatusLine.setText(getMessage(status));
+		LabelStatusLine.setText(getMessage("Create Customer", status));
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			int id = jo.getInt("id");
@@ -1370,7 +1370,7 @@ public class AdminClient {
 		
 		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		int status = cr.getStatus();
-		LabelStatusLine.setText(getMessage(status));
+		LabelStatusLine.setText(getMessage("Create Administrator", status));
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			int id = jo.getInt("id");
@@ -1394,7 +1394,7 @@ public class AdminClient {
 		
 		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		int status = cr.getStatus();
-		LabelStatusLine.setText(getMessage(status));
+		LabelStatusLine.setText(getMessage("Create Account", status));
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			return jo.getInt("id");
@@ -1414,7 +1414,7 @@ public class AdminClient {
 		
 		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		int status = cr.getStatus();
-		LabelStatusLine.setText(getMessage(status));
+		LabelStatusLine.setText(getMessage("Create Account Type", status));
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			return jo.getInt("id");
@@ -1434,7 +1434,7 @@ public class AdminClient {
 		
 		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		int status = cr.getStatus();
-		LabelStatusLine.setText(getMessage(status));
+		LabelStatusLine.setText(getMessage("Create Bank", status));
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			return jo.getInt("id");
@@ -1448,7 +1448,7 @@ public class AdminClient {
 		
 		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
 		int status = cr.getStatus();
-		LabelStatusLine.setText(getMessage(status));
+		//LabelStatusLine.setText(getMessage(status));
 		
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
@@ -1510,7 +1510,7 @@ public class AdminClient {
 		
 		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		int status = cr.getStatus();
-		LabelStatusLine.setText(getMessage(status));
+		LabelStatusLine.setText(getMessage("Manage Accounts", status));
 		return cr.getStatus();
 	}
 	
@@ -1525,7 +1525,7 @@ public class AdminClient {
 		
 		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		int status = cr.getStatus();
-		LabelStatusLine.setText(getMessage(status));
+		LabelStatusLine.setText(getMessage("Set Security Mode", status));
 		return cr.getStatus();
 	}
 	
@@ -1535,7 +1535,7 @@ public class AdminClient {
 		
 		ClientResponse cr = Client.create().resource( GETString ).get( ClientResponse.class );
 		int status = cr.getStatus();
-		LabelStatusLine.setText(getMessage(status));
+		LabelStatusLine.setText(getMessage("Get Security Mode", status));
 		if (cr.getStatus() == 200) {
 			JSONObject jo = new JSONObject(cr.getEntity(String.class));
 			return jo.getBoolean("securityMode");
@@ -1554,7 +1554,7 @@ public class AdminClient {
 		
 		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		int status = cr.getStatus();
-		LabelStatusLine.setText(getMessage(status));
+		LabelStatusLine.setText(getMessage("Pay Interests", status));
 		return cr.getStatus();
 	}
 	
@@ -1572,7 +1572,7 @@ public static void changeAdmin(int idLogin, String firstName, String lastName, S
 		
 		ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 		int status = cr.getStatus();
-		LabelStatusLine.setText(getMessage(status));
+		LabelStatusLine.setText(getMessage("Change Administrator", status));
 		if (cr.getStatus() == 200) {
 			admin.setFirstName(firstName);
 			admin.setLastName(lastName);
@@ -1594,19 +1594,19 @@ public static int changeAccountType(int idLogin, AccountType at) {
 	
 	ClientResponse cr = Client.create().resource( POSTString ).type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post( ClientResponse.class, f );
 	int status = cr.getStatus();
-	LabelStatusLine.setText(getMessage(status));
+	LabelStatusLine.setText(getMessage("Change Account Type", status));
 	return cr.getStatus();
 }
 
-	public static String getMessage(int statusCode) {
-		switch (statusCode) {
-			case 200: return "OK: Your request was processed successfully!";
-			case 400: return "BAD REQUEST: The data format might be incorrect!";
-			case 403: return "FORBIDDEN: Your login data might be incorrect!";
-			case 404: return "NOT FOUND: The requested account was not found!";
-			case 412: return "PRECONDITION FAILED: Your balance is insufficient!";
-			case 500: return "INTERNAL SERVER ERROR: Please try again later!";
-			default:  return "Unknown Response!";
-		}
+public static String getMessage(String caller, int statusCode) {
+	switch (statusCode) {
+		case 200: return caller + " - " + "OK: Your request was processed successfully!";
+		case 400: return caller + " - " + "BAD REQUEST: The data format might be incorrect!";
+		case 403: return caller + " - " + "FORBIDDEN: Your login data might be incorrect!";
+		case 404: return caller + " - " + "NOT FOUND: The requested account was not found!";
+		case 412: return caller + " - " + "PRECONDITION FAILED: Your balance is insufficient!";
+		case 500: return caller + " - " + "INTERNAL SERVER ERROR: Please try again later!";
+		default:  return caller + " - " + "Unknown Response!";
 	}
+}
 }

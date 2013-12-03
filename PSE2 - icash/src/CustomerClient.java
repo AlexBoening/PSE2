@@ -364,6 +364,8 @@ public class CustomerClient {
 		    					column[4] = t[i].getDate().toString();
 		    					item.setText(column);
 		    				}
+		    				
+		    				CurrentBalance.setText(getBalance(account.getId()));
 		    			}
 		    			catch (SQLException e) {
 		    				LabelStatusLine.setText(getMessage(500));

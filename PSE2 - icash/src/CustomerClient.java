@@ -158,7 +158,7 @@ public class CustomerClient {
 		        	  if (customer != null || !securityMode)
 		        		  account = getAccount(accountId);
 		        	      
-		        	  if (account != null) {
+		        	  if (account != null && account.getId() != 0) {
 		        		  CurrentBalance.setText(getBalance(account.getId()));
 		        		  stackLayoutMain.topControl = compositeMainClient;
 		        	  	
@@ -193,18 +193,21 @@ public class CustomerClient {
 		    ChangeAccFirstNameLabel.setLayoutData(griddataLabel);
 			Text ChangeAccFirstNameText = new Text(compositeChangeCustomerPage, SWT.SINGLE | SWT.BORDER);
 			ChangeAccFirstNameText.setLayoutData(griddataText);
+			buttonMenuChangeCustomer.setData("firstName", ChangeAccFirstNameText);
 			
 			Label ChangeAccLastNameLabel = new Label(compositeChangeCustomerPage, SWT.NONE);
 			ChangeAccLastNameLabel.setText("Last Name:");
 			ChangeAccLastNameLabel.setLayoutData(griddataLabel);
 			Text ChangeAccLastNameText = new Text(compositeChangeCustomerPage, SWT.SINGLE | SWT.BORDER);
 			ChangeAccLastNameText.setLayoutData(griddataText);			
+			buttonMenuChangeCustomer.setData("lastName", ChangeAccLastNameText);
 			
 			Label ChangeAccPWLabel = new Label(compositeChangeCustomerPage, SWT.NONE);
 			ChangeAccPWLabel.setText("Password:");
 			ChangeAccPWLabel.setLayoutData(griddataLabel);
 			Text ChangeAccPWText = new Text(compositeChangeCustomerPage, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
 			ChangeAccPWText.setLayoutData(griddataText);
+			buttonMenuChangeCustomer.setData("password", ChangeAccPWText);
 			
 		    Label SepPerformChangeAcc2 = new Label(compositeChangeCustomerPage, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    SepPerformChangeAcc2.setBackground(new Color(display,255,255,255));
@@ -226,9 +229,12 @@ public class CustomerClient {
 	        	  String password = Security.createPasswordHash(((Text)event.widget.getData("password")).getText());
 	        	  
 	        	  customer = getCustomer(account.getId());
-	        	  changeAccount(customer.getId(), firstName, lastName, password);
-	        	  LabelStatusLineName.setText("Hello " + customer.getFirstName() + " " + customer.getLastName() + "!");
-	        	  
+	        	  if (customer != null) {
+	        		  changeAccount(customer.getId(), firstName, lastName, password);
+	        		  LabelStatusLineName.setText("Hello " + customer.getFirstName() + " " + customer.getLastName() + "!");
+	        	  }
+	        	  else 
+	        		  LabelStatusLine.setText(getMessage("Change Customer", 403));
 	        	  ((Text)event.widget.getData("firstName")).setText("");
 	        	  ((Text)event.widget.getData("lastName")).setText("");
 	        	  ((Text)event.widget.getData("password")).setText("");
@@ -335,9 +341,11 @@ public class CustomerClient {
 		    			try {
 		    				// Get all transactions existing in the database
 						    account = getAccount(account.getId());
-		    				Transaction[] t = new Transaction[account.getTransactions().size()];
-		    				account.getTransactions().toArray(t);
-		    		
+						    Transaction[] t;
+						    if (account != null) {
+						    	t = new Transaction[account.getTransactions().size()];
+		    					account.getTransactions().toArray(t);
+						        		
 		    				for (int i=0; i<t.length; i++) {
 		    					TableItem item = new TableItem(table, SWT.NONE);
 		    					String[] column = new String[5];
@@ -350,15 +358,17 @@ public class CustomerClient {
 		    					column[4] = t[i].getDate().toString();
 		    					item.setText(column);
 		    				}
-		    				
+		    				LabelStatusLine.setText(getMessage("View Transactions", 200));
 		    				CurrentBalance.setText(getBalance(account.getId()));
+						    }
+						    
 		    			}
 		    			catch (SQLException e) {
 		    				LabelStatusLine.setText(getMessage("View Transactions", 500));
 		    			}
-		    			else {
-		    				LabelStatusLine.setText(getMessage("View Transactions", 400));
-		    			}
+		    			//else {
+		    			//	LabelStatusLine.setText(getMessage("View Transactions", 400));
+		    			//}
 		    		buttonCommitPDF = new Button(compositeViewTransaction, SWT.PUSH);
 				    buttonCommitPDF.setText("Print Transactions");
 				    buttonCommitPDF.setBackground(new Color(display, 31, 78, 121));
@@ -630,6 +640,7 @@ public class CustomerClient {
 		    		stackLayoutMain.topControl=compositeLogin;
 		    		notFirstTimer=true;
 		    		account=null;
+		    		password = "";
 		    		shell.pack();
 		    		shell.layout();
 		    	}
@@ -662,6 +673,11 @@ public class CustomerClient {
 		    
 		    buttonMenuChangeCustomer.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
+		        	if (customer != null) {
+		        		((Text)event.widget.getData("firstName")).setText(customer.getFirstName());
+		        		((Text)event.widget.getData("lastName")).setText(customer.getLastName());
+		        		//((Text)event.widget.getData("password")).setText(password);
+		        	}
 		        	stackLayoutContent.topControl = compositeChangeCustomerPage;
 			          compositeContent.layout();
 		        }
@@ -977,7 +993,8 @@ public static Account getAccount(int number) {
 	
 	String[] name;
 	if (status == 200) {
-		LabelStatusLine.setText(getMessage("Get Account", status));
+		try {
+		//LabelStatusLine.setText(getMessage("Get Account", status));
 		JSONObject jo = new JSONObject(cr.getEntity(String.class));
 		Account a = new Account();
 		a.setId(Convert.toInt(jo.getString("number")));
@@ -1033,11 +1050,20 @@ public static Account getAccount(int number) {
 			
 			a.add(t);
 		}
-    return a;
+		return a;
+		}
+		catch (Exception e) {
+			LabelStatusLine.setText(getMessage("Get Account", 500));
+			Account a = new Account();
+			a.setId(0);
+			return a;
+		}
     }
 	else {
 		LabelStatusLine.setText(getMessage("Get Account", status));
-		return null;
+		Account a = new Account();
+		a.setId(0);
+		return a;
 	}	
 }
 

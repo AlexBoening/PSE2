@@ -573,13 +573,15 @@ public class AdminClient {
 		    DescriptionLabel.setLayoutData(griddataLabel);
 			Text ChangeAccountTypeDescription = new Text(compositeChangeAccountTypePage, SWT.SINGLE | SWT.BORDER);
 			ChangeAccountTypeDescription.setLayoutData(griddataText);
+			ChangeAccountType.setData("description", ChangeAccountTypeDescription);
 			
 			Label InterestRateLabel = new Label(compositeChangeAccountTypePage, SWT.NONE);
 			InterestRateLabel.setText("Interest Rate:");
 			InterestRateLabel.setLayoutData(griddataLabel);
 			Text ChangeAccountTypeInterestRate = new Text(compositeChangeAccountTypePage, SWT.SINGLE | SWT.BORDER);
 			ChangeAccountTypeInterestRate.setLayoutData(griddataText);
-		    
+			ChangeAccountType.setData("interestRate", ChangeAccountTypeInterestRate);
+			
 			CaptionChangeAccountTypePage.pack();
 			
 			Label SepPerform4 = new Label(compositeChangeAccountTypePage, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -614,6 +616,19 @@ public class AdminClient {
 		        	}
 		        }
 		      });
+		    
+		    ChangeAccountType.addListener(SWT.Selection, new Listener() {
+		        public void handleEvent(Event event) {
+		        	if (((Combo)event.widget).getSelectionIndex() > -1) {
+		        		AccountType accountType = at[((Combo)event.widget).getSelectionIndex()];
+		        		Text description = (Text)((Combo)event.widget).getData("description");
+		        		Text interestRate = (Text)((Combo)event.widget).getData("interestRate");
+		        		description.setText(accountType.getDescription());
+		        		interestRate.setText("" + accountType.getInterestRate());
+		        	}
+		        		
+		        }
+		    });
 	}
 	
 	private static void fillCompositeAccountPage() {
@@ -750,18 +765,21 @@ public class AdminClient {
 		    ChangeAccFirstNameLabel.setLayoutData(griddataLabel);
 			Text ChangeAccFirstNameText = new Text(compositeChangeAdminPage, SWT.SINGLE | SWT.BORDER);
 			ChangeAccFirstNameText.setLayoutData(griddataText);
+			buttonMenuChangeAdmin.setData("firstName", ChangeAccFirstNameText);
 			
 			Label ChangeAccLastNameLabel = new Label(compositeChangeAdminPage, SWT.NONE);
 			ChangeAccLastNameLabel.setText("Last Name:");
 			ChangeAccLastNameLabel.setLayoutData(griddataLabel);
 			Text ChangeAccLastNameText = new Text(compositeChangeAdminPage, SWT.SINGLE | SWT.BORDER);
-			ChangeAccLastNameText.setLayoutData(griddataText);			
+			ChangeAccLastNameText.setLayoutData(griddataText);	
+			buttonMenuChangeAdmin.setData("lastName", ChangeAccLastNameText);
 			
 			Label ChangeAccPWLabel = new Label(compositeChangeAdminPage, SWT.NONE);
 			ChangeAccPWLabel.setText("Password:");
 			ChangeAccPWLabel.setLayoutData(griddataLabel);
 			Text ChangeAccPWText = new Text(compositeChangeAdminPage, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
 			ChangeAccPWText.setLayoutData(griddataText);
+			buttonMenuChangeAdmin.setData("password", ChangeAccPWText);
 			
 		    Label SepPerformChangeAcc2 = new Label(compositeChangeAdminPage, SWT.SEPARATOR | SWT.HORIZONTAL);
 		    SepPerformChangeAcc2.setBackground(new Color(display,255,255,255));
@@ -997,6 +1015,11 @@ public class AdminClient {
 		    
 		    buttonMenuChangeAdmin.addListener(SWT.Selection, new Listener() {
 		        public void handleEvent(Event event) {
+		        	if (admin != null) {
+		        		((Text)event.widget.getData("firstName")).setText(admin.getFirstName());
+		        		((Text)event.widget.getData("lastName")).setText(admin.getLastName());
+		        		//((Text)event.widget.getData("password")).setText(password);
+		        	}
 		        	stackLayoutContent.topControl = compositeChangeAdminPage;
 			          compositeContent.layout();
 			        }
@@ -1547,6 +1570,7 @@ public class AdminClient {
 				AccountType accountType = new AccountType();
 				accountType.setId(joat.getInt("id"));
 				accountType.setDescription(joat.getString("description"));
+				accountType.setInterestRate(joat.getDouble("interestRate"));
 				at[i] = accountType;
 			}
 		}

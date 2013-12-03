@@ -2,6 +2,8 @@ package server_neu;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -26,6 +28,8 @@ import classes.*;
 @Path("/")
 @Singleton
 public class RestResource {
+	
+	private static Lock lock = new ReentrantLock(true);
 	
 	@GET
 	@Path("/getAccount")
@@ -226,28 +230,32 @@ public class RestResource {
 	}
 	
 	public Response transferMoney(int sender, int receiver, int amount, String reference, Account outgoingAccount){
+		Transaction t;
+		Response r;
+		
 		try {
-			
-			Transaction t;
-			
 			if (amount < 0)
 				return Response.status(400).build();         	// Negative Amounts not allowed
 			Account incomingAccount = new Account(receiver);
 			if (incomingAccount.getId() == 0)
 				return Response.status(404).build();			// Account does not exist
 			
+			lock.lock();
 			int balance = outgoingAccount.getBalance();
 			
 			if (balance >= amount || outgoingAccount.getId() 
-					              == incomingAccount.getBank().getBank_account().getId())
+					              == incomingAccount.getBank().getBank_account().getId()) {
 			    t = new Transaction(amount, reference, Convert.currentDate(), incomingAccount, outgoingAccount);
+			    r = Response.ok().build();						// Transaction was created successfully
+			}
 			else
-				return Response.status(412).build();			// Insufficient Money
+				r = Response.status(412).build();			// Insufficient Money
 			}
 			catch(SQLException e) {
-				return Response.status(500).build();			// Internal Server Error
+				r = Response.status(500).build();			// Internal Server Error
 			}
-			return Response.ok().build();						// Transaction was created successfully
+			lock.unlock();
+			return r;
 	}	
 	
 	@GET
@@ -715,7 +723,7 @@ public class RestResource {
 				jo.put("admins", admins);
 				
 				// AccountTypes
-				String[] columnAccountType = {"idAccountTyp", "descriptionAccountTyp"};
+				String[] columnAccountType = {"idAccountTyp", "descriptionAccountTyp", "interestRateAccountTyp"};
 				table = "AccountTyp";
 				
 				value = SQL.select(columnAccountType, table, condition, connector);
@@ -724,6 +732,7 @@ public class RestResource {
 					JSONObject accountType = new JSONObject();
 					accountType.put("id", Convert.toInt(value[i][0]));
 					accountType.put("description", value[i][1]);
+					accountType.put("interestRate", value[i][2]);
 					accountTypes.put(accountType);
 				}
 				

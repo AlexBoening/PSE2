@@ -1146,8 +1146,13 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 				int amount = 0;
 				if (account.getTransactions() != null) {
 					Iterator<Transaction> it = account.getTransactions().iterator();
-					while (it.hasNext())
-						amount += it.next().getAmount();
+					while (it.hasNext()) {
+						Transaction t = it.next();
+						if (t.getIncomingAccount().getId() == account.getId())
+							amount += t.getAmount();
+						if (t.getOutgoingAccount().getId() == account.getId())
+							amount -= t.getAmount();
+					}	
 				}
 				return Convert.toEuro(amount);
 			}

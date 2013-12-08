@@ -61,8 +61,9 @@ public class JettyServer {
 		server.setHandler(handlerCollection);
 		server.start();
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/icash", "root", "");
+			//Class.forName("com.mysql.jdbc.Driver");
+			//Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/icash", "root", "");
+			SQL.init();
 			logger.info(new java.util.Date() + ": Server started");
 		}
 		catch (SQLException e) {

@@ -695,7 +695,7 @@ public class AdminClient {
     				}
 		    		}
 		    		catch (SQLException e) {
-		    			// Statuszeile auf Status 500 setzen
+		    			LabelStatusLine.setText(getMessage("View Accounts", 400));
 		    		}
 		    		
 		    CaptionViewPage.pack();

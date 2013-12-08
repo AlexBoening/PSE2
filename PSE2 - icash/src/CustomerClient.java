@@ -1,6 +1,7 @@
 import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.ws.rs.core.MediaType;
 
@@ -1004,7 +1005,7 @@ public static Account getAccount(int number) {
 		if (name.length > 1)
 			c.setLastName(name[1]);
 		a.setCustomer(c);
-    
+		a.setTransactions(new ArrayList<Transaction>());
 		LabelStatusLineName.setText("Hello " + c.getFirstName() + " " + c.getLastName() + "!");
     
 		JSONArray ja = jo.getJSONArray("transactions");
@@ -1141,9 +1142,13 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 			return "";
 		}
 		else {
-			int amount = 0;
 			try {
-				amount = account.getBalance();
+				int amount = 0;
+				if (account.getTransactions() != null) {
+					Iterator<Transaction> it = account.getTransactions().iterator();
+					while (it.hasNext())
+						amount += it.next().getAmount();
+				}
 				return Convert.toEuro(amount);
 			}
 			catch (SQLException e) {
@@ -1283,4 +1288,3 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		}
 	}
 }
-

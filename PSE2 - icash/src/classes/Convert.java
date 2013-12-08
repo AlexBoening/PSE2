@@ -57,7 +57,11 @@ public class Convert {
 			case '0': break;
 			case '-': negative = true; result /= 10; break;
 			case ',':
-			case '.': decimalPlace = true; result /= 10; break;
+			case '.': if (!decimalPlace) {
+						  decimalPlace = true; 
+						  result /= 10; 
+						  break;
+					  }
 			default : result /= 10; 
 					  if (decimalPlace) 
 						  noDecimalPlaces--;

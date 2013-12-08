@@ -1,4 +1,5 @@
 package classes;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -164,20 +165,28 @@ public void setAccountType(AccountType accountType) {
 public ArrayList<Transaction> getTransactions() throws SQLException {
 	if (transactions == null) {
 		transactions = new ArrayList<Transaction>();
-		String[] column = {"idTransaction"};
+		String[] column = {"idTransaction", "amountTransaction", "descriptionTransaction", "dateTransaction", "sentIncomingTransaction", "sentOutgoingTransaction"};
 		String[] condition = {"incomingAccount_idAccount = " + id, "outgoingAccount_idAccount = " + id};
 		String[][] value = SQL.select(column, "Transaction", condition, "or");
-		for (int i=0; i<value.length; i++)
-		    transactions.add(new Transaction(Convert.toInt(value[i][0])));
+		for (int i=0; i<value.length; i++) {
+			Transaction t = new Transaction();
+			t.setId(Convert.toInt(value[i][0]));
+			t.setAmount(Convert.toInt(value[i][1]));
+			t.setDescription(value[i][2]);
+			String s = value[i][3].substring(0,10);
+			t.setDate(Date.valueOf(value[i][3].substring(0, 10)));
+			t.setSentIncoming(value[i][4].equals("X"));
+			t.setSentOutgoing( value[i][5].equals("X"));
+			transactions.add(t);
+		}
+		    
 	}
 	return transactions;
 }
 
-/*
 public void setTransactions(ArrayList<Transaction> transactions) {
 	this.transactions = transactions;
 }
-*/
 
 public void updateDB() throws SQLException{
 	String[] column = new String[5];

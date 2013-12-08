@@ -18,23 +18,6 @@ public class Security {
 	}
 	
 	public static String createPasswordHash(String password) {
-       // try {
-        	  /*MessageDigest sha1 = MessageDigest.getInstance("SHA1");
-        	  String hash = new String (sha1.digest(password.getBytes()));
-        	  if (URLEncode)
-        		  password = URLEncoder.encode(hash, "UTF-8");
-        	  else
-        		  password = hash;*/
         	return DigestUtils.sha1Hex(password);
-        	/*} 
-        catch (NoSuchAlgorithmException ex) {
-        	Logger logger = Logger.getRootLogger();
-        	logger.info(new java.util.Date() + ": An error occured during the creation of the password-hash");
-        	}
-        catch (UnsupportedEncodingException e) {
-        	Logger logger = Logger.getRootLogger();
-    		logger.info(new java.util.Date() + ": An error occured during the creation of the password-hash");
-        }
-    	return password;*/
     }
 }

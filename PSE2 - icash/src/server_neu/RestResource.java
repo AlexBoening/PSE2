@@ -29,7 +29,7 @@ import classes.*;
 @Singleton
 public class RestResource {
 	
-	private static Lock lock = new ReentrantLock(true);
+	private static Lock lock = new ReentrantLock();
 	
 	@GET
 	@Path("/getAccount")
@@ -239,23 +239,23 @@ public class RestResource {
 			Account incomingAccount = new Account(receiver);
 			if (incomingAccount.getId() == 0)
 				return Response.status(404).build();			// Account does not exist
+				
+				synchronized (lock) {
+					int balance = outgoingAccount.getBalance();
 			
-			lock.lock();
-			int balance = outgoingAccount.getBalance();
-			
-			if (balance >= amount || outgoingAccount.getId() 
-					              == incomingAccount.getBank().getBank_account().getId()) {
-			    t = new Transaction(amount, reference, Convert.currentDate(), incomingAccount, outgoingAccount);
-			    r = Response.ok().build();						// Transaction was created successfully
-			}
-			else
-				r = Response.status(412).build();			// Insufficient Money
-			}
-			catch(SQLException e) {
-				r = Response.status(500).build();			// Internal Server Error
-			}
-			lock.unlock();
-			return r;
+					if (balance >= amount || outgoingAccount.getId() 
+					    == incomingAccount.getBank().getBank_account().getId()) {
+						t = new Transaction(amount, reference, Convert.currentDate(), incomingAccount, outgoingAccount);
+						r = Response.ok().build();						// Transaction was created successfully
+					}
+					else
+						r = Response.status(412).build();			// Insufficient Money
+				}
+		}
+		catch(SQLException e) {
+			r = Response.status(500).build();			// Internal Server Error
+		}
+	return r;
 	}	
 	
 	@GET

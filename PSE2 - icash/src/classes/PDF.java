@@ -31,23 +31,15 @@ import java.util.Calendar;
 public class PDF {
 
 	  private static String FILE;  
-	  private static Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
-	  private static Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD);
-	  private static Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
-	  
-	  public static void main(String[] args) {
-		  /*String[][] transactions = new String[5][5];
-	      for (int i=0; i<transactions.length; i++) {
-	    	  transactions[0][i] = "Row 1 Line " + String.valueOf(i+1);
-	    	  transactions[1][i] = "Row 2 Line " + String.valueOf(i+1);
-	    	  transactions[2][i] = "Row 3 Line " + String.valueOf(i+1);
-	    	  transactions[3][i] = "Row 4 Line " + String.valueOf(i+1);
-	    	  transactions[4][i] = "Row 5 Line " + String.valueOf(i+1);
-	      }*/
-	  }
+	  private static Font catFont;
+	  private static Font subFont;
+	  private static Font smallBold;
 	  
 	  public static void print(Account a, Bank b, Customer c, AccountType at) {
 	    try { 
+	    	  catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
+	  	      subFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD);
+	  	      smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
 	    	  String timeStamp = new SimpleDateFormat("yyyy.MM.dd_HH.mm.ss").format(Calendar.getInstance().getTime());
 		      File file = new File("Kontoauszug_" + timeStamp + ".pdf"); 
 	    	  Document document = new Document();
@@ -111,26 +103,6 @@ public class PDF {
           table.setHeaderRows(1);
 
 		  for (int i=0; i<t.length; i++) {
-			// Has the transaction already been printed?
-			  /*try {
-			  if (t[i].getIncomingAccount().getId() == a.getId() && !t[i].isSentIncoming()) {
-		    		t[i].setSentIncoming(true);
-		    		if (t[i].getIncomingAccount().getId() == t[i].getOutgoingAccount().getId())
-		    			t[i].setSentOutgoing(true);
-		    		t[i].updateDB();
-		    	}
-		    	else if (t[i].getOutgoingAccount().getId() == a.getId() && !t[i].isSentOutgoing()) {
-		    		t[i].setSentOutgoing(true);
-		    		if (t[i].getIncomingAccount().getId() == t[i].getOutgoingAccount().getId())
-		    			t[i].setSentIncoming(true);
-		    		t[i].updateDB();
-		    	}
-		    	else
-		    		continue;
-			  }
-			  catch(SQLException e) {
-				  continue;
-			  }*/
 			  
 			PdfPCell cell1, cell2, cell3, cell4, cell5;
 			cell5 = new PdfPCell(new Paragraph(t[i].getDate().toString()));

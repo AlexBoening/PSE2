@@ -27,7 +27,7 @@ public abstract class Person {
     	value[0] = "" + id;
     	value[1] = firstName;
     	value[2] = lastName;
-    	value[3] = password;  // ToDo: Verschlüsseln
+    	value[3] = password;  // ToDo: encrypt
     	if (admin)
     	    SQL.insert(value, "Administrator");
     	else

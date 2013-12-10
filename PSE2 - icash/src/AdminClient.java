@@ -1294,7 +1294,7 @@ public class AdminClient {
 	}
 	
 
-// Methoden zur Datenübertragung an die RestResource
+// Methods for data transfer to RestResource
 	
 	public static Administrator getAdmin(int id) {
 		String GETString;

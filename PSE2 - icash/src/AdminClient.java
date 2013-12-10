@@ -365,7 +365,7 @@ public class AdminClient {
 		    	CreateAccountAccountType.setItems(accountType);
 		    }
 			
-		    // Wird bisher nicht verwendet - Default: active
+		    // not used yet - Default: active
 			/*Label ActiveLabel = new Label(compositeCreateAccountPage, SWT.NONE);
 			ActiveLabel.setText("Active:");
 			ActiveLabel.setLayoutData(griddataLabel);

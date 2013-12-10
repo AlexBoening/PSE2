@@ -315,7 +315,7 @@ public class CustomerClient {
 		    		SWT.SINGLE | SWT.H_SCROLL |
 		    		SWT.V_SCROLL | SWT.BORDER |
 		    		SWT.FULL_SELECTION );
-		    		// Drei Tabellenspalten erzeugen
+		    		// create three columns
 		    		final TableColumn col1 = new TableColumn(table,SWT.RIGHT);
 		    		col1.setText("Amount");
 		    		col1.setWidth(100);
@@ -331,7 +331,8 @@ public class CustomerClient {
 		    		final TableColumn col5 = new TableColumn(table,SWT.LEFT);
 		    		col5.setText("Date");
 		    		col5.setWidth(100);
-		    		// Spaltenköpfe und Trennlinien sichtbar machen
+
+
 		    		table.setHeaderVisible(true);
 		    		table.setLinesVisible(true);
 		    		
@@ -939,40 +940,6 @@ public class CustomerClient {
 	}
 
 	
-
-private static void kalkuliereSpaltenbreite(Table tabelle, int minBreite)
-	{
-		if(tabelle == null || tabelle.getColumns().length == 0)
-			return;
-		
-		int breite = tabelle.getSize().x - tabelle.getBorderWidth() * 2;
-		if(tabelle.getVerticalBar() != null && tabelle.getVerticalBar().isVisible())
-		{
-			breite -= tabelle.getVerticalBar().getSize().x;
-		}
-		
-		if(breite > minBreite)
-		{
-			int aktuelleBreite = 0;
-			int neueBreite = 0;
-			
-			for(TableColumn spalte : tabelle.getColumns())
-			{
-				aktuelleBreite += spalte.getWidth();
-			}
-			
-			for(int i = 0; i < tabelle.getColumns().length - 1; i++)
-			{
-				int spaltenBreite = (int)(tabelle.getColumn(i).getWidth() / (float)aktuelleBreite * breite);
-				
-				tabelle.getColumn(i).setWidth(spaltenBreite > 10 ? spaltenBreite : 10);
-				neueBreite += tabelle.getColumn(i).getWidth();
-			}
-			
-			tabelle.getColumn(tabelle.getColumns().length - 1).setWidth(breite - neueBreite);
-		}
-	}
-
 //------------ Business Logic ----------------------------//
 
 public static Account getAccount(int number) {

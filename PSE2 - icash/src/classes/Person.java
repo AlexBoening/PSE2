@@ -3,6 +3,10 @@ package classes;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * abstract class Person
+ * 
+ */
 public abstract class Person {
     protected int id;
     protected String firstName;
@@ -11,6 +15,14 @@ public abstract class Person {
     protected boolean loggedIn;
     protected ArrayList<Account> accounts;
     
+    /**
+     * overloaded constructor for Person
+     * @param firstName String
+     * @param lastName String
+     * @param password String
+     * @param admin boolean if admin or not
+     * @throws SQLException
+     */
     public Person(String firstName, String lastName, String password, boolean admin) throws SQLException {
     	if (admin) {
     	    this.id = SQL.getID("idAdministrator", "Administrator", "");
@@ -34,6 +46,12 @@ public abstract class Person {
     		SQL.insert(value, "Customer");
     }
     
+    /**
+     * overloaded constructor for Person
+     * @param id int ID
+     * @param admin boolean if admin or not
+     * @throws SQLException
+     */
     public Person(int id, boolean admin) throws SQLException {
     	
     	if (admin) {
@@ -66,6 +84,10 @@ public abstract class Person {
     	
     }
     
+    /**
+     * adds an Account to the object
+     * @param a Account
+     */
     public void add(Account a) {
     	if (accounts == null)
     		accounts = new ArrayList<Account>();

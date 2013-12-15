@@ -25,12 +25,23 @@ import org.json.*;
 
 import classes.*;
 
+/**
+ * this is the RestResource
+ * interface between clients and server
+ * 
+ */
 @Path("/")
 @Singleton
 public class RestResource {
 	
 	private static Lock lock = new ReentrantLock();
 	
+	/**
+	 * gets Account
+	 * @param numberString String account ID
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@GET
 	@Path("/getAccount")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -61,6 +72,14 @@ public class RestResource {
 		}		
 	}
 	
+	/**
+	 * gets Account
+	 * @param numberString String account ID
+	 * @param customerString String customer ID
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@GET
 	@Path("/s/getAccount")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -98,6 +117,12 @@ public class RestResource {
 		
 	}
 	
+	/**
+	 * gets Account
+	 * @param number int account ID
+	 * @param a Account
+	 * @return
+	 */
 	public Response getAccount(int number, Account a) {
 		
 		JSONObject jo = new JSONObject();
@@ -148,6 +173,15 @@ public class RestResource {
 		return Response.ok(jo.toString(4), MediaType.APPLICATION_JSON).build();
 	}
 	
+	/**
+	 * transfer money from sender to receiver
+	 * @param senderString String sender
+	 * @param receiverString String receiver
+	 * @param amountString String amount
+	 * @param reference String optional reason
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@POST
 	@Path("/transferMoney")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -184,6 +218,17 @@ public class RestResource {
 		}
 	}
 	
+	/**
+	 * transfer money in security mode
+	 * @param senderString String
+	 * @param receiverString String
+	 * @param amountString String
+	 * @param reference String optional reason
+	 * @param customerString String
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@POST
 	@Path("/s/transferMoney")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -229,6 +274,15 @@ public class RestResource {
 
 	}
 	
+	/**
+	 * transfer money
+	 * @param sender int
+	 * @param receiver int
+	 * @param amount int
+	 * @param reference String optional reason
+	 * @param outgoingAccount Account
+	 * @return
+	 */
 	public Response transferMoney(int sender, int receiver, int amount, String reference, Account outgoingAccount){
 		Transaction t;
 		Response r;
@@ -258,6 +312,12 @@ public class RestResource {
 	return r;
 	}	
 	
+	/**
+	 * gets bank account
+	 * @param account int account ID
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@GET
 	@Path("/getBankAccount")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -286,6 +346,12 @@ public class RestResource {
 		}
 	}
 	
+	/**
+	 * gets current balance
+	 * @param account int account ID
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@GET
 	@Path("/getBalance")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -315,6 +381,14 @@ public class RestResource {
 		}
 	}	
 	
+	/**
+	 * gets bank account in security mode
+	 * @param account int 
+	 * @param customer int 
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@GET
 	@Path("/s/getBankAccount")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -349,6 +423,14 @@ public class RestResource {
 		}
 	}
 	
+	/**
+	 * gets current balance in security mode
+	 * @param account int
+	 * @param customer int 
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@GET
 	@Path("/s/getBalance")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -383,6 +465,12 @@ public class RestResource {
 		}
 	}
 	
+	/**
+	 * get customer of given account
+	 * @param account int account ID
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@GET
 	@Path("/getCustomer")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -414,6 +502,13 @@ public class RestResource {
 		}
     }
 	
+	/**
+	 * get customer of given account in security mode
+	 * @param account int account ID
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@GET
 	@Path("/s/getCustomer")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -445,6 +540,13 @@ public class RestResource {
 		}
     }
 	
+	/**
+	 * get Bank of given account in security mode
+	 * @param account int
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@GET
 	@Path("/s/getBank")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -477,6 +579,13 @@ public class RestResource {
 		}
     }
 	
+	/**
+	 * get account type of given account
+	 * @param account int
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@GET
 	@Path("/s/getAccountType")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -510,6 +619,15 @@ public class RestResource {
 		}
     }
 	
+	/**
+	 * change customer
+	 * @param firstName String
+	 * @param lastName String
+	 * @param passwordNew String
+	 * @param customerId int
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@POST
 	@Path("/changeAccount")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -545,6 +663,16 @@ public class RestResource {
 		}							
 	}
 	
+	/**
+	 * change customer in security mode
+	 * @param firstName String 
+	 * @param lastName String
+	 * @param passwordNew String
+	 * @param customerId int
+	 * @param password String 
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@POST
 	@Path("/s/changeAccount")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -583,6 +711,13 @@ public class RestResource {
 	
 // Administrator Methods
 	
+	/**
+	 * get admin in security mode
+	 * @param adminID int 
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@GET
 	@Path("/s/getAdmin")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -648,6 +783,13 @@ public class RestResource {
 		}
     }
 	
+	/**
+	 * gets data for given admin ID in security mode
+	 * @param adminID int
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@GET
 	@Path("/s/getData")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -751,6 +893,15 @@ public class RestResource {
         }
 	}
 	
+	/**
+	 * set active flag of given account to given boolean
+	 * @param active boolean 
+	 * @param idAccount int
+	 * @param idLogin int
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@POST
 	@Path("/s/setActive")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -787,6 +938,14 @@ public class RestResource {
         }
 	}
 	
+	/**
+	 * pay interst for accounts of given bank
+	 * @param bankId int
+	 * @param idLogin int admin ID
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@POST
 	@Path("/s/payInterests")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -818,6 +977,16 @@ public class RestResource {
 		}
 	}
 	
+	/**
+	 * create new Customer
+	 * @param firstName String
+	 * @param lastName String
+	 * @param password String
+	 * @param adminIdLogin int 
+	 * @param passwordLogin String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@POST
 	@Path("/s/createCustomer")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -854,6 +1023,16 @@ public class RestResource {
 		}						
 	}
 	
+	/**
+	 * create new Administrator
+	 * @param firstName String
+	 * @param lastName String
+	 * @param password String
+	 * @param adminIdLogin int
+	 * @param passwordLogin String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@POST
 	@Path("/s/createAdministrator")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -890,6 +1069,17 @@ public class RestResource {
 		}						
 	}
 		
+	/**
+	 * create new Account
+	 * @param bankId int
+	 * @param customerId int
+	 * @param adminId int
+	 * @param accountTypeId int
+	 * @param adminIdLogin int
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@POST
 	@Path("/s/createAccount")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -964,6 +1154,15 @@ public class RestResource {
 		}				
 	}
 	
+	/**
+	 * create new AccountType
+	 * @param interestRate double 
+	 * @param description String name of type
+	 * @param adminIdLogin int
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@POST
 	@Path("/s/createAccountType")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -998,6 +1197,15 @@ public class RestResource {
 		}							
 	}
 	
+	/**
+	 * create new Bank
+	 * @param blz int
+	 * @param description String name of bank
+	 * @param adminIdLogin int 
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@POST
 	@Path("/s/createBank")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -1037,6 +1245,13 @@ public class RestResource {
 		}							
 	}
 	
+	/**
+	 * 
+	 * @param idLogin int
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return wether security mode is active or not
+	 */
 	@GET
 	@Path("/s/getSecurityMode")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -1066,6 +1281,14 @@ public class RestResource {
 		}
     }
 	
+	/**
+	 * sets securty mode
+	 * @param securityMode boolean new mode
+	 * @param idLogin int
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@POST
 	@Path("/s/setSecurityMode")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -1095,6 +1318,16 @@ public class RestResource {
         }
 	}
 	
+	/**
+	 * change administrator
+	 * @param firstName String new first name
+	 * @param lastName String new last name
+	 * @param passwordNew String new password
+	 * @param administratorId int 
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@POST
 	@Path("/s/changeAdmin")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })
@@ -1131,6 +1364,16 @@ public class RestResource {
 		}							
 	}
 	
+	/**
+	 * change account tpye
+	 * @param idAccountType int
+	 * @param description String name
+	 * @param interestRate double 
+	 * @param idLogin int
+	 * @param password String
+	 * @param req HttpServletRequest
+	 * @return
+	 */
 	@POST
 	@Path("/s/changeAccountType")
 	@Produces({ MediaType.TEXT_PLAIN + "; charset=utf-8" })

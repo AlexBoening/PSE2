@@ -55,6 +55,10 @@ import com.sun.jersey.api.representation.Form;
 
 import classes.*;
 
+/**
+ * This is the client for the customer, which he can use to manage his online banking account.
+ *
+ */
 public class CustomerClient {
 		
 	static Display display;
@@ -89,6 +93,10 @@ public class CustomerClient {
 	private static Label LabelStatusLineName;
 	private static boolean notFirstTimer;	   
 	
+	/**
+	 * 
+	 * @param args commandline parameters. Never used
+	 */
 	 public static void main(String[] args) {
 		 
 		 	initializeShell();
@@ -130,6 +138,9 @@ public class CustomerClient {
 		    display.dispose();
 }
 
+	 /**
+	  * adds Listener to the login button
+	  */
 	 private static void buttonLoginListenerAdd() {
 		 
 		        	if(notFirstTimer==false){
@@ -176,6 +187,9 @@ public class CustomerClient {
 			      
 	}
 
+	 /**
+	  * fills the page "change account"
+	  */
 	private static void fillcompositeChangeAcc(){
 		 
 		 GridData ChangeAccCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);		    
@@ -244,6 +258,9 @@ public class CustomerClient {
 		    
 	 }
 
+	/**
+	 * fills the page "deposit money"
+	 */
 	 private static void fillcompositeDepositPage() {
 		
 		 GridData DepositCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);		    
@@ -296,6 +313,9 @@ public class CustomerClient {
 		    
 	}
 
+	 /**
+	  * fills the page "view transactions"
+	  */
 	private static void fillcompositeViewTransaction() {
 		
 		 GridData CreateAccountCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
@@ -385,6 +405,9 @@ public class CustomerClient {
 				    compositeViewTransaction.pack();
 	}
 
+	/**
+	 * fills the page "perform transaction"
+	 */
 	private static void fillcompositePerformTransaction() {
 		 
 		 GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
@@ -456,6 +479,9 @@ public class CustomerClient {
 			});
 	}
 	
+	/**
+	 * fills the page "withdraw money"
+	 */
 	private static void fillcompositeWithdrawPage() {
 		 GridData CreateCustomerCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
 		    
@@ -508,6 +534,9 @@ public class CustomerClient {
 		    
 	}
 
+	/**
+	 * fills the page "welcome"
+	 */
 	private static void fillCompositeWelcomePage() {
 		 
 		 GridData WelcomeCompositeData = new GridData(GridData.BEGINNING, GridData.FILL,true, false);
@@ -528,6 +557,9 @@ public class CustomerClient {
 		    
 	}
 
+	/**
+	 * fills the window with the header, menu and content
+	 */
 	private static void fillCompositeMainClient() {
 
 		//Header
@@ -694,6 +726,9 @@ public class CustomerClient {
 		    
 	}
 
+	/**
+	 * fills the page "login"
+	 */
 	private static void fillCompositeLogin()
 	 {
 		 
@@ -831,6 +866,9 @@ public class CustomerClient {
 		    
 	 }
 	
+	/**
+	 * initializes all composites
+	 */
 	private static void initializeComposites() {
 		 
 		 compositeLogin = new Composite(shell,0);
@@ -885,6 +923,9 @@ public class CustomerClient {
 			compositeWithdrawPage.setLayout(layoutMainClient);
 	}
 	
+	/**
+	 * initializes often used GridData
+	 */
 	private static void initializeGridData() {
 
 		griddataWindow = new GridData(GridData.FILL, GridData.CENTER,true, true);
@@ -915,6 +956,9 @@ public class CustomerClient {
 		
 	}
 	
+	/**
+	 * initializes the shell + images
+	 */
 	private static void initializeShell() {
 		
 		display = new Display();
@@ -941,7 +985,11 @@ public class CustomerClient {
 
 	
 //------------ Business Logic ----------------------------//
-
+/**
+ * gets the Account which is logged in
+ * @param number int this is the account ID
+ * @return Account
+ */
 public static Account getAccount(int number) {
 	
 	String GETString = server + "/rest/getAccount?number=" + number;
@@ -1035,6 +1083,13 @@ public static Account getAccount(int number) {
 	}	
 }
 
+/**
+ * transfers money according to given parameters
+ * @param senderNumber int who send the money
+ * @param receiverNumber int who will receive the money
+ * @param amount String how much money
+ * @param reference String reason or other information for transaction
+ */
 public static void transferMoney(int senderNumber, int receiverNumber, String amount, String reference) {
 	
 	String POSTString = server + "/rest/transferMoney";
@@ -1061,6 +1116,11 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 	LabelStatusLine.setText(getMessage("Get Bank", status));
 }
 
+/**
+ * 
+ * @param id int ID of the bank account to search for
+ * @return int bank account
+ */
 	public static int getBankAccount(int id) {
 		String GETString = server + "/rest/getBankAccount" + "?account=" + id;
 		if (securityMode) {
@@ -1083,6 +1143,11 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		return 0;
 	}
 	
+	/**
+	 * returns the current account balance of the customer
+	 * @param id int ID of the current logged in Bank account
+	 * @return String returns the current balance of the customer
+	 */
 	public static String getBalance(int id) {
 		
 		String GETString = server + "/rest/getBalance" + "?account=" + id;
@@ -1129,6 +1194,11 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		}
 	}
 	
+	/**
+	 * returns Customer
+	 * @param id int ID of customer
+	 * @return Customer
+	 */
 	public static Customer getCustomer(int id) {
 		
 		String GETString;
@@ -1163,6 +1233,13 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		return null;
 	}
 	
+	/**
+	 * 
+	 * @param idLogin int logged in customer ID
+	 * @param firstName String new first name
+	 * @param lastName String new last name
+	 * @param passwordNew String new password
+	 */
 	public static void changeAccount(int idLogin, String firstName, String lastName, String passwordNew) {
 		
 		String POSTString;
@@ -1197,6 +1274,9 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		}
 	}
 
+	/**
+	 * saves the transactions as pdf file and opens it
+	 */
 	public static void printTransactions() {
 		
 		Account a = account;
@@ -1248,6 +1328,12 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 		PDF.print(a,b,c,at);
 	}
 	
+	/**
+	 * gets message according to the status code
+	 * @param caller String
+	 * @param statusCode int 
+	 * @return String the message to display to the user
+	 */
 	public static String getMessage(String caller, int statusCode) {
 		switch (statusCode) {
 			case 200: return caller + " - " + "OK: Your request was processed successfully!";

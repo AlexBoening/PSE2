@@ -2,6 +2,10 @@ package classes;
 import java.sql.Date;
 import java.sql.SQLException;
 
+/**
+ * class for transactions
+ * 
+ */
 public class Transaction {
     private int id;
     private int amount;
@@ -12,6 +16,15 @@ public class Transaction {
     private boolean sentIncoming;
     private boolean sentOutgoing;
     
+    /**
+     * overloaded constructor for Transaction
+     * @param amount int
+     * @param description String optional reason
+     * @param date Date
+     * @param incomingAccount Account receiver
+     * @param outgoingAccount Account sender
+     * @throws SQLException
+     */
     public Transaction(int amount, String description, Date date, Account incomingAccount, Account outgoingAccount) throws SQLException {
         this.id = SQL.getID("idTransaction", "Transaction", "");
         this.amount = amount;
@@ -36,6 +49,11 @@ public class Transaction {
         SQL.insert(value, "Transaction");
     }
     
+    /**
+     * overloaded constructor for Transaction
+     * @param id int
+     * @throws SQLException
+     */
     public Transaction(int id) throws SQLException {
      	
     	String[] column = {"amountTransaction", "descriptionTransaction", "dateTransaction", "sentIncomingTransaction", "sentOutgoingTransaction"};

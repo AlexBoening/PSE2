@@ -27,7 +27,10 @@ import com.itextpdf.text.pdf.PdfWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-
+/**
+ * class to create PDF files
+ * 
+ */
 public class PDF {
 
 	  private static String FILE;  
@@ -35,6 +38,13 @@ public class PDF {
 	  private static Font subFont;
 	  private static Font smallBold;
 	  
+	  /**
+	   * creates the file and opens it
+	   * @param a Account
+	   * @param b Bank
+	   * @param c Customer
+	   * @param at AccountType
+	   */
 	  public static void print(Account a, Bank b, Customer c, AccountType at) {
 	    try { 
 	    	  catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
@@ -59,6 +69,10 @@ public class PDF {
 		    }
 	  }
 
+	  /**
+	   * adds meta data to given document 
+	   * @param document
+	   */
 	 private static void addMetaData(Document document) {
 	    document.addTitle("Kontoauszug");
 	    document.addSubject("Kontoauszug");
@@ -67,6 +81,15 @@ public class PDF {
 	    document.addCreator("iCash");
 	  }
 
+	 /**
+	  * adds title to given document
+	  * @param document Document the pdf file
+	  * @param b Bank
+	  * @param c Customer
+	  * @param a Account
+	  * @param ac AccountType
+	  * @throws DocumentException
+	  */
 	  private static void addTitlePage(Document document, Bank b, Customer c, Account a, AccountType ac)
 	      throws DocumentException {
 		    Paragraph preface = new Paragraph();
@@ -87,6 +110,12 @@ public class PDF {
 	    // document.newPage();
 	  }
 	  
+	  /**
+	   * adds a table to the pdf file
+	   * @param document Document pdf file
+	   * @param t Transaction[] Array of all transactions
+	   * @param a Account
+	   */
 	  private static void addTable(Document document, Transaction[] t, Account a) {
 		  PdfPTable table = new PdfPTable(5); // 5 columns
 		  PdfPCell header5 = new PdfPCell(new Paragraph("date", smallBold));
@@ -134,6 +163,11 @@ public class PDF {
           }	
 	  }
 	  
+	  /**
+	   * adds given amount of empty lines after given paragraph
+	   * @param paragraph Paragraph
+	   * @param number int
+	   */
 	  private static void addEmptyLine(Paragraph paragraph, int number) {
 		    for (int i = 0; i < number; i++) {
 		      paragraph.add(new Paragraph(" "));

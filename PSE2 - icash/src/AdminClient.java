@@ -50,6 +50,10 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.representation.Form;
 
+/**
+ * client for administrative use
+ *
+ */
 public class AdminClient {
 		
 	static Display display;
@@ -87,6 +91,10 @@ public class AdminClient {
 	private static Label LabelStatusLineName;
 	public static Logger logger = Logger.getRootLogger();
 	
+	/**
+	 * main programm
+	 * @param args commandline parameters. Never used
+	 */
 	 public static void main(String[] args) throws Exception {
 		 
 		 	initializeShell();
@@ -125,6 +133,9 @@ public class AdminClient {
 		    display.dispose();
 }
 
+	 /**
+	  * adds Listener to the login button
+	  */
 	 private static void buttonLoginListenerAdd() {
 
      	if(notFirstTimer==false){
@@ -165,7 +176,9 @@ public class AdminClient {
 	        	 shell.layout();
 	}
 	 
-	 
+	 /**
+	  * fills the page "create customer"
+	  */
 	 private static void fillCompositeCreateCustomerPage() {
 		
 		 GridData CreateCustomerCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
@@ -231,6 +244,9 @@ public class AdminClient {
 	        });
 	}
 	 
+	 /**
+	  * fills the page "create admin"
+	  */
 	 private static void fillCompositeCreateAdminPage() {
 			
 		 GridData CreateAdminCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
@@ -296,6 +312,9 @@ public class AdminClient {
 	        });
 	}
 
+	 /**
+	  * fills the page "create account"
+	  */
 	private static void fillCompositeCreateAccountPage() {
 		
 		if (admin != null)
@@ -412,6 +431,9 @@ public class AdminClient {
 	        });
 	}
 	
+	/**
+	 * fills the page "create account type"
+	 */
 	private static void fillCompositeCreateAccountTypePage() {
 		
 		 GridData CreateAccountTypeCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
@@ -468,6 +490,9 @@ public class AdminClient {
 	        });
 	}
 
+	/**
+	 * fills the page "pay interest"
+	 */
 	private static void fillCompositePayInterestPage() {
 		 
 		 if (admin != null)
@@ -533,6 +558,9 @@ public class AdminClient {
 		      });
 	}
 	
+	/**
+	 * fills the page "change account type"
+	 */
 	private static void fillCompositeChangeAccountTypePage() {
 		 
 		 if (admin != null)
@@ -631,6 +659,9 @@ public class AdminClient {
 		    });
 	}
 	
+	/**
+	 * fills the page "manage accounts"
+	 */
 	private static void fillCompositeAccountPage() {
 		 
 		 GridData ViewCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);
@@ -747,6 +778,9 @@ public class AdminClient {
 			      });
 	}
 	
+	/**
+	 * fills the page "change admin"
+	 */
 	private static void fillCompositeChangeAdminPage(){
 		 
 		 GridData ChangeAccCompositeData = new GridData(GridData.FILL, GridData.FILL,true, false);		    
@@ -812,6 +846,9 @@ public class AdminClient {
 		    
 	 }
 	
+	/**
+	 * fills the page "welcome"
+	 */
 	private static void fillCompositeWelcomePage() {
 		 
 		 GridData WelcomeCompositeData = new GridData(GridData.BEGINNING, GridData.FILL,true, false);
@@ -830,6 +867,9 @@ public class AdminClient {
 		    labelForImage.setLayoutData(griddataCaption);
 	}
 
+	/**
+	 * fills the window with the header, menu and content
+	 */
 	private static void fillCompositeMainClient() {
 
 		//Header
@@ -1064,6 +1104,9 @@ public class AdminClient {
 	    
 	}
 
+	/**
+	 * fills the page "login"
+	 */
 	private static void fillCompositeLogin()
 	 {
 		 
@@ -1168,6 +1211,9 @@ public class AdminClient {
 		    compositeLogin.pack();
 	 }
 	
+	/**
+	 * initializes all composites
+	 */
 	private static void initializeComposites() throws Exception {
 		
 		// Logger
@@ -1243,6 +1289,9 @@ public class AdminClient {
 		    compositeChangeAccountTypePage.setLayout(layoutMainClient);
 	}
 	
+	/**
+	 * initializes often used GridData
+	 */
 	private static void initializeGridData() {
 
 		griddataWindow = new GridData(GridData.FILL, GridData.FILL,true, true);
@@ -1268,6 +1317,9 @@ public class AdminClient {
 		
 	}
 	
+	/**
+	 * initializes the shell + images
+	 */
 	private static void initializeShell() {
 		
 		display = new Display();
@@ -1296,6 +1348,11 @@ public class AdminClient {
 
 // Methods for data transfer to RestResource
 	
+	/**
+	 * gets current logged in admin
+	 * @param id int administrator ID
+	 * @return Administrator
+	 */
 	public static Administrator getAdmin(int id) {
 		String GETString;
 		if (securityMode) {
@@ -1369,6 +1426,14 @@ public class AdminClient {
 		return null;
 	}
 	
+	/**
+	 * creates a new customer
+	 * @param idLogin int admin ID
+	 * @param firstName String
+	 * @param lastName String
+	 * @param passwordCustomer String initial password
+	 * @return int WAS KOMMT HIER ZURÜCK? DIE CUSTOMER ID?
+	 */
 	public static int createCustomer(int idLogin, String firstName, String lastName, String passwordCustomer) {
 	
 		String POSTString = server + "/rest/s/createCustomer";
@@ -1399,6 +1464,14 @@ public class AdminClient {
 			return 0;
 	}
 	
+	/**
+	 * creates a new administrator
+	 * @param idLogin int admin ID
+	 * @param firstName String
+	 * @param lastName String
+	 * @param passwordAdmin String initial password
+	 * @return SIEHE OBEN?
+	 */
 	public static int createAdministrator(int idLogin, String firstName, String lastName, String passwordAdmin) {
 		
 		String POSTString = server + "/rest/s/createAdministrator";
@@ -1429,6 +1502,15 @@ public class AdminClient {
 			return 0;
 	}
 	
+	/**
+	 * creates a new account
+	 * @param idLogin int admin ID
+	 * @param bankId int 
+	 * @param customerId int
+	 * @param adminId int what admin manages this account
+	 * @param accountTypeId int
+	 * @return int ??!?!?!?!?!?!?!?!??!?!?!
+	 */
 	public static int createAccount(int idLogin, int bankId, int customerId, int adminId, int accountTypeId) {
 
 		String POSTString = server + "/rest/s/createAccount";
@@ -1458,6 +1540,13 @@ public class AdminClient {
 		return 0;
 	}
 	
+	/**
+	 * creates a new account type
+	 * @param idLogin int admin ID
+	 * @param interestRate String 
+	 * @param description String optional description for account type
+	 * @return ?!?!?!?!??!?!?
+	 */
 	public static int createAccountType(int idLogin, String interestRate, String description) {
 		
 		String POSTString = server + "/rest/s/createAccountType";
@@ -1485,6 +1574,13 @@ public class AdminClient {
 		return 0;
 	}
 	
+	/**
+	 * creates a new bank
+	 * @param idLogin int admin ID
+	 * @param description String
+	 * @param blz int
+	 * @return int =?!!=!==!=!=!?!!?!?!?!?
+	 */
 	public static int createBank(int idLogin, String description, int blz) {
 		
 		String POSTString = server + "/rest/s/createBank";
@@ -1512,6 +1608,10 @@ public class AdminClient {
 		return 0;
 	}
 	
+	/**
+	 * gets data for some ID?!!?!?!??!?!?!?!?
+	 * @param id int
+	 */
 	public static void getData(int id) {
 		
 		String GETString = server + "/rest/s/getData" + "?adminID=" + id + "&passwortHash=" + password; 
@@ -1576,6 +1676,13 @@ public class AdminClient {
 		}
 	}
 	
+	/**
+	 * sets marked account active/deactive
+	 * @param idLogin int admin ID
+	 * @param active boolean if currently active or not
+	 * @param idAccount int the account to switch activity
+	 * @return int ?!?!?!?!?!!?!?!?
+	 */
 	public static int setActive(int idLogin, boolean active, int idAccount) {
 		
 		String POSTString = server + "/rest/s/setActive";
@@ -1599,6 +1706,12 @@ public class AdminClient {
 		return status;
 	}
 	
+	/**
+	 * sets the security mode
+	 * @param idLogin int admin ID
+	 * @param securityMode boolean current mode
+	 * @return int =??!?!!?!?!??!
+	 */
 	public static int setSecurityMode(int idLogin, boolean securityMode) {
 		
 		String POSTString = server + "/rest/s/setSecurityMode";
@@ -1621,6 +1734,11 @@ public class AdminClient {
 		return cr.getStatus();
 	}
 	
+	/**
+	 * gets wether security mode is activated or not
+	 * @param idLogin int admin ID
+	 * @return boolean active or not
+	 */
 	public static boolean getSecurityMode(int idLogin) {
 		
 		String GETString = server + "/rest/s/getSecurityMode?idLogin=" + idLogin + "&passwortHash=" + password;
@@ -1643,6 +1761,12 @@ public class AdminClient {
 		return false;										
 	}
 	
+	/**
+	 * pay interest for all accounts of given bank
+	 * @param idLogin int admin ID
+	 * @param b Bank 
+	 * @return int ?!?!?!?!??!?!?!
+	 */
 	public static int payInterests(int idLogin, Bank b) {
 		String POSTString = server + "/rest/s/payInterests";
 		
@@ -1664,6 +1788,13 @@ public class AdminClient {
 		return status;
 	}
 	
+	/**
+	 * changes admin account
+	 * @param idLogin int admin ID
+	 * @param firstName String new first name
+	 * @param lastName String new last name
+	 * @param passwordNew String new password
+	 */
 public static void changeAdmin(int idLogin, String firstName, String lastName, String passwordNew) {
 		
 		String POSTString = server + "/rest/s/changeAdmin";
@@ -1695,6 +1826,12 @@ public static void changeAdmin(int idLogin, String firstName, String lastName, S
 		}
 	}
 
+/**
+ * changes account type
+ * @param idLogin int admin ID
+ * @param at AccountType account type to change
+ * @return int ?!?!?!?!??!?!
+ */
 public static int changeAccountType(int idLogin, AccountType at) {
 	
 	String POSTString = server + "/rest/s/changeAccountType";
@@ -1718,6 +1855,12 @@ public static int changeAccountType(int idLogin, AccountType at) {
 	return cr.getStatus();
 }
 
+/**
+ * gets message according to the status code
+ * @param caller String
+ * @param statusCode int 
+ * @return String the message to display to the user
+ */
 public static String getMessage(String caller, int statusCode) {
 	switch (statusCode) {
 		case 200: return caller + " - " + "OK: Your request was processed successfully!";

@@ -2,8 +2,14 @@ package classes;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
+/**
+ * class to convert different data types
+ */
 public class Convert {
 	
+	/**
+	 * converts String to int
+	 */
 	public static int toInt(String s) {
 		
 		int result = 0;
@@ -32,6 +38,9 @@ public class Convert {
 		return result;
 	}
 
+	/**
+	 * converts String to double
+	 */
 	public static double toDouble(String s) {
 		
 		double result = 0;
@@ -74,12 +83,18 @@ public class Convert {
 		return result;
 	}
 	
+	/**
+	 * converts String (euro) to Cent
+	 */
 	public static int toCent(String euro) {
 		
 		double amount = toDouble(euro);
 		return (int)Math.round(amount * 100);
 	}
-	
+
+	/**
+	 * converts int (cent) to euro (String)
+	 */
 	public static String toEuro(int cent) {
 		String sign;
 		if (cent < 0) {
@@ -97,6 +112,9 @@ public class Convert {
 			return sign + "0.0" + euro.substring(euro.length() - 1, euro.length());
 	}
 	
+	/**
+	 * returns current DateTime
+	 */
 	public static Date currentDate() {
 	    //SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
         java.util.Date currentTime = new java.util.Date();

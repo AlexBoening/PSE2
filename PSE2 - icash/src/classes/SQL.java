@@ -6,12 +6,21 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.log4j.Logger;
 
+/**
+ * SQL class to perform SQL commands
+ * 
+ */
 public class SQL {
 	
 	private static Connection conn;
 	private static Statement stmt;
 	private static Lock lock;
 	
+	/**
+	 * initializes the SQL connection
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
+	 */
 	public static void init() throws SQLException, ClassNotFoundException {
 		Class.forName("com.mysql.jdbc.Driver");
 		conn = DriverManager.getConnection("jdbc:mysql://localhost/icash", "root", "");
@@ -19,6 +28,15 @@ public class SQL {
 		lock = new ReentrantLock(true);
 	}
 	
+	/**
+	 * executes select statement with given parameters
+	 * @param column String column in table
+	 * @param table String table to fetch data from
+	 * @param condition String limiting results
+	 * @param connector String
+	 * @return results from select query
+	 * @throws SQLException
+	 */
 	public static String[][] select(String[] column, String table, String[] condition, String connector) 
 			                 throws SQLException {
 		
@@ -59,6 +77,12 @@ public class SQL {
 		return result;
 	}
 	
+	/**
+	 * inserts new data in give table
+	 * @param value String[] new values
+	 * @param table String table to add data into
+	 * @throws SQLException
+	 */
 	public static void insert(String[] value, String table) throws SQLException {
 		
 		ResultSet rs = null;
@@ -77,6 +101,15 @@ public class SQL {
 		    	throw new SQLException();
 		}
 	
+	/**
+	 * update data record in given table
+	 * @param column String[] columns to add
+	 * @param value String[] overwrite values with this new values
+	 * @param table String table
+	 * @param condition String limiting datarows to update
+	 * @param connector String
+	 * @throws SQLException
+	 */
 	public static void update(String[] column, String[] value, String table, String[] condition, String connector)
 	                   throws SQLException {
 		
@@ -97,6 +130,14 @@ public class SQL {
 	    	throw new SQLException();
 	}
 	
+	/**
+	 * gets last entry in table matching given condition
+	 * @param column String 
+	 * @param table String
+	 * @param condition String
+	 * @return last entry
+	 * @throws SQLException
+	 */
 	public static int getID(String column, String table, String condition) throws SQLException {
 		
 		int id = 0;

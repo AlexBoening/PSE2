@@ -4,6 +4,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Bank class
+ * 
+ */
 public class Bank {
     private int id;
     private int blz;
@@ -11,6 +15,12 @@ public class Bank {
     private ArrayList<Account> accounts;
     private Account bank_account;
     
+    /**
+     * overloaded constructor for Bank
+     * @param blz int
+     * @param description String
+     * @throws SQLException
+     */
     public Bank(int blz, String description) throws SQLException {
     	this.id = SQL.getID("idBank", "Bank", "");
     	this.blz = blz;
@@ -24,6 +34,11 @@ public class Bank {
     	SQL.insert(value, "Bank");
     }
     
+    /**
+     * constructor for Bank
+     * @param id int
+     * @throws SQLException
+     */
     public Bank(int id) throws SQLException {
     	
     	String[] column = {"idBank", "blzBank", "descriptionBank", "Account_idAccount" };
@@ -42,12 +57,20 @@ public class Bank {
     	
     }
     
+    /**
+     * adds a Account to the bank
+     * @param a
+     */
     public void add(Account a) {
     	if (accounts == null)
     		accounts = new ArrayList<Account>();
         accounts.add(a);	
     }
     
+    /**
+     * pays interest for all accounts of this bank
+     * @throws SQLException
+     */
     public void payInterests() throws SQLException {
     	int balance = 0;
     	int interests = 0;
@@ -87,6 +110,11 @@ public class Bank {
 		this.description = description;
 	}
 	
+	/**
+	 * get all accounts associated with this bank
+	 * @return ArrayList<Account> list of accounts
+	 * @throws SQLException
+	 */
 	public ArrayList<Account> getAccounts() throws SQLException {
 		if (accounts == null) {
 			accounts = new ArrayList<Account>();
@@ -107,6 +135,10 @@ public class Bank {
 		this.bank_account = bank_account;
 	}
 	
+	/**
+	 * updates database
+	 * @throws SQLException
+	 */
 	public void updateDB() throws SQLException {
 		String[] condition = {"idBank = " + id};
 		String[] column = new String[2];

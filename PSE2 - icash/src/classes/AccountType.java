@@ -2,12 +2,22 @@ package classes;
 
 import java.sql.SQLException;
 
+/**
+ * class AccountType
+ *
+ */
 public class AccountType {
 
 	private int id;
 	private String description;
 	private double interestRate;
 	
+	/**
+	 * overloaded constructor for AccountType
+	 * @param description String name of AccountType
+	 * @param interestRate double 
+	 * @throws SQLException
+	 */
 	public AccountType(String description, double interestRate) throws SQLException {
 	    this.id = SQL.getID("idAccountTyp", "AccountTyp", "");
 	    this.description = description;
@@ -20,6 +30,11 @@ public class AccountType {
 	    SQL.insert(value, "AccountTyp");
 	}
 	
+	/**
+	 * constructor for AccountType
+	 * @param id AccountType ID
+	 * @throws SQLException
+	 */
 	public AccountType(int id) throws SQLException {
 		String[] column = {"idAccountTyp", "descriptionAccountTyp", "interestRateAccountTyp"};
         String[] condition = {"idAccountTyp = " + id};
@@ -55,6 +70,10 @@ public class AccountType {
 		this.interestRate = interestRate;
 	}
 	
+	/**
+	 * updates database
+	 * @throws SQLException
+	 */
 	public void updateDB() throws SQLException {
 		String[] column = new String[2];
 		String[] value = new String[2];

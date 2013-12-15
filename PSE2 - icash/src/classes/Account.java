@@ -4,6 +4,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Account class 
+ *
+ */
 public class Account {
     private int id;
     private boolean flagActive;
@@ -14,6 +18,15 @@ public class Account {
     private ArrayList<Transaction> transactions;
 
 
+/**
+ * overloaded constructor for Account
+ * @param flagActive boolean 
+ * @param customer Customer
+ * @param administrator Administrator
+ * @param bank Bank
+ * @param accountType AccountType
+ * @throws SQLException
+ */
 public Account(boolean flagActive, Customer customer, Administrator administrator, 
 		       Bank bank, AccountType accountType) throws SQLException {
     this.id = SQL.getID("idAccount", "Account", "bank_idBank = " + bank.getId());
@@ -42,6 +55,11 @@ public Account(boolean flagActive, Customer customer, Administrator administrato
     SQL.insert(value, "Account");
     }
 
+/**
+ * constructor for Account class
+ * @param id int ID of new Account
+ * @throws SQLException
+ */
 public Account(int id) throws SQLException {
 	String[] column = {"flagActive"};
 	String[] condition = {"idAccount = " + id};
@@ -52,15 +70,27 @@ public Account(int id) throws SQLException {
 	this.flagActive = value[0][0].equals("X");
 }
 
+/**
+ * ?
+ */
 public Account() {
 }
 
+/**
+ * adds transaction to the account
+ * @param t Transaction
+ */
 public void add(Transaction t) {
 	if (transactions == null)
 		transactions = new ArrayList<Transaction>();
     transactions.add(t);	
 }
 
+/**
+ * gets current balance
+ * @return
+ * @throws SQLException
+ */
 public int getBalance() throws SQLException {
     int balance = 0;
     Iterator<Transaction> it = getTransactions().iterator();
@@ -75,6 +105,10 @@ public int getBalance() throws SQLException {
     return balance;
 }
 
+/**
+ * shows transactions
+ * @throws SQLException
+ */
 public void showTransactions() throws SQLException {
 	Iterator<Transaction> it = getTransactions().iterator();
     Transaction t;
@@ -188,6 +222,10 @@ public void setTransactions(ArrayList<Transaction> transactions) {
 	this.transactions = transactions;
 }
 
+/**
+ * updates database
+ * @throws SQLException
+ */
 public void updateDB() throws SQLException{
 	String[] column = new String[5];
 	String[] value = new String[5];

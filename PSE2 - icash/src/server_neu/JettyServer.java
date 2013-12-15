@@ -26,10 +26,20 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
 import java.sql.*;
 import java.util.logging.*;
 
+/**
+ * this is the server handling all requests
+ * 
+ */
 public class JettyServer {
     
 	public static boolean securityMode;
 	
+	/**
+	 * main program for server
+	 * starts the server
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		Server server = new Server(9998);
 		securityMode = false;

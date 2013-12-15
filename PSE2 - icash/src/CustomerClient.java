@@ -94,7 +94,7 @@ public class CustomerClient {
 	private static boolean notFirstTimer;	   
 	
 	/**
-	 * 
+	 * main programm
 	 * @param args commandline parameters. Never used
 	 */
 	 public static void main(String[] args) {

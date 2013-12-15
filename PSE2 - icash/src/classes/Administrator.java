@@ -2,16 +2,35 @@ package classes;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * Administrator class
+ * extends Person
+ */
 public class Administrator extends Person {
 
+	/**
+	 * overloaded constructor for Administrator
+	 * @param firstName String
+	 * @param lastName String
+	 * @param password String
+	 * @throws SQLException
+	 */
 	public Administrator(String firstName, String lastName, String password) throws SQLException {
 	    super(firstName, lastName, password, true); 
 	}
 	
+	/**
+	 * overloaded constructor for Administrator
+	 * @param id
+	 * @throws SQLException
+	 */
 	public Administrator(int id) throws SQLException {
 		super(id, true);
 	}
 	
+	/**
+	 * constructor for Administrator
+	 */
 	public Administrator() {
 		super();
 	}
@@ -20,6 +39,12 @@ public class Administrator extends Person {
 		return firstName;
 	}
 	
+	/**
+	 * deactivates given account
+	 * @param account Account account to deactive
+	 * @param active boolean true if active
+	 * @throws SQLException
+	 */
 	public void deactivateAccount(Account account, boolean active) throws SQLException {
 		if (account.getAdministrator().getId() == id)
 	        account.setFlagActive(active);	
@@ -28,10 +53,25 @@ public class Administrator extends Person {
 		}
 	}
 	
+	/**
+	 * creates new Customer
+	 * @param firstName String
+	 * @param lastName String
+	 * @param password String
+	 * @throws SQLException
+	 */
 	public void createCustomer(String firstName, String lastName, String password) throws SQLException {
 		Customer c = new Customer(firstName, lastName, password);
 	}
 	
+	/**
+	 * creates new Account
+	 * @param flagActive boolean
+	 * @param customer Customer
+	 * @param bank Bank
+	 * @param accountType AccountType
+	 * @throws SQLException
+	 */
 	public void createAccount(boolean flagActive, Customer customer, Bank bank, AccountType accountType) throws SQLException {
 		Account a = new Account (flagActive, customer, this, bank, accountType);
 	}
@@ -56,6 +96,11 @@ public class Administrator extends Person {
 		this.password = password;
 	}
 	
+	/**
+	 * gets all accounts managed by this administrator
+	 * @return ArrayList<Account> list with accounts
+	 * @throws SQLException
+	 */
 	public ArrayList<Account> getAccounts() throws SQLException {
 		if (accounts == null) {
 			accounts = new ArrayList<Account>();
@@ -68,6 +113,11 @@ public class Administrator extends Person {
 		return accounts;
 	}
 	
+	/**
+	 * logs administrator in
+	 * @param password
+	 * @throws SQLException
+	 */
     public void login(String password) throws SQLException{
     	String[] column = {"passwordAdministrator"};
     	String table = "Administrator";
@@ -82,6 +132,10 @@ public class Administrator extends Person {
     		setLoggedIn(false);
     }
     
+    /**
+     * updates database
+     * @throws SQLException
+     */
 	public void updateDB() throws SQLException {
 		String[] condition = {"idAdministrator = " + id};
 		String[] column = new String[3];

@@ -2,20 +2,46 @@ package classes;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * class for Customer objects
+ * extends Person
+ */
 public class Customer extends Person {
 
+	/**
+	 * overloaded constructor for Customer
+	 * @param firstName String
+	 * @param lastName String
+	 * @param password String
+	 * @throws SQLException
+	 */
 	public Customer(String firstName, String lastName, String password) throws SQLException {
 	    super(firstName, lastName, password, false);
 	}
 	
+	/**
+	 * overloaded constructor for Customer
+	 * @param id int
+	 * @throws SQLException
+	 */
 	public Customer(int id) throws SQLException {
 		super(id, false);
 	}
 	
+	/**
+	 * constructor for Customer
+	 */
 	public Customer() {
 		super();
 	}
 	
+	/**
+	 * withdraw money from give account from this customer
+	 * @param account Account
+	 * @param amount int
+	 * @param description String optional reason
+	 * @throws SQLException
+	 */
 	public void withdrawMoney(Account account, int amount, String description) throws SQLException {
 		if (account.getCustomer().getId() == id) {
 			int balance = account.getBalance();
@@ -31,10 +57,25 @@ public class Customer extends Person {
 		}
 	}
 	
+	/**
+	 * deposit money on give account from this customer
+	 * @param account Account
+	 * @param amount int
+	 * @param description String optional reason
+	 * @throws SQLException
+	 */
 	public void depositMoney(Account account, int amount, String description) throws SQLException {
 		Transaction t = new Transaction(amount, description, Convert.currentDate(), account, account.getBank().getBank_account());
 	}
 	
+	/**
+	 * perform transaction
+	 * @param incomingAccount Account from which account does the money come from
+	 * @param outgoingAccount Account to which account should the money be send
+	 * @param amount int 
+	 * @param description String optional reason
+	 * @throws SQLException
+	 */
 	public void performTransaction(Account incomingAccount, Account outgoingAccount, int amount, String description) throws SQLException {
 		if (outgoingAccount.getCustomer().getId() == id) {
 			int balance = outgoingAccount.getBalance();
@@ -69,6 +110,11 @@ public class Customer extends Person {
 		this.password = password;
 	}
 	
+	/**
+	 * 
+	 * @return list of accounts associated with this customer
+	 * @throws SQLException
+	 */
 	public ArrayList<Account> getAccounts() throws SQLException {
 		if (accounts == null) {
 			accounts = new ArrayList<Account>();
@@ -81,6 +127,12 @@ public class Customer extends Person {
 		return accounts;
 	}
 	
+	/**
+	 * logs the customer in
+	 * @param password String
+	 * @param a Account
+	 * @throws SQLException
+	 */
     public void login(String password, Account a) throws SQLException{
     	if (!a.isFlagActive()) {
     		setLoggedIn(false);

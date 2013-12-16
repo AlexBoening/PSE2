@@ -1350,7 +1350,7 @@ public class AdminClient {
 	
 	/**
 	 * gets current logged in admin
-	 * @param id int administrator ID
+	 * @param idLogin int admin ID
 	 * @return Administrator
 	 */
 	public static Administrator getAdmin(int id) {
@@ -1503,13 +1503,13 @@ public class AdminClient {
 	}
 	
 	/**
-	 * creates a new account
+	 * creates a new bank-account
 	 * @param idLogin int admin ID
 	 * @param bankId int 
 	 * @param customerId int
 	 * @param adminId int what admin manages this account
 	 * @param accountTypeId int
-	 * @return int ??!?!?!?!?!?!?!?!??!?!?!
+	 * @return status-information of response-object
 	 */
 	public static int createAccount(int idLogin, int bankId, int customerId, int adminId, int accountTypeId) {
 
@@ -1545,7 +1545,7 @@ public class AdminClient {
 	 * @param idLogin int admin ID
 	 * @param interestRate String 
 	 * @param description String optional description for account type
-	 * @return ?!?!?!?!??!?!?
+	 * @return status-information of response-object
 	 */
 	public static int createAccountType(int idLogin, String interestRate, String description) {
 		
@@ -1579,7 +1579,7 @@ public class AdminClient {
 	 * @param idLogin int admin ID
 	 * @param description String
 	 * @param blz int
-	 * @return int =?!!=!==!=!=!?!!?!?!?!?
+	 * @return status-information of response-object
 	 */
 	public static int createBank(int idLogin, String description, int blz) {
 		
@@ -1609,8 +1609,8 @@ public class AdminClient {
 	}
 	
 	/**
-	 * gets data for some ID?!!?!?!??!?!?!?!?
-	 * @param id int
+	 * fetch data of all banks, accounts, account-types, customers and administrators
+	 * @param idLogin int admin ID
 	 */
 	public static void getData(int id) {
 		
@@ -1681,7 +1681,7 @@ public class AdminClient {
 	 * @param idLogin int admin ID
 	 * @param active boolean if currently active or not
 	 * @param idAccount int the account to switch activity
-	 * @return int ?!?!?!?!?!!?!?!?
+	 * @return status-information of response-object
 	 */
 	public static int setActive(int idLogin, boolean active, int idAccount) {
 		
@@ -1710,7 +1710,7 @@ public class AdminClient {
 	 * sets the security mode
 	 * @param idLogin int admin ID
 	 * @param securityMode boolean current mode
-	 * @return int =??!?!!?!?!??!
+	 * @return status-information of response-object
 	 */
 	public static int setSecurityMode(int idLogin, boolean securityMode) {
 		
@@ -1765,7 +1765,7 @@ public class AdminClient {
 	 * pay interest for all accounts of given bank
 	 * @param idLogin int admin ID
 	 * @param b Bank 
-	 * @return int ?!?!?!?!??!?!?!
+	 * @return status-information of response-object
 	 */
 	public static int payInterests(int idLogin, Bank b) {
 		String POSTString = server + "/rest/s/payInterests";
@@ -1830,7 +1830,7 @@ public static void changeAdmin(int idLogin, String firstName, String lastName, S
  * changes account type
  * @param idLogin int admin ID
  * @param at AccountType account type to change
- * @return int ?!?!?!?!??!?!
+ * @return status-information of response-object
  */
 public static int changeAccountType(int idLogin, AccountType at) {
 	

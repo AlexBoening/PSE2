@@ -1350,7 +1350,7 @@ public class AdminClient {
 	
 	/**
 	 * gets current logged in admin
-	 * @param idLogin int admin ID
+	 * @param id int admin ID
 	 * @return Administrator
 	 */
 	public static Administrator getAdmin(int id) {
@@ -1432,7 +1432,7 @@ public class AdminClient {
 	 * @param firstName String
 	 * @param lastName String
 	 * @param passwordCustomer String initial password
-	 * @return int WAS KOMMT HIER ZURÜCK? DIE CUSTOMER ID?
+	 * @return customerID
 	 */
 	public static int createCustomer(int idLogin, String firstName, String lastName, String passwordCustomer) {
 	
@@ -1470,7 +1470,7 @@ public class AdminClient {
 	 * @param firstName String
 	 * @param lastName String
 	 * @param passwordAdmin String initial password
-	 * @return SIEHE OBEN?
+	 * @return administratorID
 	 */
 	public static int createAdministrator(int idLogin, String firstName, String lastName, String passwordAdmin) {
 		
@@ -1610,7 +1610,7 @@ public class AdminClient {
 	
 	/**
 	 * fetch data of all banks, accounts, account-types, customers and administrators
-	 * @param idLogin int admin ID
+	 * @param id int admin ID
 	 */
 	public static void getData(int id) {
 		

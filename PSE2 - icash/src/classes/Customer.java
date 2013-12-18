@@ -36,28 +36,6 @@ public class Customer extends Person {
 	}
 	
 	/**
-	 * withdraw money from give account from this customer
-	 * @param account Account
-	 * @param amount int
-	 * @param description String optional reason
-	 * @throws SQLException
-	 */
-	public void withdrawMoney(Account account, int amount, String description) throws SQLException {
-		if (account.getCustomer().getId() == id) {
-			int balance = account.getBalance();
-			if (balance >= amount) {
-			    Transaction t = new Transaction(amount, description, Convert.currentDate(), account.getBank().getBank_account(), account);
-			}
-			else {
-				// Error Message: Balance must not be negative
-			}
-		}
-		else {
-			// Error Message: You cannot withdraw Money from an account you do not own!
-		}
-	}
-	
-	/**
 	 * deposit money on give account from this customer
 	 * @param account Account
 	 * @param amount int
@@ -66,29 +44,6 @@ public class Customer extends Person {
 	 */
 	public void depositMoney(Account account, int amount, String description) throws SQLException {
 		Transaction t = new Transaction(amount, description, Convert.currentDate(), account, account.getBank().getBank_account());
-	}
-	
-	/**
-	 * perform transaction
-	 * @param incomingAccount Account from which account does the money come from
-	 * @param outgoingAccount Account to which account should the money be send
-	 * @param amount int 
-	 * @param description String optional reason
-	 * @throws SQLException
-	 */
-	public void performTransaction(Account incomingAccount, Account outgoingAccount, int amount, String description) throws SQLException {
-		if (outgoingAccount.getCustomer().getId() == id) {
-			int balance = outgoingAccount.getBalance();
-			if (balance >= amount) {
-			    Transaction t = new Transaction(amount, description, Convert.currentDate(), incomingAccount, outgoingAccount);
-			}
-			else {
-				// Error Message: Balance must not be negative
-			}
-		}
-		else {
-			// Error Message: You cannot transfer Money from an account you do not own!
-		}
 	}
 	
 	public String getFirstName() {

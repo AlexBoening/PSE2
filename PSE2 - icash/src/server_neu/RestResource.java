@@ -40,7 +40,7 @@ public class RestResource {
 	 * gets Account
 	 * @param numberString String account ID
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code / Account Data
 	 */
 	@GET
 	@Path("/getAccount")
@@ -78,7 +78,7 @@ public class RestResource {
 	 * @param customerString String customer ID
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code / Account Data
 	 */
 	@GET
 	@Path("/s/getAccount")
@@ -121,7 +121,7 @@ public class RestResource {
 	 * gets Account
 	 * @param number int account ID
 	 * @param a Account
-	 * @return
+	 * @return Response HTTP-Response-Code / Account Data
 	 */
 	public Response getAccount(int number, Account a) {
 		
@@ -129,7 +129,6 @@ public class RestResource {
 		try {
 		
 		// Build up header data
-		//jo.put("id", a.getBank().getId());
 		jo.put("number", "" + a.getId());
 		jo.put("owner", a.getCustomer().getFirstName() + " " + a.getCustomer().getLastName());
         
@@ -145,7 +144,6 @@ public class RestResource {
 			
 			// Receiver Data
 			JSONObject receiver = new JSONObject();
-			//receiver.put("id", t[i].getIncomingAccount().getBank().getId());
 			receiver.put("number", "" + t[i].getIncomingAccount().getId());
 			receiver.put("owner", t[i].getIncomingAccount().getCustomer().getFirstName() + " " 
 			                    + t[i].getIncomingAccount().getCustomer().getLastName());
@@ -154,12 +152,10 @@ public class RestResource {
 			
 			// Sender Data
 			JSONObject sender = new JSONObject();
-			//sender.put("id", t[i].getOutgoingAccount().getBank().getId());
 			sender.put("number", "" + t[i].getOutgoingAccount().getId());
 			sender.put("owner", t[i].getOutgoingAccount().getCustomer().getFirstName() + " " 
 			                    + t[i].getOutgoingAccount().getCustomer().getLastName());
 			transaction.put("sender", sender);
-			//transaction.put("transactionDate", t[i].getDate());
 			transaction.put("transactionDate", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+01:00'").format(t[i].getDate()));
 			
 			ja.put(transaction);
@@ -180,7 +176,7 @@ public class RestResource {
 	 * @param amountString String amount
 	 * @param reference String optional reason
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code
 	 */
 	@POST
 	@Path("/transferMoney")
@@ -227,7 +223,7 @@ public class RestResource {
 	 * @param customerString String
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code
 	 */
 	@POST
 	@Path("/s/transferMoney")
@@ -281,7 +277,7 @@ public class RestResource {
 	 * @param amount int
 	 * @param reference String optional reason
 	 * @param outgoingAccount Account
-	 * @return
+	 * @return Response HTTP-Response-Code
 	 */
 	public Response transferMoney(int sender, int receiver, int amount, String reference, Account outgoingAccount){
 		Transaction t;
@@ -316,7 +312,7 @@ public class RestResource {
 	 * gets bank account
 	 * @param account int account ID
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code / Bank Account (for deposites and withdraws)
 	 */
 	@GET
 	@Path("/getBankAccount")
@@ -350,7 +346,7 @@ public class RestResource {
 	 * gets current balance
 	 * @param account int account ID
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code / Balance
 	 */
 	@GET
 	@Path("/getBalance")
@@ -387,7 +383,7 @@ public class RestResource {
 	 * @param customer int 
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code / Bank Account (for deposits and withdraws)
 	 */
 	@GET
 	@Path("/s/getBankAccount")
@@ -429,7 +425,7 @@ public class RestResource {
 	 * @param customer int 
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code / Balance
 	 */
 	@GET
 	@Path("/s/getBalance")
@@ -469,7 +465,7 @@ public class RestResource {
 	 * get customer of given account
 	 * @param account int account ID
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code / Customer Data
 	 */
 	@GET
 	@Path("/getCustomer")
@@ -507,7 +503,7 @@ public class RestResource {
 	 * @param account int account ID
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code / Customer Data
 	 */
 	@GET
 	@Path("/s/getCustomer")
@@ -545,7 +541,7 @@ public class RestResource {
 	 * @param account int
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code / Bank Data
 	 */
 	@GET
 	@Path("/s/getBank")
@@ -584,7 +580,7 @@ public class RestResource {
 	 * @param account int
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code / Account Type Data
 	 */
 	@GET
 	@Path("/s/getAccountType")
@@ -626,7 +622,7 @@ public class RestResource {
 	 * @param passwordNew String
 	 * @param customerId int
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code
 	 */
 	@POST
 	@Path("/changeAccount")
@@ -671,7 +667,7 @@ public class RestResource {
 	 * @param customerId int
 	 * @param password String 
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code
 	 */
 	@POST
 	@Path("/s/changeAccount")
@@ -716,7 +712,7 @@ public class RestResource {
 	 * @param adminID int 
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code / Admin Data
 	 */
 	@GET
 	@Path("/s/getAdmin")
@@ -788,7 +784,7 @@ public class RestResource {
 	 * @param adminID int
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code / Data for administrators, banks, customers, account types
 	 */
 	@GET
 	@Path("/s/getData")
@@ -900,7 +896,7 @@ public class RestResource {
 	 * @param idLogin int
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code
 	 */
 	@POST
 	@Path("/s/setActive")
@@ -944,7 +940,7 @@ public class RestResource {
 	 * @param idLogin int admin ID
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code
 	 */
 	@POST
 	@Path("/s/payInterests")
@@ -985,7 +981,7 @@ public class RestResource {
 	 * @param adminIdLogin int 
 	 * @param passwordLogin String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code
 	 */
 	@POST
 	@Path("/s/createCustomer")
@@ -1031,7 +1027,7 @@ public class RestResource {
 	 * @param adminIdLogin int
 	 * @param passwordLogin String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code
 	 */
 	@POST
 	@Path("/s/createAdministrator")
@@ -1078,7 +1074,7 @@ public class RestResource {
 	 * @param adminIdLogin int
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code
 	 */
 	@POST
 	@Path("/s/createAccount")
@@ -1161,7 +1157,7 @@ public class RestResource {
 	 * @param adminIdLogin int
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code
 	 */
 	@POST
 	@Path("/s/createAccountType")
@@ -1204,7 +1200,7 @@ public class RestResource {
 	 * @param adminIdLogin int 
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code
 	 */
 	@POST
 	@Path("/s/createBank")
@@ -1250,7 +1246,7 @@ public class RestResource {
 	 * @param idLogin int
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return wether security mode is active or not
+	 * @return Response HTTP-Response-Code / whether security mode is active or not
 	 */
 	@GET
 	@Path("/s/getSecurityMode")
@@ -1287,7 +1283,7 @@ public class RestResource {
 	 * @param idLogin int
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code
 	 */
 	@POST
 	@Path("/s/setSecurityMode")
@@ -1326,7 +1322,7 @@ public class RestResource {
 	 * @param administratorId int 
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code
 	 */
 	@POST
 	@Path("/s/changeAdmin")
@@ -1372,7 +1368,7 @@ public class RestResource {
 	 * @param idLogin int
 	 * @param password String
 	 * @param req HttpServletRequest
-	 * @return
+	 * @return Response HTTP-Response-Code
 	 */
 	@POST
 	@Path("/s/changeAccountType")

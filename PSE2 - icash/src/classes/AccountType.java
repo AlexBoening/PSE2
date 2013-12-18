@@ -46,7 +46,10 @@ public class AccountType {
         this.description = value[0][1];
         this.interestRate = Convert.toDouble(value[0][2]);
 	}
-	
+
+	/**
+	 * Empty Constructor for Clients without Database Connection
+	 */
 	public AccountType() {
 		
 	}

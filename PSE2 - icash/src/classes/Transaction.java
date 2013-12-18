@@ -71,6 +71,9 @@ public class Transaction {
         this.sentOutgoing = value[0][4].equals("X");
     }
     
+    /**
+     * Empty Constructor for Clients without Database Connection
+     */
     public Transaction() {
     	
     }
@@ -152,6 +155,10 @@ public class Transaction {
 		this.outgoingAccount = outgoingAccount;
 		}
 	
+	/**
+	 * updates database
+	 * @throws SQLException
+	 */
 	public void updateDB() throws SQLException {
 		String[] condition = {"idTransaction = " + id};
 		String[] column = new String[7];

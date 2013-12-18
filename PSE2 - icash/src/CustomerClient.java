@@ -988,7 +988,7 @@ public class CustomerClient {
 /**
  * gets the Account which is logged in
  * @param number int this is the account ID
- * @return Account
+ * @return Account requested Account
  */
 public static Account getAccount(int number) {
 	
@@ -1119,7 +1119,7 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 /**
  * 
  * @param id int ID of the bank account to search for
- * @return int bank account
+ * @return int bank account (for deposition and withdraws)
  */
 	public static int getBankAccount(int id) {
 		String GETString = server + "/rest/getBankAccount" + "?account=" + id;
@@ -1332,7 +1332,7 @@ public static void transferMoney(int senderNumber, int receiverNumber, String am
 	 * gets message according to the status code
 	 * @param caller String
 	 * @param statusCode int 
-	 * @return String the message to display to the user
+	 * @return String the message to be displayed to the user
 	 */
 	public static String getMessage(String caller, int statusCode) {
 		switch (statusCode) {

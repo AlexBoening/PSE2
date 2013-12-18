@@ -71,7 +71,7 @@ public Account(int id) throws SQLException {
 }
 
 /**
- * ?
+ * Empty Constructor for Clients without Database Connection
  */
 public Account() {
 }
@@ -88,7 +88,7 @@ public void add(Transaction t) {
 
 /**
  * gets current balance
- * @return
+ * @return int Balance in cents
  * @throws SQLException
  */
 public int getBalance() throws SQLException {

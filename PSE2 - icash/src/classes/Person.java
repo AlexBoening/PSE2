@@ -80,6 +80,9 @@ public abstract class Person {
     	}
     }
     
+    /**
+     * Empty Constructor for Clients without Database Connection
+     */
     public Person() {
     	
     }

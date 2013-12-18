@@ -116,10 +116,7 @@ public class Convert {
 	 * returns current DateTime
 	 */
 	public static Date currentDate() {
-	    //SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
         java.util.Date currentTime = new java.util.Date();
-        //String s = formatter.format(currentTime);
-        //Date d = new Date(toInt(s.substring(0,4))-1900, toInt(s.substring(4,6))-1, toInt(s.substring(6,8)));*/
         Date d = new Date(currentTime.getTime());
 	    return d;
 	}
